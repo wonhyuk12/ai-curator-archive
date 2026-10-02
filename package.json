@@ -1,0 +1,15 @@
+{
+  "name": "ai-curator-archive",
+  "private": true,
+  "description": "AI 큐레이터(AI 소식·모델 차트) + AI ARCHIVE(직업별 AI 툴 마인드맵)",
+  "scripts": {
+    "postinstall": "npm install --prefix archive",
+    "dev": "concurrently -n curator,archive -c cyan,magenta \"serve curator -l 3001 --no-clipboard --no-port-switching\" \"npm run dev --prefix archive\"",
+    "build": "npm run build --prefix archive",
+    "start": "concurrently -n curator,archive -c cyan,magenta \"serve curator -l 3001 --no-clipboard --no-port-switching\" \"npm run start --prefix archive\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "serve": "^14.2.4"
+  }
+}
