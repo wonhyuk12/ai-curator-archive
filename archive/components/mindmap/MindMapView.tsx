@@ -250,7 +250,7 @@ export function MindMapView({ slug }: { slug: string }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="pointer-events-none absolute left-5 top-[88px] font-mono text-[10px] leading-5 tracking-[0.18em] text-white/40"
+            className="pointer-events-none absolute left-5 top-[88px] font-mono max-[640px]:hidden text-[10px] leading-5 tracking-[0.18em] text-white/40"
           >
             <div className="text-white/70">
               {"// "}{category.nameEn} <span style={{ color: accent }}>MIND MAP</span>
