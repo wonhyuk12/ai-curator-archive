@@ -9,9 +9,12 @@ const ARCHIVE_URL = location.pathname.startsWith("/news/") ? "/"
   : ["localhost", "127.0.0.1"].includes(location.hostname) ? "http://localhost:3000/" : "https://ai-archive-weld.vercel.app/";
 document.querySelectorAll("a.to-archive").forEach((a) => (a.href = ARCHIVE_URL));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// 밝은 바탕색이면 글자를 어둡게
+const lightBg = (hex) => { const n = parseInt(hex.slice(1), 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 > 150; };
 const logo = (co, size) => {
   const c = COMPANIES[co];
-  const inner = c.img ? `<img src="${c.img}" alt="">` : `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[co] || ""}</svg>`;
+  // 로고 이미지·아이콘이 없는 회사는 이름 첫 글자로
+  const inner = c.img ? `<img src="${c.img}" alt="">` : ICONS[co] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[co]}</svg>` : `<b class="mono" style="color:${lightBg(c.c) ? "#111" : "#fff"}">${esc(c.name[0])}</b>`;
   return `<span class="logo-c" title="${c.name}" style="--c:${c.c}${size ? `;width:${size}px;height:${size}px` : ""}">${inner}</span>`;
 };
 const modelLogo = (m, size) => {
@@ -25,7 +28,7 @@ const daysAgo = (n) => { const d = new Date(CHECKED); d.setDate(d.getDate() - n)
 function renderIdx() {
   const since = daysAgo(30);
   const newCount = Object.values(TIMELINES).flat().filter((e) => e.kind === "release" && e.date >= since).length;
-  const cheapest = [...MODELS].sort((a, b) => blended(a) - blended(b))[0];
+  const cheapest = priced(MODELS.filter((m) => (m.kind || "chat") === "chat")).sort((a, b) => blended(a) - blended(b))[0];
   const newest = byNewest(MODELS)[0];
   const freeCount = Object.values(SUBSCRIPTIONS).filter((s) => s.plans.some((p) => p[1] === 0)).length;
   const items = [
@@ -57,14 +60,20 @@ function monthBars() {
 }
 
 // ---- LLM 차트 ----
-const usd = (v) => (Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`);
-const blended = (m) => (m.price.in * 3 + m.price.out) / 4;
+const usd = (v) => (Number.isInteger(v) ? `$${v}` : v < 0.01 ? `$${v.toFixed(3)}` : `$${v.toFixed(2)}`);
+// 요금을 공개하지 않은 모델(모델 파일만 공개 등)은 요금 비교에서 빠져요
+const blended = (m) => (m.price ? (m.price.in * 3 + m.price.out) / 4 : Infinity);
+const priced = (list) => list.filter((m) => m.price);
+// 모델 종류: 대화형(chat) · 이미지(image)
+let kindKey = "all";
+const ofKind = (list) => (kindKey === "all" ? list : list.filter((m) => (m.kind || "chat") === kindKey));
 const relDate = (d) => { const [, m, day] = d.split("-"); return day ? `${+m}.${+day}` : `${+m}월`; };
 let rankKey = "new";
 // 최근 30일 안에 나온 모델에 NEW 표시
 const isNew = (m) => m.date >= daysAgo(30);
 // 인기: OpenRouter 30일 사용량 (POPULAR)
-const CO_FAMILY = { openai: "gpt", anthropic: "claude", google: "gemini", deepseek: "deepseek", meta: "llama", mistral: "mistral", xai: "grok" };
+// 회사 → 대표 계열 (구독 요금·인기 목록에서 계열 화면 열기)
+const CO_FAMILY = Object.fromEntries(Object.entries(FAMILIES).map(([k, f]) => [f.co, k]));
 const pct = (c) => { const v = c * 100; return `${v >= 0 ? "+" : ""}${Math.round(v).toLocaleString("en-US")}%`; };
 const fmtTok = (n) => (n >= 1e12 ? `${Math.round(n / 1e12).toLocaleString("en-US")}조` : `${Math.round(n / 1e8).toLocaleString("en-US")}억`);
 // 막대 길이(%) — 가장 큰 값 = 100%
@@ -83,7 +92,7 @@ function popRows() {
 const LEGENDS = {
   new: () => `최신순 = 공식 출시일 순서예요. 지금 어떤 AI가 새로 나왔는지 볼 수 있어요 · ${CHECKED} 확인`,
   price: () => priceMode === "api"
-    ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서. 막대 = 입력 3 : 출력 1로 섞은 평균 단가 (길수록 비쌈) · ${CHECKED} 확인`
+    ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서. 막대 = 입력 3 : 출력 1로 섞은 평균 단가 (길수록 비쌈) · 같은 종류끼리만 비교 · ${CHECKED} 확인`
     : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 기준 USD) · ${CHECKED} 확인`,
   pop: () => `인기 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
@@ -108,18 +117,20 @@ function subRows(tier) {
 }
 function renderRows() {
   $("#pmode").hidden = rankKey !== "price";
+  $("#kmode").hidden = rankKey === "pop" || (rankKey === "price" && priceMode !== "api");
   if (rankKey === "pop") { $("#rows").innerHTML = popRows(); return; }
   if (rankKey === "price" && priceMode !== "api") { $("#rows").innerHTML = subRows(priceMode); return; }
-  let list = byNewest(MODELS);
-  // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순
-  if (rankKey === "price") list.sort((a, b) => blended(a) - blended(b));
-  const maxPrice = Math.max(...MODELS.map(blended));
+  let list = ofKind(byNewest(MODELS));
+  // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순 (같은 종류끼리)
+  // 요금은 같은 종류끼리만 비교 ("전체"면 대화형 기준)
+  if (rankKey === "price") list = priced(kindKey === "all" ? list.filter((m) => (m.kind || "chat") === "chat") : list).sort((a, b) => blended(a) - blended(b));
+  const maxPrice = Math.max(...priced(list).map(blended));
   $("#rows").innerHTML = list.map((m, i) => `
     <button type="button" class="row row-price" data-id="${m.id}">
       <span class="rk">${i + 1}</span>
       ${modelLogo(m)}
       <span class="nm"><b>${esc(m.name)}${isNew(m) ? '<span class="new">NEW</span>' : ""}</b><small>${COMPANIES[m.co].name}</small>${rankKey === "price" ? meter(blended(m), maxPrice) : ""}</span>
-      <span class="pr num">${rankKey === "new" ? `<b>${relDate(m.date)}</b><small class="flat">${m.date.slice(0, 4)} 출시</small>` : `<b>${usd(m.price.in)} / ${usd(m.price.out)}</b><small class="flat">입력 / 출력</small>`}</span>
+      <span class="pr num">${rankKey === "new" ? `<b>${relDate(m.date)}</b><small class="flat">${m.date.slice(0, 4)} 출시</small>` : (m.price ? `<b>${usd(m.price.in)} / ${usd(m.price.out)}</b><small class="flat">입력 / 출력</small>` : `<b>-</b><small class="flat">요금 비공개</small>`)}</span>
     </button>`).join("");
 }
 $("#rankTabs").addEventListener("click", (e) => {
@@ -127,6 +138,12 @@ $("#rankTabs").addEventListener("click", (e) => {
   rankKey = b.dataset.k;
   setLegend();
   $("#rankTabs").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  renderRows();
+});
+$("#kmode").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-km]"); if (!b) return;
+  kindKey = b.dataset.km;
+  $("#kmode").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
   renderRows();
 });
 $("#pmode").addEventListener("click", (e) => {
@@ -221,16 +238,18 @@ function pane(m, tab) {
   return `
     <div><h4>어디서 쓸 수 있나요</h4><div class="chips">${m.use.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
     <div><h4>주요 기능</h4><div class="chips">${m.features.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
-    <div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
+    ${m.price ? `<div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
-      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1~2자 정도) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>
+      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1~2자 정도) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
+      : `<div><h4>API 요금</h4><p class="price-note">공개된 API 요금이 없어요. ${m.use.some((u) => u.includes("모델 파일")) ? "모델 파일을 무료로 내려받아 직접 실행할 수 있어요. " : ""}<a href="${esc(m.src)}" target="_blank" rel="noopener">공식 발표 ›</a></p></div>`}
     ${peerPriceHTML(m)}
     ${subHTML(m.co)}`;
 }
 // 같은 회사 모델끼리 API 평균 단가 비교 (입력 3 : 출력 1)
 function peerPriceHTML(m) {
-  const peers = MODELS.filter((x) => x.co === m.co).sort((a, b) => blended(a) - blended(b));
+  if (!m.price) return "";
+  const peers = priced(MODELS.filter((x) => x.co === m.co && (x.kind || "chat") === (m.kind || "chat"))).sort((a, b) => blended(a) - blended(b));
   if (peers.length < 2) return "";
   const max = Math.max(...peers.map(blended));
   return `<div><h4>${COMPANIES[m.co].name} 모델끼리 요금 비교</h4><div class="peers">${peers.map((x) => `

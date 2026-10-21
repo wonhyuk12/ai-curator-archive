@@ -410,3 +410,6 @@ header{background:rgba(5,5,5,.72);backdrop-filter:blur(16px);border-bottom-color
 .peer.cur .meter i{opacity:1}
 .peer .pn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .peer .pv{font-size:13px}
+
+/* 로고가 없는 회사: 이름 첫 글자 */
+.logo-c .mono{font-size:15px;font-weight:800;font-style:normal}
