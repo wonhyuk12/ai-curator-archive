@@ -131,7 +131,7 @@ const NEWS = [
   { date: "2026-09-29", co: "openai", type: "model", title: "GPT-6.1 Sol 출시",
     what: "OpenAI 발표 기준 에이전트 코딩·컴퓨터 사용에서 최상위 GPT-6 Astra에 가까운 성능을 1/5 가격($2 / $10)에 내요.",
     why: "ChatGPT·Codex에서 바로 쓰여요. 비싼 Astra 대신 쓸 수 있는 선택지예요.",
-    link: "https://openai.com/index/introducing-gpt-6-1-sol" },
+    link: "https://techcrunch.com/2026/09/29/openai-launches-gpt-6-1-sol-says-it-nearly-matches-gpt-6-astra-and-costs-less/" },
   { date: "2026-09-28", co: "anthropic", type: "model", title: "Claude Sonnet 5.5 출시",
     what: "이전 Sonnet보다 출력이 30% 이상 빠르고, 작업당 비용은 최대 30% 줄었어요 (Anthropic 발표).",
     why: "Claude 무료 요금제에서도 쓰는 모델이라 무료 사용자도 바로 체감해요.",
