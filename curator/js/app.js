@@ -193,9 +193,13 @@ function renderFeed() {
   const all = newsList();
   const list = toks.length ? all.filter((n) => feedMatch(n, toks)) : all;
   $("#feedCount").textContent = toks.length ? `${list.length} / ${all.length}건` : `${all.length}건`;
-  $("#feed").innerHTML = list.length ? newsHTML(list)
+  // 처음엔 최근 15개만, "더 보기"로 전부 (검색 중이면 전부)
+  const shown = toks.length || feedAll ? list : list.slice(0, 15);
+  $("#feed").innerHTML = list.length ? newsHTML(shown) + (shown.length < list.length ? `<button type="button" class="more-btn" id="feedMore">소식 더 보기 (${list.length - shown.length}개)</button>` : "")
     : `<p class="empty">‘${esc($("#feedQ").value.trim())}’에 맞는 소식이 없어요</p>`;
 }
+let feedAll = false;
+document.addEventListener("click", (e) => { if (e.target.closest("#feedMore")) { feedAll = true; renderFeed(); } });
 $("#feedQ").addEventListener("input", renderFeed);
 document.addEventListener("click", (e) => {
   const b = e.target.closest(".news > button"); if (!b) return;
@@ -469,7 +473,7 @@ function renderSuggest() {
 }
 // 주요 소식에서 해당 소식을 펼쳐 보여줌
 function showNews(i) {
-  if ($("#feedQ").value) { $("#feedQ").value = ""; renderFeed(); } // 전체 목록 기준 위치로 찾기
+  if ($("#feedQ").value || !feedAll) { $("#feedQ").value = ""; feedAll = true; renderFeed(); } // 전체 목록 기준 위치로 찾기
   const el = $("#feed").children[i]; if (!el) return;
   const btn = el.querySelector(":scope > button");
   if (btn && btn.nextElementSibling.hidden) btn.click();

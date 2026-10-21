@@ -413,3 +413,4 @@ header{background:rgba(5,5,5,.72);backdrop-filter:blur(16px);border-bottom-color
 
 /* 로고가 없는 회사: 이름 첫 글자 */
 .logo-c .mono{font-size:15px;font-weight:800;font-style:normal}
+.more-btn{width:100%;min-height:44px;margin-top:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:700}
