@@ -44,14 +44,15 @@ function renderIdx() {
 // 최근 12개월 월별 공식 출시 수 (진화 타임라인의 출시 기록으로 계산)
 function monthBars() {
   const end = new Date(CHECKED), months = [];
-  for (let i = 11; i >= 0; i--) { const d = new Date(end.getFullYear(), end.getMonth() - i, 1); months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`); }
+  // 최신 달이 맨 앞(왼쪽) — 사이트 전체 "최신이 먼저" 규칙
+  for (let i = 0; i < 12; i++) { const d = new Date(end.getFullYear(), end.getMonth() - i, 1); months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`); }
   const releases = Object.values(TIMELINES).flat().filter((e) => e.kind === "release");
   const counts = months.map((m) => releases.filter((e) => e.date.startsWith(m)).length);
   const max = Math.max(...counts, 1);
   const label = (m) => `${+m.slice(5)}월`;
   return `<div class="mbars" role="img" aria-label="최근 12개월 월별 모델 출시 수">
-    ${counts.map((c, i) => `<span class="mb${i === 11 ? " cur" : ""}" title="${months[i].slice(0, 4)}년 ${label(months[i])} · ${c}개"><i style="height:${c ? Math.max(8, (c / max) * 100) : 0}%"></i></span>`).join("")}
-    </div><div class="mbars-x"><span>${label(months[0])}</span><span>${label(months[11])}</span></div>
+    ${counts.map((c, i) => `<span class="mb${i === 0 ? " cur" : ""}" title="${months[i].slice(0, 4)}년 ${label(months[i])} · ${c}개"><i style="height:${c ? Math.max(8, (c / max) * 100) : 0}%"></i></span>`).join("")}
+    </div><div class="mbars-x"><span>${label(months[0])} (최신)</span><span>${label(months[11])}</span></div>
     <div class="mbars-cap">월별 출시 수 (7개 회사)</div>`;
 }
 
