@@ -29,7 +29,7 @@ function renderIdx() {
   const newest = byNewest(MODELS)[0];
   const freeCount = Object.values(SUBSCRIPTIONS).filter((s) => s.plans.some((p) => p[1] === 0)).length;
   const items = [
-    { k: "최근 30일 새 모델", v: `${newCount}개`, sub: "한 달 동안 공식 출시된 AI 모델 수예요" },
+    { k: "최근 30일 새 모델", v: `${newCount}개`, sub: "한 달 동안 공식 출시된 AI 모델 수예요", chart: monthBars() },
     { k: "가장 최근 출시", v: esc(newest.name), sub: `${COMPANIES[newest.co].name} · ${newest.date.replaceAll("-", ".")}`, small: true },
     { k: "가장 저렴한 API", v: `${usd(cheapest.price.in)} / ${usd(cheapest.price.out)}`, sub: `${esc(cheapest.name)} · 100만 토큰당 입력 / 출력` },
     { k: "무료로 쓸 수 있는 AI", v: `${freeCount}곳`, sub: "가입만 하면 무료 요금제가 있는 서비스예요" },
@@ -38,8 +38,21 @@ function renderIdx() {
     <div class="ix">
       <span class="k">${it.k}</span>
       <span class="v num"${it.small ? ' style="font-size:20px"' : ""}>${it.v}</span>
-      <span class="d" style="color:var(--sub)">${it.sub}</span>
+      <span class="d" style="color:var(--sub)">${it.sub}</span>${it.chart || ""}
     </div>`).join("");
+}
+// 최근 12개월 월별 공식 출시 수 (진화 타임라인의 출시 기록으로 계산)
+function monthBars() {
+  const end = new Date(CHECKED), months = [];
+  for (let i = 11; i >= 0; i--) { const d = new Date(end.getFullYear(), end.getMonth() - i, 1); months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`); }
+  const releases = Object.values(TIMELINES).flat().filter((e) => e.kind === "release");
+  const counts = months.map((m) => releases.filter((e) => e.date.startsWith(m)).length);
+  const max = Math.max(...counts, 1);
+  const label = (m) => `${+m.slice(5)}월`;
+  return `<div class="mbars" role="img" aria-label="최근 12개월 월별 모델 출시 수">
+    ${counts.map((c, i) => `<span class="mb${i === 11 ? " cur" : ""}" title="${months[i].slice(0, 4)}년 ${label(months[i])} · ${c}개"><i style="height:${c ? Math.max(8, (c / max) * 100) : 0}%"></i></span>`).join("")}
+    </div><div class="mbars-x"><span>${label(months[0])}</span><span>${label(months[11])}</span></div>
+    <div class="mbars-cap">월별 출시 수 (7개 회사)</div>`;
 }
 
 // ---- LLM 차트 ----
@@ -53,12 +66,15 @@ const isNew = (m) => m.date >= daysAgo(30);
 const CO_FAMILY = { openai: "gpt", anthropic: "claude", google: "gemini", deepseek: "deepseek", meta: "llama", mistral: "mistral", xai: "grok" };
 const pct = (c) => { const v = c * 100; return `${v >= 0 ? "+" : ""}${Math.round(v).toLocaleString("en-US")}%`; };
 const fmtTok = (n) => (n >= 1e12 ? `${Math.round(n / 1e12).toLocaleString("en-US")}조` : `${Math.round(n / 1e8).toLocaleString("en-US")}억`);
+// 막대 길이(%) — 가장 큰 값 = 100%
+const meter = (v, max) => `<span class="meter" aria-hidden="true"><i style="width:${Math.max(1.5, (v / max) * 100)}%"></i></span>`;
 function popRows() {
+  const max = Math.max(...POPULAR.items.map((t) => t.tokens));
   return POPULAR.items.map((t, i) => `
     <button type="button" class="row row-price" data-pop="${i}">
       <span class="rk">${i + 1}</span>
       ${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
-      <span class="nm"><b>${esc(t.name)}${t.change === null ? '<span class="new">NEW</span>' : ""}</b><small>${esc(t.author)}</small></span>
+      <span class="nm"><b>${esc(t.name)}${t.change === null ? '<span class="new">NEW</span>' : ""}</b><small>${esc(t.author)}</small>${meter(t.tokens, max)}</span>
       <span class="pr num"><b>${fmtTok(t.tokens)} 토큰</b><small class="${t.change === null ? "flat" : t.change >= 0 ? "up" : "down"}">${t.change === null ? "새로 나옴" : `한 달 전보다 ${pct(t.change)}`}</small></span>
     </button>`).join("");
 }
@@ -66,9 +82,9 @@ function popRows() {
 const LEGENDS = {
   new: () => `최신순 = 공식 출시일 순서예요. 지금 어떤 AI가 새로 나왔는지 볼 수 있어요 · ${CHECKED} 확인`,
   price: () => priceMode === "api"
-    ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서 · ${CHECKED} 확인`
+    ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서. 막대 = 입력 3 : 출력 1로 섞은 평균 단가 (길수록 비쌈) · ${CHECKED} 확인`
     : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 기준 USD) · ${CHECKED} 확인`,
-  pop: () => `인기 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수 · ${POPULAR.checked}까지 자료`,
+  pop: () => `인기 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
 function setLegend() { $(".a-chart .legend").textContent = LEGENDS[rankKey](); }
 // 구독 요금: 서비스별 Pro급 / Max급 월 요금 (SUBSCRIPTIONS)
@@ -96,11 +112,12 @@ function renderRows() {
   let list = byNewest(MODELS);
   // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순
   if (rankKey === "price") list.sort((a, b) => blended(a) - blended(b));
+  const maxPrice = Math.max(...MODELS.map(blended));
   $("#rows").innerHTML = list.map((m, i) => `
     <button type="button" class="row row-price" data-id="${m.id}">
       <span class="rk">${i + 1}</span>
       ${modelLogo(m)}
-      <span class="nm"><b>${esc(m.name)}${isNew(m) ? '<span class="new">NEW</span>' : ""}</b><small>${COMPANIES[m.co].name}</small></span>
+      <span class="nm"><b>${esc(m.name)}${isNew(m) ? '<span class="new">NEW</span>' : ""}</b><small>${COMPANIES[m.co].name}</small>${rankKey === "price" ? meter(blended(m), maxPrice) : ""}</span>
       <span class="pr num">${rankKey === "new" ? `<b>${relDate(m.date)}</b><small class="flat">${m.date.slice(0, 4)} 출시</small>` : `<b>${usd(m.price.in)} / ${usd(m.price.out)}</b><small class="flat">입력 / 출력</small>`}</span>
     </button>`).join("");
 }
@@ -207,7 +224,17 @@ function pane(m, tab) {
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
       <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1~2자 정도) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>
+    ${peerPriceHTML(m)}
     ${subHTML(m.co)}`;
+}
+// 같은 회사 모델끼리 API 평균 단가 비교 (입력 3 : 출력 1)
+function peerPriceHTML(m) {
+  const peers = MODELS.filter((x) => x.co === m.co).sort((a, b) => blended(a) - blended(b));
+  if (peers.length < 2) return "";
+  const max = Math.max(...peers.map(blended));
+  return `<div><h4>${COMPANIES[m.co].name} 모델끼리 요금 비교</h4><div class="peers">${peers.map((x) => `
+    <div class="peer${x.id === m.id ? " cur" : ""}"><span class="pn">${esc(x.name)}</span>${meter(blended(x), max)}<span class="pv num">${usd(x.price.in)} / ${usd(x.price.out)}</span></div>`).join("")}</div>
+    <p class="price-note">막대 = 입력 3 : 출력 1로 섞은 평균 단가 · 길수록 비싸요 · 지금 보는 모델은 밝게 표시</p></div>`;
 }
 
 // ---- AI 진화 타임라인 (실제 데이터) ----

@@ -390,3 +390,23 @@ header{background:rgba(5,5,5,.72);backdrop-filter:blur(16px);border-bottom-color
 /* 섹션 설명 한 줄 · 타임라인 용어 풀이 */
 .sec-help{margin:-4px 0 12px;font-size:13px;line-height:1.5;color:var(--sub)}
 .tl-help{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface);font-size:12.5px;line-height:1.6;color:var(--sub)}
+
+/* 실제 데이터 막대 그래프 */
+.meter{display:block;height:4px;margin-top:6px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:2px;background:var(--blue)}
+.mbars{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:34px;margin-top:8px}
+.mbars .mb{height:100%;display:flex;align-items:flex-end}
+.mbars .mb i{display:block;width:100%;border-radius:2px 2px 0 0;background:var(--blue);opacity:.45}
+.mbars .mb.cur i{opacity:1}
+.mbars-x{display:flex;justify-content:space-between;gap:6px;margin-top:4px;font-size:10.5px;color:var(--muted)}
+.mbars-cap{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 막대 길이 기준을 줄마다 같게: 오른쪽 숫자 칸 폭 고정 */
+.row.row-price .pr{min-width:132px}
+.peers{display:grid;gap:8px}
+.peer{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13.5px;color:var(--sub)}
+.peer .meter{margin-top:0;height:6px}
+.peer .meter i{opacity:.45}
+.peer.cur{color:var(--text)}
+.peer.cur .meter i{opacity:1}
+.peer .pn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.peer .pv{font-size:13px}
