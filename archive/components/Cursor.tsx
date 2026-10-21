@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useKiosk } from "@/lib/useKiosk";
 
 const HOVERABLE = "a, button, [role='button'], input, [data-cursor]";
 
@@ -19,6 +20,7 @@ const subscribe = (cb: () => void) => {
  */
 export function Cursor() {
   const enabled = useSyncExternalStore(subscribe, () => window.matchMedia(FINE).matches, () => false);
+  const kiosk = useKiosk();
   const [hover, setHover] = useState(false);
   const [down, setDown] = useState(false);
   const [color, setColor] = useState("#ffffff");
@@ -59,7 +61,7 @@ export function Cursor() {
     };
   }, [enabled, x, y]);
 
-  if (!enabled) return null;
+  if (!enabled || kiosk) return null; // 키오스크는 터치 전용
 
   const size = hover ? 46 : 22;
 

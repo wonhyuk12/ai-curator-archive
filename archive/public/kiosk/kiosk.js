@@ -180,6 +180,36 @@
       if (el && el.isConnected) el.click();
     }, 350);
   }, { capture: true, passive: true });
+  // 터치가 마우스로 들어오는 화면(XWayland 등)에서도 손가락으로 끌어서 스크롤 (마인드맵은 자체 이동)
+  const canScroll = (el, dx, dy) => {
+    const cs = getComputedStyle(el);
+    const y = /(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1;
+    const x = /(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1;
+    return Math.abs(dy) >= Math.abs(dx) ? y : x;
+  };
+  let drag = null, eatClick = false;
+  addEventListener("pointerdown", (e) => {
+    drag = null;
+    if (e.pointerType !== "mouse" || e.button !== 0 || e.target.closest?.(".react-flow, .kq-kb")) return;
+    drag = { x: e.clientX, y: e.clientY, el: e.target, sc: null, moved: false };
+  }, true);
+  addEventListener("pointermove", (e) => {
+    if (!drag || !(e.buttons & 1)) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved) {
+      if (Math.hypot(dx, dy) < 8) return;
+      drag.moved = true;
+      let el = drag.el;
+      while (el && el !== document.body && !(el instanceof Element && canScroll(el, dx, dy))) el = el.parentElement;
+      drag.sc = el && el !== document.body ? el : document.scrollingElement;
+    }
+    drag.sc.scrollBy(-dx, -dy);
+    drag.x = e.clientX; drag.y = e.clientY;
+    e.preventDefault();
+  }, true);
+  addEventListener("pointerup", () => { if (drag?.moved) { eatClick = true; setTimeout(() => { eatClick = false; }, 0); } drag = null; }, true);
+  addEventListener("click", (e) => { if (eatClick) { eatClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
+  addEventListener("dragstart", (e) => e.preventDefault(), true); // 링크·이미지가 끌려가지 않게
 
   if (isStart()) { if (session()) endSession("return"); return; } // 첫 화면은 React 페이지가 직접 그려요
 

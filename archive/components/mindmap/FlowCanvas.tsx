@@ -251,26 +251,42 @@ export function FlowCanvas({
         nodeStrokeWidth={0}
         style={{ width: 200, height: 130 }}
       />}
-      <Panel position="bottom-left" className="!m-4">
-        {kiosk ? <KioskFit accent={accent} /> : <Hud accent={accent} />}
-      </Panel>
+      {kiosk ? (
+        <Panel position="bottom-right" className="!mb-7 !mr-4">
+          <KioskFit accent={accent} />
+        </Panel>
+      ) : (
+        <Panel position="bottom-left" className="!m-4">
+          <Hud accent={accent} />
+        </Panel>
+      )}
     </ReactFlow>
   );
 }
 
-// 키오스크(터치): 길을 잃었을 때 누르는 큰 "전체 보기" 버튼 하나
+// 키오스크(터치): 오른쪽 아래 큰 확대 · 축소 · 전체 보기 버튼 (두 손가락 확대가 안 되는 화면 대비)
 function KioskFit({ accent }: { accent: string }) {
   const rf = useReactFlow();
+  const box = "flex h-[52px] items-center justify-center rounded-2xl border bg-black/70 text-white backdrop-blur-xl";
+  const style = { borderColor: `${accent}88`, boxShadow: `0 0 24px -6px ${accent}` };
   return (
-    <button
-      type="button"
-      data-track="마인드맵 전체 보기"
-      onClick={() => rf.fitView({ padding: 0.18, duration: 700 })}
-      className="flex h-[52px] items-center gap-2 rounded-2xl border bg-black/70 px-5 text-[15px] font-bold text-white backdrop-blur-xl"
-      style={{ borderColor: `${accent}88`, boxShadow: `0 0 24px -6px ${accent}` }}
-    >
-      <Maximize2 className="h-5 w-5" style={{ color: accent }} /> 전체 보기
-    </button>
+    <div className="flex flex-col items-end gap-2">
+      <button type="button" aria-label="확대" data-track="마인드맵 확대" onClick={() => rf.zoomIn({ duration: 300 })} className={`${box} w-[52px]`} style={style}>
+        <Plus className="h-6 w-6" style={{ color: accent }} />
+      </button>
+      <button type="button" aria-label="축소" data-track="마인드맵 축소" onClick={() => rf.zoomOut({ duration: 300 })} className={`${box} w-[52px]`} style={style}>
+        <Minus className="h-6 w-6" style={{ color: accent }} />
+      </button>
+      <button
+        type="button"
+        data-track="마인드맵 전체 보기"
+        onClick={() => rf.fitView({ padding: 0.18, duration: 700 })}
+        className={`${box} gap-2 px-5 text-[15px] font-bold`}
+        style={style}
+      >
+        <Maximize2 className="h-5 w-5" style={{ color: accent }} /> 전체 보기
+      </button>
+    </div>
   );
 }
 
