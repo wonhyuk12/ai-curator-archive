@@ -775,20 +775,20 @@ const TOOL_TABLE = defineTools({
   },
   brisk: {
     name: "Brisk Teaching",
-    description: "선생님용 무료 AI 도구. 크롬 확장으로 지금 보는 문서·기사에서 바로 퀴즈·수업 자료를 만들어요.",
+    description: "선생님용 AI 도구 (무료로 시작). 브라우저 확장으로 지금 보는 문서·기사에서 바로 퀴즈·수업 자료를 만들어요.",
     pricing: "Freemium",
     url: "https://www.briskteaching.com",
     related: ["magicschool", "kahoot"],
     strengths: ["보고 있는 웹페이지·문서에서 바로 자료를 만들어요", "학생 글에 피드백 초안을 달아 줘요", "읽기 수준을 바꾼 자료를 만들 수 있어요"],
-    howTo: ["크롬 확장을 설치해요", "수업에 쓸 기사나 문서를 열어요", "Brisk 버튼을 눌러 퀴즈·요약을 만들어요"],
+    howTo: ["브라우저 확장을 설치해요", "수업에 쓸 기사나 문서를 열어요", "Brisk 버튼을 눌러 퀴즈·요약을 만들어요"],
   },
   kahoot: {
     name: "Kahoot!",
-    description: "게임처럼 푸는 퀴즈 플랫폼. 주제를 넣으면 AI로 퀴즈 문제를 만들어 수업에서 바로 써요.",
+    description: "게임처럼 푸는 퀴즈 플랫폼. 주제를 넣으면 AI로 퀴즈 문제를 만들어 수업에서 바로 써요 (AI 문제 만들기는 유료 플랜).",
     pricing: "Freemium",
     url: "https://kahoot.com",
     related: ["quizlet", "magicschool"],
-    strengths: ["학생들이 휴대폰으로 함께 참여하는 퀴즈", "주제만 넣어도 문제를 만들어 주는 기능", "결과로 어떤 문제를 많이 틀렸는지 확인"],
+    strengths: ["학생들이 휴대폰으로 함께 참여하는 퀴즈", "주제만 넣어도 문제를 만들어 주는 기능 (유료 플랜)", "결과로 어떤 문제를 많이 틀렸는지 확인"],
     howTo: ["주제나 자료를 넣어 퀴즈를 만들어요", "문제와 정답을 확인해 고쳐요", "수업 시간에 화면에 띄워 함께 풀어요"],
   },
   durable: {
@@ -874,7 +874,7 @@ const TOOL_TABLE = defineTools({
   },
   topaz: {
     name: "Topaz Photo",
-    description: "흐리거나 작은 사진을 AI로 선명하게·크게 만드는 사진·영상 화질 개선 프로그램이에요.",
+    description: "흐리거나 작은 사진을 AI로 선명하게·크게 만드는 프로그램이에요 (구독제).",
     pricing: "Paid",
     url: "https://www.topazlabs.com",
     related: ["lightroom", "photoshop"],
@@ -896,7 +896,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://wanderlog.com",
     related: ["mindtrip", "myrealtrip"],
-    strengths: ["장소를 지도에 모아 동선 확인", "친구와 같은 일정을 함께 편집", "예약 메일을 넣으면 일정에 정리"],
+    strengths: ["장소를 지도에 모아 동선 확인", "친구와 같은 일정을 함께 편집", "예약 메일을 전달하면 일정에 정리"],
     howTo: ["여행지와 날짜를 정해요", "가고 싶은 곳을 추가해요", "날짜별로 끌어 놓아 동선을 정리해요"],
   },
   myrealtrip: {
@@ -928,7 +928,7 @@ const TOOL_TABLE = defineTools({
   },
   channeltalk: {
     name: "채널톡",
-    description: "한국 고객 상담 서비스. 상담 채팅에 AI 상담원을 붙이고 고객 데이터·마케팅까지 한곳에서 해요.",
+    description: "한국 고객 상담 서비스. 상담 채팅에 AI 상담원을 붙이고 고객 데이터·마케팅까지 한곳에서 해요. 무료 플랜이 있고, AI 상담은 건당 요금이 붙어요.",
     pricing: "Freemium",
     url: "https://channel.io",
     related: ["fin", "zendesk"],
@@ -1009,8 +1009,8 @@ const TOOL_TABLE = defineTools({
   },
   sudowrite: {
     name: "Sudowrite",
-    description: "소설 쓰기에 맞춘 AI 글쓰기 도우미. 장면 묘사·이어 쓰기·아이디어를 도와요.",
-    pricing: "Freemium",
+    description: "소설 쓰기에 맞춘 AI 글쓰기 도우미 (영어 중심). 장면 묘사·이어 쓰기·아이디어를 도와요. 무료 체험 후 유료예요.",
+    pricing: "Paid",
     url: "https://www.sudowrite.com",
     related: ["claude", "chatgpt"],
     strengths: ["소설 장면을 이어서 써 줘요", "묘사를 더 풍부하게", "줄거리 아이디어 브레인스토밍"],
@@ -1099,8 +1099,8 @@ const TOOL_TABLE = defineTools({
   },
   powerautomate: {
     name: "Power Automate",
-    description: "Microsoft의 업무 자동화 도구. 앱·시스템·웹사이트에 걸친 반복 작업을 AI와 함께 자동화해요.",
-    pricing: "Paid",
+    description: "Microsoft의 업무 자동화 도구. 앱·시스템·웹사이트에 걸친 반복 작업을 AI와 함께 자동화해요. 내 PC 자동화는 윈도우에서 무료, 클라우드 자동화는 유료예요.",
+    pricing: "Freemium",
     url: "https://www.microsoft.com/power-platform/products/power-automate",
     related: ["zapier", "make"],
     strengths: ["Microsoft 365(Outlook·Teams·Excel)와 잘 연결", "말로 설명하면 자동화 흐름 초안", "PC 화면 작업 자동화"],
@@ -1130,7 +1130,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://hailuoai.video",
     related: ["kling", "pika", "runway"],
-    strengths: ["글·사진으로 영상 만들기", "참고 이미지로 인물·스타일 맞추기", "밈(재미 영상) 도구"],
+    strengths: ["글·사진으로 영상 만들기", "참고 이미지로 인물·스타일 맞추기", "다양한 영상 효과"],
     howTo: ["장면을 글로 적거나 사진을 올려요", "참고 이미지로 인물을 지정해요", "결과를 골라 내려받아요"],
   },
   synthesia: {
@@ -1153,16 +1153,16 @@ const TOOL_TABLE = defineTools({
   },
   soundraw: {
     name: "SOUNDRAW",
-    description: "저작권 걱정 없이 쓰는 배경음악을 몇 초 만에 만드는 AI 음악 생성기예요.",
+    description: "사용료 걱정 없이 쓰는 배경음악을 몇 초 만에 만드는 AI 음악 생성기예요.",
     pricing: "Freemium",
     url: "https://soundraw.io",
     related: ["suno", "stableaudio"],
-    strengths: ["로열티 없는 배경음악", "악기별로 조절", "원하는 길이로 맞추기"],
+    strengths: ["사용료 안 내는 배경음악", "악기별로 조절", "원하는 길이로 맞추기"],
     howTo: ["분위기·장르·길이를 골라요", "악기 구성을 조절해요", "영상에 맞춰 내려받아요"],
   },
   udio: {
     name: "Udio",
-    description: "글로 설명하면 노래를 만드는 AI 음악 생성 서비스예요.",
+    description: "글로 설명하면 노래를 만드는 AI 음악 생성 서비스예요. 지금은 만든 곡 내려받기가 막혀 있어요 (2025년 음반사 합의 이후).",
     pricing: "Freemium",
     url: "https://www.udio.com",
     related: ["suno", "soundraw"],
@@ -1198,7 +1198,7 @@ const TOOL_TABLE = defineTools({
   },
   finalround: {
     name: "Final Round AI",
-    description: "AI 면접 연습·도우미. 예상 질문 연습과 면접 후 돌아보기를 도와요.",
+    description: "AI 모의 면접 연습 서비스. 직무별 예상 질문으로 연습하고 피드백을 받아요. 실제 면접 중에 몰래 쓰는 것은 회사 규칙 위반일 수 있어요.",
     pricing: "Freemium",
     url: "https://www.finalroundai.com",
     related: ["chatgpt", "speak"],
@@ -1212,7 +1212,7 @@ const TOOL_TABLE = defineTools({
     url: "https://www.mintlify.com",
     related: ["cursor", "claudecode"],
     strengths: ["보기 좋은 개발 문서 사이트", "코드가 바뀌면 문서 갱신 도움", "문서 안 AI 검색"],
-    howTo: ["저장소를 연결해요", "문서 초안을 만들어요", "바뀐 코드에 맞춰 문서를 갱신해요"],
+    howTo: ["코드 저장소(GitHub 등)를 연결해요", "문서 초안을 만들어요", "바뀐 코드에 맞춰 문서를 갱신해요"],
   },
   qodo: {
     name: "Qodo",
@@ -1221,15 +1221,15 @@ const TOOL_TABLE = defineTools({
     url: "https://www.qodo.ai",
     related: ["copilot", "claudecode"],
     strengths: ["코드 변경 자동 검토", "테스트 코드 제안", "코드 편집기·GitHub에서 동작"],
-    howTo: ["저장소를 연결해요", "코드 변경(PR)에 리뷰를 요청해요", "지적 사항을 확인해 고쳐요"],
+    howTo: ["코드 저장소(GitHub 등)를 연결해요", "코드 변경(PR)에 리뷰를 요청해요", "지적 사항을 확인해 고쳐요"],
   },
   msdesigner: {
     name: "Microsoft Designer",
-    description: "SNS 게시물·초대장·카드 같은 디자인을 AI로 빠르게 만드는 무료 그래픽 앱이에요.",
-    pricing: "Free",
+    description: "SNS 게시물·초대장·카드 같은 디자인을 AI로 빠르게 만드는 그래픽 앱이에요. 무료로 시작할 수 있어요.",
+    pricing: "Freemium",
     url: "https://designer.microsoft.com",
     related: ["canva", "adobeexpress"],
-    strengths: ["말로 설명하면 디자인 초안", "초대장·카드 템플릿", "무료로 사용"],
+    strengths: ["말로 설명하면 디자인 초안", "초대장·카드 템플릿", "무료로 시작"],
     howTo: ["만들 디자인을 글로 설명해요", "후보 중 하나를 골라요", "글자와 사진을 바꿔 저장해요"],
   },
   adobeexpress: {
@@ -1260,8 +1260,8 @@ const TOOL_TABLE = defineTools({
     howTo: ["데이터를 연결해요", "항목을 끌어 놓아 차트를 만들어요", "대시보드로 묶어 공유해요"],
   },
   unityai: {
-    name: "Unity AI",
-    description: "게임 엔진 Unity에 들어간 AI 도구. 에디터 안 AI 도우미가 게임 개발 작업을 도와요.",
+    name: "Unity AI 도우미",
+    description: "게임 엔진 Unity 에디터 안에 들어간 AI 도우미가 게임 개발 작업을 도와요. 유료 플랜에 포함되고, 개인 무료판은 체험 후 유료예요.",
     pricing: "Paid",
     url: "https://unity.com/features/ai",
     related: ["claude", "cursor"],
@@ -1329,11 +1329,11 @@ const TOOL_TABLE = defineTools({
     url: "https://www.khroma.co",
     related: ["figma", "canva"],
     strengths: ["내 취향을 배운 색 조합", "색 조합 저장", "무료"],
-    howTo: ["좋아하는 색 50개를 골라요", "추천 조합을 둘러봐요", "마음에 드는 조합을 저장해요"],
+    howTo: ["좋아하는 색을 여러 개 골라요", "추천 조합을 둘러봐요", "마음에 드는 조합을 저장해요"],
   },
   uxpilot: {
     name: "UX Pilot",
-    description: "AI로 와이어프레임과 UI 디자인을 빠르게 만드는 도구예요.",
+    description: "AI로 화면 뼈대 그림(와이어프레임)과 화면 디자인을 빠르게 만드는 도구예요.",
     pricing: "Freemium",
     url: "https://uxpilot.ai",
     related: ["figma", "stitch"],
@@ -1361,7 +1361,7 @@ const TOOL_TABLE = defineTools({
   askup: {
     name: "AskUp",
     description: "카카오톡 채널로 쓰는 업스테이지의 AI. 카카오톡에서 바로 묻고 답을 받아요.",
-    pricing: "Free",
+    pricing: "Freemium",
     url: "https://pf.kakao.com/_BhxkWxj",
     related: ["wrtn", "chatgpt"],
     strengths: ["카카오톡에서 바로 사용", "사진 속 글자 읽기", "따로 앱 설치 없음"],
@@ -1378,7 +1378,7 @@ const TOOL_TABLE = defineTools({
   },
   grok: {
     name: "Grok",
-    description: "xAI의 AI 어시스턴트. 최신 모델은 Grok 4.7이고, X의 실시간 정보와 함께 답해요.",
+    description: "xAI의 AI 어시스턴트. X(트위터)의 실시간 정보와 함께 답해요.",
     pricing: "Freemium",
     url: "https://grok.com",
     related: ["chatgpt", "claude"],
@@ -1450,7 +1450,7 @@ const TOOL_TABLE = defineTools({
   },
   whimsical: {
     name: "Whimsical",
-    description: "순서도·마인드맵·와이어프레임을 AI로 빠르게 그리는 도구예요.",
+    description: "순서도·마인드맵·화면 뼈대 그림(와이어프레임)을 AI로 빠르게 그리는 도구예요.",
     pricing: "Freemium",
     url: "https://whimsical.com/ai",
     related: ["miro", "napkin"],
@@ -1473,7 +1473,7 @@ const TOOL_TABLE = defineTools({
     url: "https://ollama.com",
     related: ["lmstudio", "huggingface"],
     strengths: ["인터넷 없이도 내 컴퓨터에서 실행", "무료", "여러 공개 모델 지원"],
-    howTo: ["Ollama를 설치해요", "터미널에서 ollama run 모델이름 을 실행해요", "대화하며 써 봐요"],
+    howTo: ["Ollama를 설치해요", "명령 창(터미널)을 열고 ollama run 모델이름 을 입력해요", "대화하며 써 봐요"],
   },
   lmstudio: {
     name: "LM Studio",
@@ -1486,7 +1486,7 @@ const TOOL_TABLE = defineTools({
   },
   aistudio: {
     name: "Google AI Studio",
-    description: "Gemini 모델을 웹에서 바로 시험하고 API 키를 받는 Google의 개발자 도구예요.",
+    description: "Gemini 모델을 웹에서 바로 시험하고, 내 프로그램에서 Gemini를 쓰는 열쇠(API 키)를 받는 Google의 개발자 도구예요.",
     pricing: "Freemium",
     url: "https://aistudio.google.com",
     related: ["gemini", "huggingface"],
@@ -1583,7 +1583,7 @@ export const ARCHIVE: Category[] = [
           { tool: "huggingface", useCase: "공개 모델 찾기", tag: "모델", recommendation: "EXAONE·Kanana 같은 공개 모델 파일은 Hugging Face에서 찾아요." },
           { tool: "ollama", useCase: "내 컴퓨터에서 실행", tag: "로컬 AI", recommendation: "인터넷 없이 내 컴퓨터에서 모델을 돌려 보려면 Ollama." },
           { tool: "lmstudio", useCase: "앱으로 쉽게 실행", tag: "로컬 AI", recommendation: "명령어 없이 앱으로 모델을 받아 쓰려면 LM Studio." },
-          { tool: "aistudio", useCase: "Gemini 바로 시험", tag: "API", recommendation: "Gemini 모델을 웹에서 시험하고 API 키를 받으려면 Google AI Studio." },
+          { tool: "aistudio", useCase: "Gemini 바로 시험", tag: "API", recommendation: "Gemini 모델을 웹에서 시험하고 내 프로그램용 열쇠(API 키)를 받으려면 Google AI Studio." },
         ],
       },
     ],
@@ -1874,6 +1874,8 @@ export const ARCHIVE: Category[] = [
           { tool: "claude", useCase: "문장 다듬기 · 줄이기", tag: "교정", recommendation: "내 글의 뜻은 그대로 두고 문장만 다듬고 싶을 땐 Claude에게 바뀐 부분 표시를 요청하세요.", prompt: "아래 글을 내 말투는 살리면서 더 읽기 쉽게 다듬어줘.\n- 긴 문장은 나누고, 반복되는 표현은 줄여줘\n- 고친 곳은 [원래 → 수정] 형식으로 따로 정리해줘\n\n[글 붙여넣기]" },
           { tool: "grammarly", useCase: "영어 글 교정", tag: "교정", recommendation: "영어로 쓴 글은 Grammarly로 문법과 어색한 표현을 마지막으로 점검해요.", prompt: "Make this paragraph clearer and more natural for a blog. Keep it friendly and under 120 words." },
           { tool: "deepl", useCase: "번역 · 다른 표현 찾기", tag: "번역", recommendation: "외국 자료를 인용하거나 영어 버전을 함께 낼 땐 DeepL로 자연스럽게 옮겨요." },
+          { tool: "wordtune", useCase: "다른 표현 찾기", tag: "표현", recommendation: "영어 문장을 더 자연스러운 표현으로 바꿔 보려면 Wordtune." },
+          { tool: "quillbot", useCase: "바꿔 쓰기·요약", tag: "표현", recommendation: "영어 글을 바꿔 쓰거나 줄일 땐 QuillBot." },
         ],
       },
       {
@@ -1885,18 +1887,17 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "perplexity", useCase: "출처 달린 검색", tag: "검색", recommendation: "글에 넣을 숫자·사실은 Perplexity로 찾고 출처 링크를 꼭 열어 확인해요.", prompt: "[주제]에 대한 최근 통계 3가지를 찾아줘.\n각각 숫자, 발표 기관, 발표 연도, 출처 링크를 표로 정리해줘." },
           { tool: "notebooklm", useCase: "모은 자료로만 답하기", tag: "노트", recommendation: "기사·PDF를 여러 개 모았다면 Gemini Notebook에 넣고 그 자료 안에서만 답을 받아요.", prompt: "올린 자료만 근거로 [주제]의 핵심 주장 3가지를 정리하고, 각 주장 옆에 근거가 나온 자료 이름을 적어줘." },
+          { tool: "jenni", useCase: "인용 넣어 학술 글쓰기", tag: "글쓰기", recommendation: "인용을 정리하며 논문 초안을 쓰려면 Jenni." },
         ],
       },
       {
         id: "creative",
         name: "소설·창작",
         nameEn: "CREATIVE",
-        desc: "이야기 쓰기",
+        desc: "이야기 쓰기 (영어 중심 툴)",
         icon: Feather,
         tools: [
           { tool: "sudowrite", useCase: "소설 장면 쓰기", tag: "창작", recommendation: "소설 장면 묘사와 이어 쓰기는 소설 전용 Sudowrite." },
-          { tool: "wordtune", useCase: "다른 표현 찾기", tag: "표현", recommendation: "영어 문장을 더 자연스러운 표현으로 바꿔 보려면 Wordtune." },
-          { tool: "quillbot", useCase: "바꿔 쓰기·요약", tag: "표현", recommendation: "영어 글을 바꿔 쓰거나 줄일 땐 QuillBot." },
         ],
       },
     ],
@@ -2304,7 +2305,6 @@ export const ARCHIVE: Category[] = [
           { tool: "connectedpapers", useCase: "관련 논문 그래프", tag: "논문", recommendation: "논문 한 편에서 관련 연구를 그래프로 넓히려면 Connected Papers." },
           { tool: "researchrabbit", useCase: "추천으로 넓히기", tag: "논문", recommendation: "모은 논문으로 계속 추천을 받으려면 ResearchRabbit." },
           { tool: "scite", useCase: "주장 지지·반박 확인", tag: "근거", recommendation: "인용이 지지인지 반박인지 확인하려면 Scite." },
-          { tool: "jenni", useCase: "학술 글쓰기", tag: "글쓰기", recommendation: "인용을 정리하며 논문 초안을 쓰려면 Jenni." },
           { tool: "liner", useCase: "출처 있는 조사", tag: "검색", recommendation: "한국어로 출처 있는 조사를 하려면 라이너." },
         ],
       },
@@ -2329,6 +2329,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "suno", useCase: "노래 만들기 (보컬 포함)", tag: "음악", recommendation: "가사가 있는 노래를 만들고 싶다면 Suno에 분위기와 가사를 넣어요.", prompt: "Style: upbeat K-pop, bright synths, 120 BPM\nLyrics: [가사]" },
           { tool: "stableaudio", useCase: "배경음악 · 효과음", tag: "음악", recommendation: "영상·게임 배경음악을 상업적으로 쓰려면 라이선스 데이터로 학습한 Stable Audio.", prompt: "calm lo-fi background music for studying, soft piano and rain, 90 BPM, 2 minutes" },
+          { tool: "udio", useCase: "노래 만들기", tag: "음악", recommendation: "Suno 말고 다른 노래 생성 AI를 써 보려면 Udio. 다만 지금은 만든 곡을 내려받을 수 없어요." },
         ],
       },
       {
@@ -2351,6 +2352,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "adobepodcast", useCase: "잡음 · 울림 제거", tag: "음질", recommendation: "집에서 녹음한 목소리는 Adobe Podcast의 음성 향상으로 깨끗하게 바꿔요." },
           { tool: "descript", useCase: "대본 보며 편집", tag: "편집", recommendation: "팟캐스트처럼 말이 중심인 녹음은 Descript로 글을 지우듯 편집해요." },
+          { tool: "riverside", useCase: "팟캐스트 녹화", tag: "녹음", recommendation: "원격 인터뷰를 고화질로 녹화하고 자동 편집하려면 Riverside." },
         ],
       },
       {
@@ -2362,8 +2364,6 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "lalal", useCase: "목소리·반주 분리", tag: "분리", recommendation: "노래에서 목소리와 반주를 나누려면 LALAL.AI." },
           { tool: "moises", useCase: "연주 연습용 분리", tag: "연습", recommendation: "악기를 빼고 빠르기를 바꿔 연습하려면 Moises." },
-          { tool: "udio", useCase: "노래 만들기", tag: "음악", recommendation: "Suno 말고 다른 노래 생성 AI를 써 보려면 Udio." },
-          { tool: "riverside", useCase: "팟캐스트 녹화", tag: "녹음", recommendation: "원격 인터뷰를 고화질로 녹화하고 자동 편집하려면 Riverside." },
         ],
       },
     ],
@@ -2633,7 +2633,7 @@ export const ARCHIVE: Category[] = [
         desc: "눈에 띄는 대표 이미지",
         icon: ImagePlus,
         tools: [
-          { tool: "playground", useCase: "썸네일 디자인", tag: "디자인", recommendation: "글자가 들어간 썸네일 시안은 Playground로 빠르게 만들어요.", prompt: "Bold YouTube thumbnail, text \"하루 만에 끝낸 방 정리\", bright yellow background, surprised person, high contrast" },
+          { tool: "playground", useCase: "썸네일 디자인", tag: "디자인", recommendation: "글자가 들어간 썸네일 시안은 Playground로 빠르게 만들어요.", prompt: "Bold YouTube thumbnail, text \"ROOM MAKEOVER IN 1 DAY\", bright yellow background, surprised person, high contrast" },
           { tool: "ideogram", useCase: "글자 정확한 썸네일", tag: "이미지 생성", recommendation: "제목 글자가 정확히 들어가야 하면 Ideogram으로 만들어요.", prompt: "YouTube thumbnail with large text \"3 TIPS\", clean desk background, bold colors" },
         ],
       },
@@ -2644,7 +2644,7 @@ export const ARCHIVE: Category[] = [
         desc: "저작권 걱정 없는 소리",
         icon: Music,
         tools: [
-          { tool: "soundraw", useCase: "로열티 없는 배경음악", tag: "음악", recommendation: "영상 길이에 맞춘 배경음악은 SOUNDRAW로 만들어 써요." },
+          { tool: "soundraw", useCase: "사용료 안 내는 배경음악", tag: "음악", recommendation: "영상 길이에 맞춘 배경음악은 SOUNDRAW로 만들어 써요." },
           { tool: "elevenlabs", useCase: "내레이션·효과음", tag: "음성", recommendation: "목소리를 녹음하기 어렵다면 ElevenLabs로 내레이션을 만들어요.", prompt: "A friendly, upbeat Korean-English bilingual narrator introducing a vlog about a weekend trip." },
         ],
       },
@@ -2979,7 +2979,7 @@ export const ARCHIVE: Category[] = [
         icon: Code,
         tools: [
           { tool: "cursor", useCase: "AI 코드 편집기", tag: "에디터", recommendation: "직접 코드를 쓰기 시작했다면 Cursor에서 AI에게 물으며 고쳐요." },
-          { tool: "copilot", useCase: "자동완성", tag: "에디터", recommendation: "학생이라면 GitHub Copilot 학생 혜택을 확인해 보세요." },
+          { tool: "copilot", useCase: "자동완성", tag: "에디터", recommendation: "학생이라면 GitHub Copilot 학생 혜택을 확인해 보세요 (신규 가입이 잠시 멈춰 있을 수 있어요)." },
         ],
       },
     ],
