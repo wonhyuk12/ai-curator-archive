@@ -242,3 +242,6 @@ html.kiosk header .search { min-width: 0; }
   html.kiosk .to-archive .short { display: inline; }
 }
 @media (max-width: 760px) { html.kiosk header .search > span { display: none; } }
+
+/* 아래 고정 버튼(처음으로·설문)에 툴 패널·모델 상세의 마지막 내용이 가리지 않게 */
+html.kiosk [data-tool-panel], html.kiosk #sheet { padding-bottom: 96px; }

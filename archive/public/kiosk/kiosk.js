@@ -95,6 +95,7 @@
     const s = { id: uuid, startedAt: Date.now(), entry };
     LS.set("kiosk.session", s);
     LS.del("kiosk.survey");
+    LS.del("curator.notiSeen"); // 새 손님에게는 최근 소식이 다시 NEW로 보이게 (AI 소식 알림함 읽음 기록)
     enqueue("sessions", { id: s.id, started_at: now(), entry, kiosk_id: kioskId, screen_w: screen.width, screen_h: screen.height, user_agent: navigator.userAgent.slice(0, 200) });
     track("session_start", { page: "/kiosk", target: entry });
     flush();
@@ -255,13 +256,16 @@
   root.appendChild(call);
   call.onclick = () => { call.classList.remove("show"); openSurvey(); };
   cfgReady.then(() => { call.querySelector("span").innerHTML = `<b>1분</b>이면 끝! 설문하고 <b>${esc(prize())}</b> 받아 가세요`; });
+  // 툴 패널·모델 상세·알림함·설문·마인드맵 안내가 떠 있으면 가리지 않게 쉬어요
+  const busy = () => !!(root.querySelector(".kq-ov") || document.querySelector("[data-map-hint], [data-tool-panel], #dim:not([hidden]), #noti:not([hidden])"));
   const showCall = () => {
-    if (LS.get("kiosk.survey")?.completed || root.querySelector(".kq-ov") || document.querySelector("[data-map-hint]")) return; // 마인드맵 안내와 겹치지 않게
+    if (LS.get("kiosk.survey")?.completed || busy()) return;
     call.classList.add("show");
     setTimeout(() => call.classList.remove("show"), 6000);
   };
   setTimeout(showCall, 2500);
   setInterval(showCall, 12000);
+  setInterval(() => { if (busy()) call.classList.remove("show"); }, 300); // 떠 있는 중에 창이 열리면 바로 숨김
 
   function goHome(reason) {
     endSession(reason);
