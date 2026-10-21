@@ -153,6 +153,34 @@
   css.rel = "stylesheet"; css.href = "/kiosk/kiosk.css";
   document.head.appendChild(css);
   flush();
+
+  /* ───────── 터치 보정 ───────── */
+  // 누른 자리에 작은 물결 (터치가 들어오는지 눈으로 확인)
+  addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    const r = document.createElement("span");
+    r.className = "kq-ripple";
+    r.style.left = e.clientX + "px"; r.style.top = e.clientY + "px";
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+  }, { capture: true, passive: true });
+  // 일부 파이 화면(Wayland)에서는 탭이 click 으로 이어지지 않아요 → 짧은 탭 뒤 click 이 안 오면 직접 눌러 줘요
+  let tap = null, clicked = 0;
+  addEventListener("click", () => { clicked = Date.now(); }, true);
+  addEventListener("pointerdown", (e) => {
+    tap = e.pointerType === "mouse" ? null : { x: e.clientX, y: e.clientY, t: Date.now(), el: e.target };
+  }, { capture: true, passive: true });
+  addEventListener("pointerup", (e) => {
+    const t = tap; tap = null;
+    if (!t || Date.now() - t.t > 600 || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 12) return;
+    const since = Date.now();
+    setTimeout(() => {
+      if (clicked >= since - 50) return; // 정상적으로 click 이 왔어요
+      const el = t.el?.closest?.("button, a[href], [role=button], input, label, summary, .kq-warn, .react-flow__node");
+      if (el && el.isConnected) el.click();
+    }, 350);
+  }, { capture: true, passive: true });
+
   if (isStart()) { if (session()) endSession("return"); return; } // 첫 화면은 React 페이지가 직접 그려요
 
   if (!session()) startSession("direct"); // 첫 화면을 거치지 않고 들어온 경우

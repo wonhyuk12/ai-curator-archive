@@ -57,6 +57,8 @@ cat > "$KDIR/start.sh" <<EOF
 #!/usr/bin/env bash
 URL="$URL"
 PREF="\$HOME/.config/chromium/Default/Preferences"
+# Wayland(labwc·wayfire) 화면이면 Chromium 도 Wayland 로 (XWayland 로 뜨면 터치 탭이 안 먹을 수 있어요)
+OZ="--ozone-platform-hint=auto"; [ -n "\$WAYLAND_DISPLAY" ] && OZ="--ozone-platform=wayland"
 while [ ! -f "\$HOME/kiosk/OFF" ]; do
   # 지난번에 비정상 종료돼도 '복구하시겠습니까' 팝업이 뜨지 않게
   [ -f "\$PREF" ] && sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]*"/"exit_type":"Normal"/' "\$PREF"
@@ -69,7 +71,7 @@ while [ ! -f "\$HOME/kiosk/OFF" ]; do
     --overscroll-history-navigation=0 \\
     --check-for-update-interval=31536000 \\
     --password-store=basic \\
-    --ozone-platform-hint=auto
+    \$OZ
   sleep 3
 done
 EOF

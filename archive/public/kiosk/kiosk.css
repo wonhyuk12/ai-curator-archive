@@ -199,3 +199,7 @@ html.kiosk body:has(.a-feed) { padding-bottom: 78px; }
 .kq-row .kq-primary { flex: 1; width: auto; }
 .kq-row .kq-ghost { flex: none; white-space: nowrap; }
 .kq-warn-card .kq-stay { width: 100%; min-width: 220px; }
+
+/* 터치한 자리 표시 */
+.kq-ripple { position: fixed; width: 44px; height: 44px; margin: -22px; border-radius: 50%; border: 2px solid rgba(0, 240, 255, .8); pointer-events: none; z-index: 2147483647; animation: kq-ripple .55s ease-out forwards; }
+@keyframes kq-ripple { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
