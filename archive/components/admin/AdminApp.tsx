@@ -2,9 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  buildSessions, byHour, countBy, crossTab, demoData, distribution, ENTRY_NAMES, eventsCsv, kst, pageName, pageTimes,
-  sessionsCsv, summary, topClicks, type Dataset, type Period, type Question, type SessionRow,
+  avg, buildSessions, byHour, cleanData, countBy, crossTab, demoData, distribution, ENTRY_NAMES, eventsCsv, funnel, kst, pageName, pageTimes,
+  recentEvents, sessionsCsv, summary, surveySeconds, topClicks, type Dataset, type Period, type Question, type SessionRow,
 } from "@/lib/analytics";
+
+// 최근 기록 목록에 보일 이름
+const EVENT_NAMES: Record<string, string> = {
+  session_start: "방문 시작", session_end: "방문 끝", page_view: "페이지 열기", page_leave: "페이지 떠남", click: "누름",
+  survey_open: "설문 열기", survey_start: "설문 시작", survey_answer: "설문 답", survey_complete: "설문 완료", survey_close: "설문 닫기",
+  raffle_enter: "추첨 응모", raffle_skip: "추첨 건너뜀",
+};
+const END_NAMES: Record<string, string> = { idle: "아무것도 안 눌러 처음으로", home: "처음으로 버튼", exit: "나가기 버튼", restart: "새 손님 시작", return: "첫 화면으로 돌아옴" };
 
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -55,6 +63,8 @@ export function AdminApp() {
   const [data, setData] = useState<Dataset | null>(null);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const [includeTest, setIncludeTest] = useState(false);
 
   useEffect(() => {
     fetch("/kiosk/questions.json").then((r) => r.json()).then((d) => setQs(d.questions)).catch(() => setErr("questions.json 을 불러오지 못했어요"));
@@ -73,6 +83,7 @@ export function AdminApp() {
         fetchAll<Dataset["raffles"][number]>(t, "raffle_entries"),
       ]);
       setData({ sessions, events, surveys, raffles });
+      setUpdatedAt(new Date());
     } catch (e) {
       if ((e as Error).message === "AUTH") {
         sessionStorage.removeItem(TOKEN_KEY);
@@ -85,20 +96,31 @@ export function AdminApp() {
   };
 
   useEffect(() => {
-    if (token && !demo) requestAnimationFrame(() => void load(token));
+    if (!token || demo) return;
+    requestAnimationFrame(() => void load(token));
+    // 30초마다 자동 새로고침 (설문·이용 기록이 들어오는지 바로 보이게)
+    const id = setInterval(() => void load(token), 30000);
+    return () => clearInterval(id);
   }, [token, demo]);
 
+  // 예전 전송 버그로 두 번 들어간 기록을 빼고, 시험 기기(test-…)는 기본으로 빼요
+  const clean = useMemo(() => (data ? cleanData(data, includeTest) : null), [data, includeTest]);
+
   useEffect(() => {
-    if (demo && qs.length) requestAnimationFrame(() => setData(demoData(qs)));
+    if (demo && qs.length) requestAnimationFrame(() => { setData(demoData(qs)); setUpdatedAt(new Date()); });
   }, [demo, qs]);
 
   if (!token && !demo) return <Login onToken={(t) => { sessionStorage.setItem(TOKEN_KEY, t); setToken(t); }} onDemo={() => setDemo(true)} err={err} />;
-  if (!data || !qs.length) return <Shell><p className="text-white/60">{loading ? "불러오는 중…" : err || "준비 중…"}</p></Shell>;
+  if (!clean || !qs.length) return <Shell><p className="text-white/60">{loading ? "불러오는 중…" : err || "준비 중…"}</p></Shell>;
   return (
     <Dashboard
-      data={data}
+      data={clean}
       qs={qs}
       demo={demo}
+      updatedAt={updatedAt}
+      loading={loading}
+      includeTest={includeTest}
+      onIncludeTest={setIncludeTest}
       onReload={() => (demo ? setData(demoData(qs)) : token && load(token))}
       onLogout={() => { sessionStorage.removeItem(TOKEN_KEY); setToken(null); setDemo(false); setData(null); }}
       onDeleteRaffles={async () => { if (token) { await deleteRaffles(token); await load(token); } }}
@@ -144,8 +166,9 @@ function Login({ onToken, onDemo, err }: { onToken: (t: string) => void; onDemo:
 }
 
 /* ───────── 대시보드 ───────── */
-function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
-  data: Dataset; qs: Question[]; demo: boolean; onReload: () => void; onLogout: () => void; onDeleteRaffles: () => Promise<void>;
+function Dashboard({ data, qs, demo, updatedAt, loading, includeTest, onIncludeTest, onReload, onLogout, onDeleteRaffles }: {
+  data: Dataset; qs: Question[]; demo: boolean; updatedAt: Date | null; loading: boolean; includeTest: boolean; onIncludeTest: (v: boolean) => void;
+  onReload: () => void; onLogout: () => void; onDeleteRaffles: () => Promise<void>;
 }) {
   const [period, setPeriod] = useState<Period>("all");
   const [kiosk, setKiosk] = useState("all");
@@ -163,6 +186,9 @@ function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
   const cross = crossTab(q, rows, topPages);
   const details = qs.flatMap((qq) => rows.filter((r) => r.survey?.details?.[qq.id]).map((r) => ({ q: qq, text: r.survey!.details![qq.id], at: r.startedAt })));
   const stamp = new Date().toISOString().slice(0, 10);
+  const flow = funnel(rows, data);
+  const surveySec = surveySeconds(rows);
+  const recent = recentEvents(data, rows);
 
   return (
     <Shell>
@@ -172,7 +198,11 @@ function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
           <div className="font-mono text-[11px] tracking-[0.2em] text-[#00F0FF]">AI_KIOSK · ADMIN</div>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight">이용 기록 · 설문 분석</h1>
         </div>
-        <div className="flex gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-xs text-white/45">
+            {loading ? "불러오는 중…" : updatedAt ? `마지막 갱신 ${updatedAt.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul" })}` : ""}
+            {!demo && " · 30초마다 자동 새로고침"}
+          </span>
           <button onClick={onReload} className="rounded-xl border border-white/15 px-3 py-2">새로고침</button>
           <button onClick={onLogout} className="rounded-xl border border-white/15 px-3 py-2 text-white/60">{demo ? "나가기" : "로그아웃"}</button>
         </div>
@@ -185,6 +215,9 @@ function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
           <option value="all">모든 키오스크</option>
           {kiosks.map((k) => <option key={k} value={k}>{k}</option>)}
         </select>
+        <label className="flex items-center gap-1.5 text-sm text-white/60">
+          <input type="checkbox" checked={includeTest} onChange={(e) => onIncludeTest(e.target.checked)} /> 시험 기록 포함
+        </label>
         <div className="ml-auto flex gap-2 text-sm">
           <button onClick={() => download(`세션요약_${stamp}.csv`, sessionsCsv(rows, qs))} className="rounded-xl bg-[#00F0FF] px-3 py-2 font-bold text-black">CSV: 사람별 요약 + 설문</button>
           <button onClick={() => download(`이용기록_${stamp}.csv`, eventsCsv(data, rows))} className="rounded-xl border border-white/15 px-3 py-2">CSV: 전체 이용 기록</button>
@@ -199,6 +232,13 @@ function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
         <Tile label="설문 완료" value={pct(sum.surveyCompleteRate)} sub={`시작 대비 · ${sum.completed}명`} />
         <Tile label="추첨 응모" value={`${sum.raffles}명`} />
       </section>
+
+      <Card title="단계별 흐름" sub="방문한 사람 중 몇 명이 다음 단계까지 갔는지 · 괄호 = 바로 앞 단계 대비" className="mt-4">
+        <HBars items={flow.map((f) => ({ label: f.label, value: f.count, text: `${f.count}명 · ${pct(f.ofFirst)}${f.label === "방문" ? "" : ` (${pct(f.ofPrev)})`}` }))} />
+        <p className="mt-3 text-sm text-white/55">
+          설문 완료까지 걸린 시간: {surveySec.length ? `평균 ${Math.round(avg(surveySec))}초 · ${surveySec.length}명 기준` : "아직 완료한 사람이 없어요"}
+        </p>
+      </Card>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Card title="첫 화면에서 고른 버튼">
@@ -252,6 +292,21 @@ function Dashboard({ data, qs, demo, onReload, onLogout, onDeleteRaffles }: {
       </Card>
 
       <Raffle data={data} demo={demo} onDelete={onDeleteRaffles} />
+
+      <Card title="최근 기록 20개" sub="기록이 실제로 들어오는지 바로 확인해요 · 한국 시간" className="mt-4">
+        {recent.length ? (
+          <ul className="divide-y divide-white/5 text-sm">
+            {recent.map((e, i) => (
+              <li key={i} className="flex flex-wrap gap-x-3 py-2">
+                <span className="text-white/40">{kst(e.ts)}</span>
+                <span className="text-[#00F0FF]">{EVENT_NAMES[e.type] ?? e.type}</span>
+                <span className="text-white/70">{pageName(e.page)}</span>
+                {e.target && <span className="text-white/50">{END_NAMES[e.target] ?? e.target}</span>}
+              </li>
+            ))}
+          </ul>
+        ) : <p className="text-sm text-white/40">아직 기록이 없어요</p>}
+      </Card>
 
       <Card title="사람별 기록" sub="최근 50명 · 전체는 CSV 로" className="mt-4">
         <SessionTable rows={rows} />

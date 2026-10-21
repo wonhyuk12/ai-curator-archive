@@ -46,40 +46,70 @@
     if (q.length > 5000) q.splice(0, q.length - 5000);
     LS.set(QKEY, q);
   }
+  // 보내는 중인 묶음은 kiosk.inflight 에 적어 둬요. 응답을 확인하면 지우고, 실패하면 대기열로 되돌려요.
+  // 보내는 도중 페이지가 바뀌어 확인을 못 하면 15초 뒤 다음 페이지가 다시 보내요 → 기록을 잃지 않아요.
+  // (이때 생길 수 있는 중복은 관리자 분석에서 걸러요)
+  const IKEY = "kiosk.inflight";
+  const RESEND_AFTER = 15000;
   let flushing = false;
+  const post = (table, rows, opts) => fetch(`${CFG.supabaseUrl}/rest/v1/${table}${opts?.onConflict ? `?on_conflict=${opts.onConflict}` : ""}`, {
+    method: "POST",
+    keepalive: true, // 페이지를 옮겨도 브라우저가 끝까지 보내요
+    headers: {
+      apikey: CFG.supabaseKey, Authorization: `Bearer ${CFG.supabaseKey}`, "Content-Type": "application/json",
+      Prefer: "return=minimal" + (opts?.onConflict ? ",resolution=ignore-duplicates" : ""),
+    },
+    body: JSON.stringify(rows),
+  });
+  const requeue = (items) => LS.set(QKEY, [...items, ...(LS.get(QKEY) || [])]);
+  const settle = (id) => LS.set(IKEY, (LS.get(IKEY) || []).filter((x) => x.id !== id));
   async function flush() {
     if (flushing) return;
-    await cfgReady;
-    if (!CFG.supabaseUrl || !CFG.supabaseKey || !navigator.onLine) return; // 설정 전엔 브라우저에 쌓아만 둬요
-    const q = LS.get(QKEY) || [];
-    if (!q.length) return;
-    flushing = true;
+    flushing = true; // 기다리기 전에 먼저 켜야 동시에 두 번 보내지 않아요
     try {
-      // 같은 테이블·옵션끼리 묶어서 보내요 (순서 유지)
-      const head = q[0], batch = [];
-      for (const it of q) { if (it.table !== head.table || JSON.stringify(it.opts) !== JSON.stringify(head.opts) || batch.length >= 200) break; batch.push(it); }
-      const conflict = head.opts?.onConflict ? `?on_conflict=${head.opts.onConflict}` : "";
-      const res = await fetch(`${CFG.supabaseUrl}/rest/v1/${head.table}${conflict}`, {
-        method: "POST",
-        headers: {
-          apikey: CFG.supabaseKey, Authorization: `Bearer ${CFG.supabaseKey}`, "Content-Type": "application/json",
-          Prefer: "return=minimal" + (head.opts?.onConflict ? ",resolution=ignore-duplicates" : ""),
-        },
-        body: JSON.stringify(batch.map((b) => b.row)),
-      });
-      if (res.ok || res.status === 409) {
-        const rest = (LS.get(QKEY) || []).slice(batch.length);
-        LS.set(QKEY, rest);
-        if (rest.length) setTimeout(() => { flushing = false; flush(); }, 50);
-      } else if (res.status >= 400 && res.status < 500) {
-        console.warn("[kiosk] 전송 거부", res.status, await res.text()); // 형식 오류는 버려요 (무한 재시도 방지)
-        LS.set(QKEY, (LS.get(QKEY) || []).slice(batch.length));
+      await cfgReady;
+      if (!CFG.supabaseUrl || !CFG.supabaseKey || !navigator.onLine) return; // 설정 전엔 브라우저에 쌓아만 둬요
+      // 확인 못 한 채 오래된 묶음은 다시 보낼 차례로
+      const inflight = LS.get(IKEY) || [];
+      const stale = inflight.filter((x) => Date.now() - x.at > RESEND_AFTER);
+      if (stale.length) {
+        LS.set(IKEY, inflight.filter((x) => !stale.includes(x)));
+        requeue(stale.flatMap((x) => x.items));
       }
-    } catch { /* 네트워크 오류: 다음에 재시도 */ }
-    finally { flushing = false; }
+      const q = LS.get(QKEY) || [];
+      if (!q.length) return;
+      // 같은 테이블·옵션끼리 묶어서 (순서 유지, keepalive 크기 제한 때문에 최대 40개·약 48KB)
+      const head = q[0], batch = [];
+      let size = 0;
+      for (const it of q) {
+        const len = JSON.stringify(it.row).length;
+        if (it.table !== head.table || JSON.stringify(it.opts) !== JSON.stringify(head.opts) || batch.length >= 40 || (batch.length && size + len > 48000)) break;
+        batch.push(it); size += len;
+      }
+      const id = Math.random().toString(36).slice(2);
+      LS.set(QKEY, q.slice(batch.length));
+      LS.set(IKEY, [...(LS.get(IKEY) || []), { id, at: Date.now(), items: batch }]);
+      try {
+        const res = await post(head.table, batch.map((b) => b.row), head.opts);
+        if (res.status >= 500) { settle(id); requeue(batch); return; } // 서버 오류: 다음에 다시
+        if (!res.ok && batch.length > 1) {
+          // 묶음 안에 문제 있는 행(이미 있는 행 409 포함)이 있으면 하나씩 다시 보내 그 행만 빼고 나머지는 살려요
+          for (const it of batch) {
+            const r = await post(it.table, [it.row], it.opts);
+            if (!r.ok && r.status !== 409) console.warn("[kiosk] 전송 거부", it.table, r.status, await r.text());
+          }
+        } else if (!res.ok && res.status !== 409) console.warn("[kiosk] 전송 거부", head.table, res.status, await res.text());
+        settle(id);
+      } catch {
+        settle(id); requeue(batch); // 네트워크 오류: 다음에 다시
+        return;
+      }
+      if ((LS.get(QKEY) || []).length) setTimeout(flush, 50);
+    } finally { flushing = false; }
   }
   setInterval(flush, 5000);
   addEventListener("online", flush);
+  addEventListener("pagehide", () => { flush(); }); // 떠나기 직전 남은 기록을 keepalive 로 보내요
 
   /* ───────── 세션 · 이벤트 ───────── */
   const now = () => new Date().toISOString();

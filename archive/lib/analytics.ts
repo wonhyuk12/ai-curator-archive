@@ -1,3 +1,4 @@
+import { ARCHIVE } from "@/data/archive";
 // 키오스크 이용 기록 + 설문 분석 (관리자 페이지 /admin 에서 사용)
 
 export type Question = {
@@ -26,18 +27,41 @@ export type Survey = {
 export type Raffle = { id: number; phone: string; consented_at: string; kiosk_id: string | null; created_at: string };
 export type Dataset = { sessions: Session[]; events: Event[]; surveys: Survey[]; raffles: Raffle[] };
 
-/* 페이지 이름 */
+/* 페이지 이름 (작업별 마인드맵은 작업 목록에서 자동으로) */
 const PAGE_NAMES: Record<string, string> = {
   "/kiosk": "키오스크 첫 화면",
-  "/news": "AI 소식 (큐레이터)",
-  "/": "AI ARCHIVE 첫 화면",
-  "/developer": "마인드맵 · 개발자",
-  "/designer": "마인드맵 · 디자이너",
-  "/study": "마인드맵 · 공부",
-  "/video": "마인드맵 · 영상 편집",
+  "/news": "AI 소식",
+  "/": "작업별 AI 추천 첫 화면",
+  ...Object.fromEntries(ARCHIVE.map((c) => [`/${c.slug}`, `마인드맵 · ${c.name}`])),
 };
 export const pageName = (p: string | null) => (p ? PAGE_NAMES[p] ?? p : "(알 수 없음)");
 export const ENTRY_NAMES: Record<string, string> = { news: "AI 소식", archive: "작업별 AI 추천", direct: "첫 화면 거치지 않음" };
+
+/* 받아온 기록 정리: 중복 제거(예전 전송 버그로 두 번 들어간 기록) · 시험 기기 빼기 */
+export const isTestKiosk = (id: string | null | undefined) => !!id && id.startsWith("test-");
+export function cleanData(d: Dataset, includeTest: boolean): Dataset {
+  const keepKiosk = (id: string | null) => includeTest || !isTestKiosk(id);
+  // 세션 기록이 전송 중에 사라졌어도 이용 기록(session_start)이 있으면 세션을 되살려요 → 그 사람의 설문이 빠지지 않게
+  const known = new Set(d.sessions.map((s) => s.id));
+  const restored: Session[] = [];
+  for (const e of d.events) {
+    if (e.type !== "session_start" || known.has(e.session_id)) continue;
+    known.add(e.session_id);
+    const sv = d.surveys.find((x) => x.session_id === e.session_id);
+    restored.push({ id: e.session_id, started_at: e.ts, entry: e.target, kiosk_id: sv?.kiosk_id ?? null });
+  }
+  const sessions = [...new Map([...d.sessions, ...restored].filter((s) => keepKiosk(s.kiosk_id)).map((s) => [s.id, s])).values()];
+  const ids = new Set(sessions.map((s) => s.id));
+  const seen = new Set<string>();
+  const events = d.events.filter((e) => {
+    if (!ids.has(e.session_id)) return false;
+    const k = [e.session_id, e.ts, e.type, e.page, e.target].join("|");
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  return { sessions, events, surveys: d.surveys.filter((s) => ids.has(s.session_id)), raffles: d.raffles.filter((r) => keepKiosk(r.kiosk_id)) };
+}
 
 /* 기간 · 키오스크 필터 */
 export type Period = "all" | "today" | "7d" | "30d";
@@ -120,6 +144,35 @@ export function summary(rows: SessionRow[], d: Dataset, period: Period, kiosk: s
     completed: completed.length,
     raffles: raffles.length,
   };
+}
+
+/* 단계별 흐름: 방문 → 설문 열기 → 설문 시작 → 설문 완료 → 추첨 응모 */
+export function funnel(rows: SessionRow[], d: Dataset) {
+  const ids = new Set(rows.map((r) => r.id));
+  const has = (type: string) => new Set(d.events.filter((e) => ids.has(e.session_id) && e.type === type).map((e) => e.session_id)).size;
+  const steps = [
+    { label: "방문", count: rows.length },
+    { label: "설문 열기", count: Math.max(has("survey_open"), rows.filter((r) => r.surveyStarted).length) },
+    { label: "설문 시작", count: rows.filter((r) => r.surveyStarted).length },
+    { label: "설문 완료", count: rows.filter((r) => r.survey?.completed).length },
+    { label: "추첨 응모", count: has("raffle_enter") },
+  ];
+  return steps.map((s, i) => ({ ...s, ofFirst: rows.length ? s.count / rows.length : 0, ofPrev: i && steps[i - 1].count ? s.count / steps[i - 1].count : 1 }));
+}
+
+/* 설문을 끝낸 사람들의 소요 시간(초) */
+export function surveySeconds(rows: SessionRow[]) {
+  return rows
+    .map((r) => r.survey)
+    .filter((s): s is Survey => !!s?.completed && !!s.started_at && !!s.finished_at)
+    .map((s) => (new Date(s.finished_at!).getTime() - new Date(s.started_at!).getTime()) / 1000)
+    .filter((x) => x > 0 && x < 3600);
+}
+
+/* 최근 기록 (실제로 기록이 들어오는지 바로 확인용) */
+export function recentEvents(d: Dataset, rows: SessionRow[], n = 20) {
+  const ids = new Set(rows.map((r) => r.id));
+  return d.events.filter((e) => ids.has(e.session_id)).sort((a, b) => b.ts.localeCompare(a.ts)).slice(0, n);
 }
 
 export function countBy<T>(xs: T[], key: (x: T) => string | null | undefined) {
@@ -282,6 +335,7 @@ export function demoData(qs: Question[]): Dataset {
     const willSurvey = rnd() < 0.62;
     if (willSurvey) {
       const opened = pick(route);
+      events.push({ session_id: id, ts: new Date(t - 3e3).toISOString(), type: "survey_open", page: opened, target: "intro", duration_ms: null, meta: null });
       events.push({ session_id: id, ts: new Date(t).toISOString(), type: "survey_start", page: opened, target: null, duration_ms: null, meta: null });
       const answers: Record<string, string | string[]> = {};
       const done = rnd() < 0.82;
@@ -302,7 +356,9 @@ export function demoData(qs: Question[]): Dataset {
       });
       t += 70e3;
       if (done) events.push({ session_id: id, ts: new Date(t).toISOString(), type: "survey_complete", page: opened, target: null, duration_ms: 70e3, meta: null });
-      if (done && rnd() < 0.6) raffles.push({ id: i, phone: `010${String(10000000 + Math.floor(rnd() * 89999999))}`, consented_at: new Date(t).toISOString(), kiosk_id: null, created_at: new Date(t).toISOString() });
+      if (done && rnd() < 0.6) {
+        events.push({ session_id: id, ts: new Date(t).toISOString(), type: "raffle_enter", page: opened, target: null, duration_ms: null, meta: null });
+        raffles.push({ id: i, phone: `010${String(10000000 + Math.floor(rnd() * 89999999))}`, consented_at: new Date(t).toISOString(), kiosk_id: null, created_at: new Date(t).toISOString() }); }
     }
     events.push({ session_id: id, ts: new Date(t + 120e3).toISOString(), type: "session_end", page: route.at(-1)!, target: pick(["idle", "home"], [7, 3]), duration_ms: t + 120e3 - start, meta: null });
   }
