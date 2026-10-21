@@ -386,3 +386,7 @@ header{background:rgba(5,5,5,.72);backdrop-filter:blur(16px);border-bottom-color
 .feed-search svg{width:16px;height:16px;fill:var(--muted);flex:none}
 .feed-search input{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:14px;color:var(--text)}
 .feed-search input::placeholder{color:var(--muted)}
+
+/* 섹션 설명 한 줄 · 타임라인 용어 풀이 */
+.sec-help{margin:-4px 0 12px;font-size:13px;line-height:1.5;color:var(--sub)}
+.tl-help{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface);font-size:12.5px;line-height:1.6;color:var(--sub)}

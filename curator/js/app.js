@@ -9,8 +9,6 @@ const ARCHIVE_URL = location.pathname.startsWith("/news/") ? "/"
   : ["localhost", "127.0.0.1"].includes(location.hostname) ? "http://localhost:3000/" : "https://ai-archive-weld.vercel.app/";
 document.querySelectorAll("a.to-archive").forEach((a) => (a.href = ARCHIVE_URL));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const cls = (v) => (v > 0 ? "up" : v < 0 ? "down" : "flat");
-const sign = (v) => (v > 0 ? "+" : "") + v.toFixed(1) + "%";
 const logo = (co, size) => {
   const c = COMPANIES[co];
   const inner = c.img ? `<img src="${c.img}" alt="">` : `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[co] || ""}</svg>`;
@@ -21,44 +19,26 @@ const modelLogo = (m, size) => {
   if (!src) return logo(m.co, size);
   return `<span class="logo-c" title="${esc(m.name)}" style="--c:#fff${size ? `;width:${size}px;height:${size}px` : ""}"><img src="${src}" alt=""></span>`;
 };
-const fav = new Set(["opus55", "g38flash"]);
 
-// 가짜 차트 데이터: seed로 늘 같은 모양, 끝값은 등락률 방향에 맞춤
-function series(seed, n, chg) {
-  let s = seed * 9301 + 49297; const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
-  const out = [100]; for (let i = 1; i < n; i++) out.push(out[i - 1] + (rnd() - 0.5) * 4);
-  out.push(out[n - 1] * (1 + chg / 100)); return out;
-}
-function spark(data, w, h, color, area) {
-  const min = Math.min(...data), max = Math.max(...data), r = max - min || 1;
-  const pts = data.map((v, i) => [(i / (data.length - 1)) * w, h - 2 - ((v - min) / r) * (h - 4)]);
-  const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
-  const id = "g" + Math.random().toString(36).slice(2, 7);
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
-    ${area ? `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
-    <path d="${d} L${w} ${h} L0 ${h} Z" fill="url(#${id})"/>` : ""}
-    <path d="${d}" fill="none" stroke="${color}" stroke-width="${area ? 2 : 1.6}" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    ${area ? `<circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="4" fill="${color}"/>` : ""}
-  </svg>`;
-}
-const colorOf = (v) => (v >= 0 ? "#FF4D6D" : "#4D9BFF");
-
-// ---- 오늘의 AI 시장 (지수 카드) ----
+// ---- 한눈에 보기 카드 (전부 실제 데이터에서 계산) ----
+const daysAgo = (n) => { const d = new Date(CHECKED); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
 function renderIdx() {
-  const avg = MODELS.reduce((a, m) => a + m.score, 0) / MODELS.length;
-  const avgChg = MODELS.reduce((a, m) => a + m.chg, 0) / MODELS.length;
+  const since = daysAgo(30);
+  const newCount = Object.values(TIMELINES).flat().filter((e) => e.kind === "release" && e.date >= since).length;
+  const cheapest = [...MODELS].sort((a, b) => blended(a) - blended(b))[0];
+  const newest = byNewest(MODELS)[0];
+  const freeCount = Object.values(SUBSCRIPTIONS).filter((s) => s.plans.some((p) => p[1] === 0)).length;
   const items = [
-    { k: "AI 화제성 지수", v: avg.toFixed(1), d: avgChg, seed: 5 },
-    { k: "API 평균 단가", v: "지수 94.2", d: -4.1, seed: 9 },
-    { k: "오늘 새 소식", v: NEWS.filter((n) => /분 전|시간 전/.test(n.time)).length + "건", d: null, sub: "어제보다 1건 많아요" },
-    { k: "지원 종료 예정", v: NEWS.filter((n) => n.type === "dep").length + "건", d: null, sub: "확인이 필요해요", warn: true },
+    { k: "최근 30일 새 모델", v: `${newCount}개`, sub: "한 달 동안 공식 출시된 AI 모델 수예요" },
+    { k: "가장 최근 출시", v: esc(newest.name), sub: `${COMPANIES[newest.co].name} · ${newest.date.replaceAll("-", ".")}`, small: true },
+    { k: "가장 저렴한 API", v: `${usd(cheapest.price.in)} / ${usd(cheapest.price.out)}`, sub: `${esc(cheapest.name)} · 100만 토큰당 입력 / 출력` },
+    { k: "무료로 쓸 수 있는 AI", v: `${freeCount}곳`, sub: "가입만 하면 무료 요금제가 있는 서비스예요" },
   ];
   $("#idx").innerHTML = items.map((it) => `
     <div class="ix">
       <span class="k">${it.k}</span>
-      <span class="v num">${it.v}</span>
-      ${it.d !== null ? `<span class="d num ${cls(it.d)}">${sign(it.d)}</span>${spark(series(it.seed, 24, it.d), 120, 28, colorOf(it.d))}`
-        : `<span class="d" style="color:${it.warn ? "var(--up)" : "var(--sub)"}">${it.sub}</span>`}
+      <span class="v num"${it.small ? ' style="font-size:20px"' : ""}>${it.v}</span>
+      <span class="d" style="color:var(--sub)">${it.sub}</span>
     </div>`).join("");
 }
 
@@ -67,35 +47,35 @@ const usd = (v) => (Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`);
 const blended = (m) => (m.price.in * 3 + m.price.out) / 4;
 const relDate = (d) => { const [, m, day] = d.split("-"); return day ? `${+m}.${+day}` : `${+m}월`; };
 let rankKey = "new";
-// 급상승: 실제 OpenRouter 사용량 증가 (TRENDING)
+// 최근 30일 안에 나온 모델에 NEW 표시
+const isNew = (m) => m.date >= daysAgo(30);
+// 인기: OpenRouter 30일 사용량 (POPULAR)
 const CO_FAMILY = { openai: "gpt", anthropic: "claude", google: "gemini", deepseek: "deepseek", meta: "llama", mistral: "mistral", xai: "grok" };
-const pct = (c) => { const v = c * 100; return `+${v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(1)}%`; };
-const fmtTok = (n) => (n >= 1e12 ? `${(n / 1e12).toFixed(1)}조` : `${Math.round(n / 1e8).toLocaleString("en-US")}억`);
-function trendRows() {
-  return TRENDING.items.map((t, i) => `
-    <button type="button" class="row row-price" data-trend="${i}">
+const pct = (c) => { const v = c * 100; return `${v >= 0 ? "+" : ""}${Math.round(v).toLocaleString("en-US")}%`; };
+const fmtTok = (n) => (n >= 1e12 ? `${Math.round(n / 1e12).toLocaleString("en-US")}조` : `${Math.round(n / 1e8).toLocaleString("en-US")}억`);
+function popRows() {
+  return POPULAR.items.map((t, i) => `
+    <button type="button" class="row row-price" data-pop="${i}">
       <span class="rk">${i + 1}</span>
       ${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
       <span class="nm"><b>${esc(t.name)}${t.change === null ? '<span class="new">NEW</span>' : ""}</b><small>${esc(t.author)}</small></span>
-      <span class="pr num"><b class="up">${t.change === null ? "신규" : pct(t.change)}</b><small class="flat">주간 ${fmtTok(t.tokens)} 토큰</small></span>
+      <span class="pr num"><b>${fmtTok(t.tokens)} 토큰</b><small class="${t.change === null ? "flat" : t.change >= 0 ? "up" : "down"}">${t.change === null ? "새로 나옴" : `한 달 전보다 ${pct(t.change)}`}</small></span>
     </button>`).join("");
 }
-// 차트 아래 설명: 탭마다 무엇을 기준으로 줄 세웠는지
+// 차트 아래 설명: 탭마다 무엇을 기준으로 줄 세웠는지, 왜 보는지
 const LEGENDS = {
-  new: () => "최신 = 공식 출시일 순 · 2026-09-30 기준 실제 데이터",
-  hot: () => "화제성 점수 = 공식 발표 수·개발자 커뮤니티 언급량을 합친 지수 (예시)",
+  new: () => `최신순 = 공식 출시일 순서예요. 지금 어떤 AI가 새로 나왔는지 볼 수 있어요 · ${CHECKED} 확인`,
   price: () => priceMode === "api"
-    ? "요금 = 각 회사 API 표준 요금 (USD · 100만 토큰당 입력 / 출력) · 2026-09-30 기준 실제 데이터"
-    : `${TIER_LABEL[priceMode]} 구독 = 각 서비스 개인 요금제 월 요금 (미국 기준 USD) · 2026-09-30 기준 실제 데이터`,
-  up: () => `급상승 = OpenRouter 주간 사용량 상위 20개 모델 중 지난주보다 사용량이 늘어난 모델 (지난 7일 vs 그 전 7일) · ${TRENDING.checked} 기준 실제 데이터`,
-  fav: () => "관심 = ♥ 표시한 모델",
+    ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서 · ${CHECKED} 확인`
+    : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 기준 USD) · ${CHECKED} 확인`,
+  pop: () => `인기 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수 · ${POPULAR.checked}까지 자료`,
 };
 function setLegend() { $(".a-chart .legend").textContent = LEGENDS[rankKey](); }
 // 구독 요금: 서비스별 Pro급 / Max급 월 요금 (SUBSCRIPTIONS)
 let priceMode = "api";
 const tierOf = (sub, t) => sub.plans.find((p) => p[2] === t);
 const money = (v) => (v === 0 ? "무료" : Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`);
-const TIER_LABEL = { free: "무료", pro: "Pro급", max: "Max급(최상위)" };
+const TIER_LABEL = { free: "무료 요금제", pro: "기본 유료 요금제", max: "최상위 유료 요금제" };
 function subRows(tier) {
   const planOf = (sub) => (tier === "free" ? sub.plans.find((p) => p[1] === 0) : tierOf(sub, tier));
   const rows = Object.entries(SUBSCRIPTIONS).map(([co, sub]) => ({ co, sub, plan: planOf(sub) }))
@@ -111,22 +91,18 @@ function subRows(tier) {
 }
 function renderRows() {
   $("#pmode").hidden = rankKey !== "price";
-  if (rankKey === "up") { $("#rows").innerHTML = trendRows(); return; }
+  if (rankKey === "pop") { $("#rows").innerHTML = popRows(); return; }
   if (rankKey === "price" && priceMode !== "api") { $("#rows").innerHTML = subRows(priceMode); return; }
-  let list = [...MODELS];
-  if (rankKey === "new") list = byNewest(list);
-  if (rankKey === "hot") list.sort((a, b) => b.score - a.score);
+  let list = byNewest(MODELS);
   // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순
   if (rankKey === "price") list.sort((a, b) => blended(a) - blended(b));
-  if (rankKey === "fav") list = list.filter((m) => fav.has(m.id));
-  $("#rows").innerHTML = list.length ? list.map((m, i) => `
-    <button type="button" class="row${rankKey === "price" ? " row-price" : ""}" data-id="${m.id}">
+  $("#rows").innerHTML = list.map((m, i) => `
+    <button type="button" class="row row-price" data-id="${m.id}">
       <span class="rk">${i + 1}</span>
       ${modelLogo(m)}
-      <span class="nm"><b>${esc(m.name)}${m.isNew ? '<span class="new">NEW</span>' : ""}</b><small>${COMPANIES[m.co].name}</small></span>
-      ${rankKey === "price" ? "" : spark(series(m.seed, 20, m.chg), 64, 26, colorOf(m.chg))}
-      <span class="pr num">${rankKey === "new" ? `<b>${relDate(m.date)}</b><small class="flat">${m.date.slice(0, 4)} 출시</small>` : rankKey === "price" ? `<b>${usd(m.price.in)} / ${usd(m.price.out)}</b><small class="flat">입력 / 출력</small>` : `<b>${m.score.toFixed(1)}</b><small class="${cls(m.chg)}">${sign(m.chg)}</small>`}</span>
-    </button>`).join("") : `<p class="empty">♥ 눌러서 관심 LLM을 담아 보세요</p>`;
+      <span class="nm"><b>${esc(m.name)}${isNew(m) ? '<span class="new">NEW</span>' : ""}</b><small>${COMPANIES[m.co].name}</small></span>
+      <span class="pr num">${rankKey === "new" ? `<b>${relDate(m.date)}</b><small class="flat">${m.date.slice(0, 4)} 출시</small>` : `<b>${usd(m.price.in)} / ${usd(m.price.out)}</b><small class="flat">입력 / 출력</small>`}</span>
+    </button>`).join("");
 }
 $("#rankTabs").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
@@ -144,17 +120,17 @@ $("#pmode").addEventListener("click", (e) => {
 $("#rows").addEventListener("click", (e) => {
   const b = e.target.closest(".row"); if (!b) return;
   if (b.dataset.sub) return openFamily(CO_FAMILY[b.dataset.sub]);
-  if (b.dataset.trend === undefined) return openModel(b.dataset.id, "evo");
-  const t = TRENDING.items[+b.dataset.trend];
-  if (t.model) openModel(t.model, "evo");                    // 차트에 있는 모델
+  if (b.dataset.pop === undefined) return openModel(b.dataset.id);
+  const t = POPULAR.items[+b.dataset.pop];
+  if (t.model) openModel(t.model);                            // 목록에 있는 모델
   else if (t.co && CO_FAMILY[t.co]) openFamily(CO_FAMILY[t.co]); // 아는 회사면 계열 화면
-  else window.open(t.url, "_blank", "noopener");             // 그 밖은 OpenRouter 모델 페이지
 });
 
 // ---- 소식 ----
 function newsList(filterCo) {
   return NEWS.filter((n) => !filterCo || n.co === filterCo);
 }
+const newsDate = (d) => { const [y, m, day] = d.split("-"); return `${y}.${+m}.${+day}`; };
 function newsHTML(list) {
   return list.length ? list.map((n, i) => `
     <div class="news">
@@ -162,19 +138,19 @@ function newsHTML(list) {
         ${logo(n.co)}
         <span>
           <span class="t">${esc(n.title)}</span>
-          <span class="s" style="display:block">${esc(n.summary)}</span>
-          <span class="m"><span class="pill ${n.type}">${TYPES[n.type]}</span><span>${COMPANIES[n.co].name}</span><span>${n.time}</span></span>
+          <span class="s" style="display:block">${esc(n.what)}</span>
+          <span class="m"><span class="pill ${n.type}">${TYPES[n.type]}</span><span>${COMPANIES[n.co].name}</span><span>${newsDate(n.date)}</span></span>
         </span>
       </button>
       <div class="more" hidden>
-        <div class="ai-note"><b>AI 코멘트</b>${esc(n.comment)}</div>
-        <a class="src" href="${n.link || COMPANIES[n.co].url}" target="_blank" rel="noopener">공식 원문 보기 ›</a>
+        <div class="ai-note"><b>나에게 왜 중요한가요</b>${esc(n.why)}</div>
+        <a class="src" href="${n.link || COMPANIES[n.co].url}" target="_blank" rel="noopener">원문 보기 ›</a>
       </div>
     </div>`).join("") : `<p class="empty">아직 소식이 없어요</p>`;
 }
 // 주요 소식 검색: 제목·요약·회사·카테고리에서 찾음 (띄어쓴 단어는 모두 들어 있어야 함)
 function feedMatch(n, toks) {
-  const hay = norm([n.title, n.summary, COMPANIES[n.co].name, TYPES[n.type], ...coAliases(n.co)].join(" "));
+  const hay = norm([n.title, n.what, n.why, COMPANIES[n.co].name, TYPES[n.type], ...coAliases(n.co)].join(" "));
   return toks.every((t) => hay.includes(t));
 }
 function renderFeed() {
@@ -197,68 +173,41 @@ function closeSheet() { $("#dim").hidden = true; document.body.style.overflow = 
 $("#dim").addEventListener("click", (e) => { if (e.target.id === "dim" || e.target.closest("[data-close]")) closeSheet(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 
-const PERIODS = [["1주", 7], ["1달", 30], ["3달", 90], ["1년", 180]];
-function openModel(id, tab = "news") {
+function openModel(id, tab = "info") {
   const m = MODELS.find((x) => x.id === id);
-  const state = { period: 1, tab };
+  const state = { tab };
   const draw = () => {
-    const [pl, pn] = PERIODS[state.period];
-    const chg = m.chg * (state.period + 1) * 1.7;
     openSheet(`
       <div class="sh-top">
         ${modelLogo(m, 44)}
         <div class="nm"><b>${esc(m.name)}</b><small>${COMPANIES[m.co].name} · ${esc(m.line)}</small></div>
-        <button type="button" class="iconbtn" data-fav aria-pressed="${fav.has(m.id)}" aria-label="관심 LLM">${fav.has(m.id) ? "♥" : "♡"}</button>
         <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button>
       </div>
-      <div class="big">
-        <div class="k">화제성 점수 <span class="ex-tag">예시</span></div>
-        <div class="v num">${m.score.toFixed(1)}</div>
-        <div class="d num ${cls(chg)}">${pl} ${sign(chg)}</div>
-      </div>
-      <div class="chart">${spark(series(m.seed + state.period, pn / 3 + 12, chg), 500, 170, colorOf(chg), true)}</div>
-      <div class="period">${PERIODS.map(([l], i) => `<button type="button" data-per="${i}" aria-pressed="${i === state.period}">${l}</button>`).join("")}</div>
-      <div class="stabs">${[["evo", "진화"], ["news", "소식"], ["info", "정보"], ["works", "작업물"]].map(([k, l]) =>
+      <div class="stabs">${[["info", "정보·요금"], ["evo", "진화 기록"], ["news", "소식"]].map(([k, l]) =>
         `<button type="button" data-tab="${k}" aria-pressed="${state.tab === k}">${l}</button>`).join("")}</div>
-      <div class="pane">${pane(m, state.tab)}</div>
-      <button type="button" class="cta" data-alert>이 모델 소식 알림 받기</button>`);
-    const sh = $("#sheet");
-    sh.querySelectorAll("[data-per]").forEach((b) => b.onclick = () => { state.period = +b.dataset.per; draw(); });
-    sh.querySelectorAll("[data-tab]").forEach((b) => b.onclick = () => { state.tab = b.dataset.tab; draw(); });
-    sh.querySelector("[data-fav]").onclick = () => { fav.has(m.id) ? fav.delete(m.id) : fav.add(m.id); draw(); renderRows(); };
-    sh.querySelector("[data-alert]").onclick = () => toast(m.co, `${m.name} 알림을 켰어요`, "새 소식이 올라오면 바로 알려 드릴게요");
+      <div class="pane">${pane(m, state.tab)}</div>`);
+    $("#sheet").querySelectorAll("[data-tab]").forEach((b) => b.onclick = () => { state.tab = b.dataset.tab; draw(); });
   };
   draw();
 }
 // 정보 탭: 이 회사 서비스의 구독 요금제 전체
 function subHTML(co) {
   const sub = SUBSCRIPTIONS[co]; if (!sub) return "";
-  return `<div><h4>구독 요금 · ${esc(sub.service)} <span class="real">실제 데이터</span></h4><div class="kv">${sub.plans.map(([n, v, t]) =>
-    `<div><span>${esc(n)}${t ? ` <small>${t === "pro" ? "Pro급" : "Max급"}</small>` : ""}</span><span class="num">${money(v)}${v ? " / 월" : ""}</span></div>`).join("")}</div>
-    <p class="price-note">${sub.note ? `${esc(sub.note)} · ` : ""}미국 기준 월 요금 · 2026-09-30 확인 · <a href="${esc(sub.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>`;
-}
-// "입력 8K · 출력 1K" 같은 예시 작업을 실제 요금으로 계산
-function taskCost(m, v) {
-  const [inK, outK] = (v.match(/[\d.]+/g) || [0, 0]).map(Number);
-  const c = (inK * 1000 * m.price.in + outK * 1000 * m.price.out) / 1e6;
-  return c < 0.01 ? `$${c.toFixed(4)}` : `$${c.toFixed(3)}`;
+  return `<div><h4>앱으로 쓰는 구독 요금 · ${esc(sub.service)}</h4><div class="kv">${sub.plans.map(([n, v, t]) =>
+    `<div><span>${esc(n)}${t ? ` <small>${t === "pro" ? "기본 유료" : "최상위 유료"}</small>` : ""}</span><span class="num">${money(v)}${v ? " / 월" : ""}</span></div>`).join("")}</div>
+    <p class="price-note">${sub.note ? `${esc(sub.note)} · ` : ""}미국 기준 월 요금 · ${CHECKED} 확인 · <a href="${esc(sub.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>`;
 }
 function pane(m, tab) {
   if (tab === "evo") return timelineHTML(m.family, m.name);
   if (tab === "news") return `<div class="feed">${newsHTML(newsList(m.co))}</div>`;
-  if (tab === "info") return `
-    <div><h4>어떻게 쓸 수 있나요 <span class="real">실제 데이터</span></h4><div class="chips">${m.use.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
-    <div><h4>주요 기능 <span class="real">실제 데이터</span></h4><div class="chips">${m.features.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
-    <div><h4>어떤 작업에 강한가요 <span class="ex-tag">예시</span></h4>${m.strengths.map(([k, v]) =>
-      `<div class="bar"><span>${k}</span><i><u style="width:${v}%"></u></i><em class="num">${v || "–"}</em></div>`).join("")}</div>
-    <div><h4>API 요금 <span class="real">실제 데이터</span></h4><div class="kv">
+  return `
+    <div><h4>어디서 쓸 수 있나요</h4><div class="chips">${m.use.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
+    <div><h4>주요 기능</h4><div class="chips">${m.features.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
+    <div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
-      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}2026-09-30 기준 표준 요금 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>
-    ${subHTML(m.co)}
-    <div><h4>작업 1번에 드는 비용</h4><div class="kv">${TOKENS.map(([k, v]) => `<div><span>${k}<small> · ${v}</small></span><span class="num">약 ${taskCost(m, v)}</span></div>`).join("")}</div></div>`;
-  return `<div class="works">${m.works.map(([t, by]) =>
-    `<div class="work"><div class="th">미리보기</div><div class="cp">${esc(t)}<small>${esc(by)} · 예시</small></div></div>`).join("")}</div>`;
+      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1~2자 정도) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>
+    ${subHTML(m.co)}`;
 }
 
 // ---- AI 진화 타임라인 (실제 데이터) ----
@@ -290,6 +239,7 @@ function timelineHTML(key, hl = "") {
     <div class="tl-top"><span class="real">실제 데이터</span><span class="tl-cnt">${first}–${last} · ${list.length}개</span>
       <span class="tl-order" role="group" aria-label="정렬">${[["new", "최신부터"], ["old", "처음부터"]].map(([k, l]) =>
         `<button type="button" data-tlorder="${k}" aria-pressed="${tlOrder === k}">${l}</button>`).join("")}</span></div>
+    <p class="tl-help">용어 풀이 · 파라미터 = AI 모델의 크기 · 컨텍스트 = 한 번에 읽을 수 있는 글의 양 · 오픈 웨이트 = 모델 파일을 내려받아 직접 쓸 수 있음 · 멀티모달 = 글·그림·소리를 함께 이해함</p>
     <div class="tl-list">${rows}</div>
     <p class="tl-foot">${TIMELINE_CHECKED} 기준 · 각 회사 공식 발표 기반 · <i class="k release"></i>출시 <i class="k update"></i>업데이트 <i class="k deprecation"></i>종료</p>
   </div>`;
@@ -312,16 +262,16 @@ function openFamily(key) {
       <div class="nm"><b>${esc(f.name)}</b><small>${COMPANIES[f.co].name} · 한눈에 보기</small></div>
       <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button></div>
     <div class="fam">
-      <section class="fam-now"><h4>지금 라인업 <span class="real">실제 데이터</span></h4><p>${esc(f.now)}</p><small>${TIMELINE_CHECKED} 기준</small></section>
-      ${models.length ? `<section><h4>LLM 차트의 모델 <span class="ex-tag">예시 점수</span></h4>${models.map((m) => `
+      <section class="fam-now"><h4>지금 쓸 수 있는 모델</h4><p>${esc(f.now)}</p><small>${TIMELINE_CHECKED} 기준</small></section>
+      ${models.length ? `<section><h4>순위표에 있는 모델</h4>${models.map((m) => `
         <button type="button" class="mres" data-m="${m.id}">${modelLogo(m)}
           <span><b>${esc(m.name)}</b><p>${esc(m.line)}</p></span><span class="go">자세히 ›</span></button>`).join("")}</section>` : ""}
       <section><h4>진화 타임라인</h4>${timelineHTML(key)}</section>
-      <section><h4>관련 소식 <span class="ex-tag">예시</span></h4><div class="feed">${newsHTML(news)}</div></section>
-      ${feats.length ? `<section><h4>이 계열이 있는 기능 <span class="ex-tag">예시</span></h4>${feats.map((r) => `
-        <div class="res">${logo(r.co)}<div><b>${esc(r.feat)}</b><p>${esc(r.k)} · ${esc(r.plan)} · ${esc(r.model)}</p></div></div>`).join("")}</section>` : ""}
+      ${news.length ? `<section><h4>관련 소식</h4><div class="feed">${newsHTML(news)}</div></section>` : ""}
+      ${feats.length ? `<section><h4>이 회사에서 쓸 수 있는 기능</h4>${feats.map((r) => `
+        <div class="res">${logo(r.co)}<div><b>${esc(r.feat)}</b><p>${esc(r.what)} · ${esc(r.plan)}</p></div></div>`).join("")}</section>` : ""}
     </div>`);
-  $("#sheet").querySelectorAll("[data-m]").forEach((b) => b.onclick = () => openModel(b.dataset.m, "evo"));
+  $("#sheet").querySelectorAll("[data-m]").forEach((b) => b.onclick = () => openModel(b.dataset.m));
 }
 
 // 모델 목록은 출시일 최신순
@@ -370,15 +320,15 @@ function runSearch(q) {
     title = `‘${esc(key)}’ 기능이 있는 곳 ${SEARCH[key].length}곳`;
     body = SEARCH[key].map((r) => `
       <div class="res">${logo(r.co)}
-        <div><b>${esc(r.feat)}</b><p>${COMPANIES[r.co].name} · ${esc(r.plan)} · ${esc(r.model)}</p>
-        <div class="ex">예시 작업물 · ${esc(r.ex)}</div></div>
+        <div><b>${esc(r.feat)}</b><p>${COMPANIES[r.co].name} · ${esc(r.plan)}</p>
+        <div class="ex">${esc(r.what)}</div></div>
       </div>`).join("");
   } else {
     title = `‘${esc(q)}’ 검색 결과`;
-    body = `<p style="color:var(--sub)">찾는 결과가 없어요. AI 이름(GPT, 클로드, 제미나이…)이나 아래 예시로 검색해 보세요.</p>`;
+    body = `<p style="color:var(--sub)">찾는 결과가 없어요. AI 이름(GPT, 클로드, 제미나이…)이나 아래 단어로 검색해 보세요.</p>`;
   }
   openSheet(`
-    <div class="sh-top"><div class="nm"><b>${title}</b><small>${models.length ? "눌러서 기능 한눈에 보기" : "회사 · 요금제 · 모델"}</small></div>
+    <div class="sh-top"><div class="nm"><b>${title}</b><small>${models.length ? "눌러서 기능 한눈에 보기" : "회사 · 요금제 · 무엇을 하나요"}</small></div>
     <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button></div>
     <div style="margin-top:8px">${body}</div>${chips}`);
   $("#sheet").querySelectorAll("[data-q]").forEach((b) => b.onclick = () => runSearch(b.dataset.q));
@@ -421,7 +371,7 @@ function hl(label, toks) {
   }
   return out;
 }
-// 주요 소식과 같은 카테고리 탭: 실제 타임라인(출시→모델 출시, 업데이트→기능, 종료→지원 종료) + 주요 소식(예시)
+// 주요 소식과 같은 카테고리 탭: 출시 기록(출시→모델 출시, 업데이트→기능, 종료→지원 종료) + 주요 소식
 let sugTab = "all";
 const KIND_TYPE = { release: "model", update: "feature", deprecation: "dep" };
 const coAliases = (co) => Object.values(FAMILIES).filter((f) => f.co === co).flatMap((f) => f.aliases);
@@ -434,7 +384,7 @@ function newsItems(tab, toks) {
     .map((e) => ({ type: "tl", e, label: e.name, co: FAMILIES[e.fam].co, when: `${e.date.slice(0, 4)}.${fmtDate(e)}`, ntype: tab }));
   const ex = NEWS.map((n, i) => ({ n, i })).filter(({ n }) => n.type === tab)
     .filter(({ n }) => !toks.length || matches(wordsOf(n.title, COMPANIES[n.co].name, ...coAliases(n.co)), toks))
-    .map(({ n, i }) => ({ type: "news", i, label: n.title, co: n.co, when: n.time, ntype: tab }));
+    .map(({ n, i }) => ({ type: "news", i, label: n.title, co: n.co, when: newsDate(n.date), ntype: tab }));
   return { real, ex };
 }
 function renderSuggest() {
@@ -463,7 +413,7 @@ function renderSuggest() {
         <small><span class="pill ${it.ntype}">${TYPES[it.ntype]}</span> ${COMPANIES[it.co].name} · ${esc(it.when)}</small></span>
       </button>`;
     body = (real.length ? `<div class="sg-head">출시 기록 <span class="real">실제 데이터</span>${toks.length ? "" : " · 최신 20개"}</div>` + real.map(row).join("") : "")
-      + (ex.length ? `<div class="sg-head">주요 소식 <span class="ex-tag">예시</span></div>` + ex.map((it, j) => row(it, real.length + j)).join("") : "")
+      + (ex.length ? `<div class="sg-head">주요 소식</div>` + ex.map((it, j) => row(it, real.length + j)).join("") : "")
       + (sugItems.length ? "" : `<p class="sg-empty">‘${esc(TYPES[sugTab])}’에 맞는 소식이 없어요</p>`);
   }
   sugActive = -1;
@@ -490,7 +440,7 @@ function moveSuggest(d) {
 function pickSuggest(it) {
   closeSuggest(); qInput.blur();
   if (it.type === "fam") { qInput.value = it.label; openFamily(it.key); }
-  else if (it.type === "model") { qInput.value = it.label; openModel(it.id, "info"); }
+  else if (it.type === "model") { qInput.value = it.label; openModel(it.id); }
   else if (it.type === "feat") { qInput.value = it.label; runSearch(it.key); }
   else if (it.type === "tl") {
     const m = MODELS.find((x) => x.family === it.e.fam && sameModel(it.e.name, x.name));
@@ -575,3 +525,4 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNoti(
 
 // 처음 그리기
 renderIdx(); renderRows(); setLegend(); renderFeed(); updateBell();
+$("#chartTime").textContent = `${CHECKED} 확인`;

@@ -27,38 +27,38 @@
     <div class="noti" id="noti" role="dialog" aria-label="알림" hidden></div>
   </div>
 </header>
-<p class="note">프로토타입 화면 · 점수, 등락률, 소식은 디자인 확인용 예시 데이터예요</p>
+<p class="note">최신 AI 모델과 소식, 요금을 공식 발표 기준으로 모아 보여 줘요 · 항목마다 출처 링크가 있어요</p>
 
 <main>
   <!-- 오늘의 AI 시장 -->
-  <section class="a-idx idx" id="idx" aria-label="오늘의 AI 시장"></section>
+  <section class="a-idx idx" id="idx" aria-label="한눈에 보기"></section>
 
   <!-- LLM 차트 -->
   <section class="a-chart card" aria-labelledby="chartTitle">
-    <div class="head"><h2 id="chartTitle">LLM 차트</h2><small id="chartTime">오늘 18:00 기준</small></div>
+    <div class="head"><h2 id="chartTitle">AI 모델 순위</h2><small id="chartTime"></small></div>
+    <p class="sec-help">대화형 AI 모델(LLM)을 새로 나온 순서, 요금, 인기로 비교해요. 눌러서 자세히 보기</p>
     <div class="tabs" id="rankTabs" role="group" aria-label="정렬">
-      <button type="button" data-k="new" aria-pressed="true">최신</button>
-      <button type="button" data-k="hot" aria-pressed="false">화제성</button>
-      <button type="button" data-k="price">요금</button>
-      <button type="button" data-k="up">급상승</button>
-      <button type="button" data-k="fav">관심</button>
+      <button type="button" data-k="new" aria-pressed="true">최신순</button>
+      <button type="button" data-k="price" aria-pressed="false">요금</button>
+      <button type="button" data-k="pop" aria-pressed="false">인기</button>
     </div>
     <div class="pmode" id="pmode" role="group" aria-label="요금 종류" hidden>
-      <button type="button" data-pm="api" aria-pressed="true">API</button>
+      <button type="button" data-pm="api" aria-pressed="true">개발자용 API</button>
       <button type="button" data-pm="free" aria-pressed="false">무료</button>
-      <button type="button" data-pm="pro" aria-pressed="false">Pro</button>
-      <button type="button" data-pm="max" aria-pressed="false">Max</button>
+      <button type="button" data-pm="pro" aria-pressed="false">기본 유료</button>
+      <button type="button" data-pm="max" aria-pressed="false">최상위 유료</button>
     </div>
     <div class="rows" id="rows"></div>
-    <p class="legend">화제성 점수 = 공식 발표 수·개발자 커뮤니티 언급량을 합친 지수 (예시)</p>
+    <p class="legend"></p>
   </section>
 
   <!-- 소식 -->
   <section class="a-feed card" aria-labelledby="feedTitle">
     <div class="head"><h2 id="feedTitle">주요 소식</h2><small id="feedCount"></small></div>
+    <p class="sec-help">AI 회사들의 공식 발표만 모았어요. 눌러서 "나에게 왜 중요한지" 보기</p>
     <label class="feed-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.92 12.1l4.24 4.24-1.42 1.42-4.24-4.24A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
-      <input id="feedQ" type="search" placeholder="소식 검색 (예: 요금, GPT, 종료)" aria-label="주요 소식 검색" autocomplete="off">
+      <input id="feedQ" type="search" placeholder="소식 검색 (예: 요금, GPT, Claude)" aria-label="주요 소식 검색" autocomplete="off">
     </label>
     <div class="feed" id="feed"></div>
   </section>
