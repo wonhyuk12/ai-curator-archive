@@ -92,6 +92,12 @@ begin
   end loop;
 end $$;
 
+-- 테이블 접근 권한 (새 프로젝트는 자동으로 안 열려 있을 수 있어요)
+grant usage on schema public to anon, authenticated;
+grant insert on public.sessions, public.events, public.survey_responses, public.raffle_entries to anon;
+grant select on public.sessions, public.events, public.survey_responses, public.raffle_entries, public.admins to authenticated;
+grant delete on public.raffle_entries to authenticated;
+
 -- 관리자: 추첨 명단 삭제 (경품 발송 후 파기)
 drop policy if exists "admin delete" on public.raffle_entries;
 create policy "admin delete" on public.raffle_entries for delete to authenticated using (public.is_admin());
