@@ -123,7 +123,7 @@ const TOOL_TABLE = defineTools({
     url: "https://www.figma.com",
     related: ["v0", "framer", "stitch"],
     strengths: ["디자인·눌러 보는 시안·개발자 전달까지 한 파일에서 끝내요", "실시간 협업 — 개발자·기획자가 같은 화면을 보며 코멘트", "Figma AI로 레이어 이름 정리, 목업 생성 같은 반복 작업을 자동화"],
-    howTo: ["프레임을 만들고 오토 레이아웃으로 반응형 구조를 잡아요", "반복되는 요소는 컴포넌트·변수로 만들어 디자인 시스템화해요", "개발 모드(Dev Mode) 링크를 공유해 개발자가 크기·색·CSS 값을 바로 보게 해요"],
+    howTo: ["화면 틀을 만들고 자동 정렬(오토 레이아웃)로 화면 크기가 바뀌어도 맞게 배치해요", "반복되는 요소는 컴포넌트로 만들어 여러 화면에서 같이 써요", "개발 모드(Dev Mode) 링크를 공유해 개발자가 크기·색·CSS 값을 바로 보게 해요"],
   },
   gemini: {
     name: "Gemini",
@@ -159,7 +159,7 @@ const TOOL_TABLE = defineTools({
     url: "https://cursor.com",
     related: ["claudecode", "copilot", "claude"],
     strengths: ["코드베이스 전체를 인덱싱해 맥락을 이해한 답변", "Tab 자동완성이 다음 편집 위치까지 예측", "에이전트 모드로 여러 파일을 한 번에 수정·실행"],
-    howTo: ["@파일, @폴더로 AI가 볼 코드를 지정해요", "작은 수정은 Cmd/Ctrl+K, 큰 작업은 에이전트 채팅으로 요청해요", "변경 diff를 검토한 뒤 파일 단위로 수락/거절해요"],
+    howTo: ["@파일, @폴더로 AI가 볼 코드를 지정해요", "작은 수정은 Cmd/Ctrl+K, 큰 작업은 에이전트 채팅으로 요청해요", "바뀐 부분을 확인한 뒤 파일별로 받아들이거나 취소해요"],
   },
   bolt: {
     name: "Bolt.new",
@@ -194,7 +194,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://supabase.com",
     related: ["claudecode", "cursor", "copilot"],
-    strengths: ["Postgres 기반 — 자연어로 SQL·스키마를 바로 생성", "누가 어떤 데이터를 볼 수 있는지(RLS 정책)를 설명만으로 작성", "인증·스토리지·Edge Function까지 한 플랫폼"],
+    strengths: ["Postgres 데이터베이스 기반 — 말로 SQL·테이블 구조(스키마)를 바로 생성", "누가 어떤 데이터를 볼 수 있는지(RLS 정책)를 설명만으로 작성", "로그인·파일 저장·서버 함수(Edge Function)까지 한 곳에서"],
     howTo: ["대시보드의 AI 어시스턴트를 열고 테이블 구조를 설명해요", "생성된 SQL을 검토한 뒤 SQL Editor에서 실행해요", "접근 권한(RLS)은 역할별로 누가 무엇을 할 수 있는지 문장으로 정리해 요청해요"],
   },
   chatgpt: {
@@ -235,7 +235,7 @@ const TOOL_TABLE = defineTools({
   },
   midjourney: {
     name: "Midjourney",
-    description: "분위기와 색감 표현이 뛰어난 이미지 생성 AI. V8 세대 모델은 업스케일 없이 2K 고해상도 이미지를 만들어요. 분위기 참고 이미지·대표 이미지·컨셉 아트 제작에 많이 써요.",
+    description: "분위기와 색감 표현이 뛰어난 이미지 생성 AI. V8 세대는 HD 모드에서 업스케일 없이 2K 이미지를 만들어요. 분위기 참고 이미지·대표 이미지·컨셉 아트 제작에 많이 써요.",
     pricing: "Paid",
     url: "https://www.midjourney.com",
     related: ["firefly", "ideogram", "recraft"],
@@ -577,11 +577,11 @@ const TOOL_TABLE = defineTools({
   },
   wrtn: {
     name: "뤼튼",
-    description: "한국어에 맞춘 AI 서비스. 여러 회사의 최신 AI 모델로 글쓰기·검색·이미지 생성을 한곳에서 해요.",
+    description: "한국어에 맞춘 무료 AI 서비스. 글쓰기·검색·이미지 생성을 한곳에서 해요.",
     pricing: "Free",
     url: "https://wrtn.ai",
     related: ["chatgpt", "claude", "grammarly"],
-    strengths: ["한국어 글쓰기에 맞춘 화면과 템플릿", "여러 회사 AI 모델을 골라 쓸 수 있음", "블로그·자기소개서 같은 용도별 도구 제공"],
+    strengths: ["한국어 글쓰기에 맞춘 화면과 템플릿", "무료로 바로 사용", "블로그·자기소개서 같은 용도별 도구 제공"],
     howTo: ["쓰려는 글의 종류(블로그, 자기소개서 등)를 먼저 골라요", "주제·독자·분량·말투를 적어 초안을 받아요", "마음에 드는 문단만 남기고 '더 짧게', '예시 추가'처럼 고쳐 달라고 해요"],
   },
   jasper: {
@@ -776,7 +776,7 @@ export const ARCHIVE: Category[] = [
         icon: LayoutTemplate,
         tools: [
           { tool: "claude", useCase: "디자인 → 코드 변환", tag: "코드 생성", recommendation: "시안 스크린샷을 그대로 붙여넣고 컴포넌트 코드로 바꿀 땐 Claude가 간격·글자 크기까지 꼼꼼히 맞춰요.", prompt: "첨부한 디자인 스크린샷을 React + TypeScript + Tailwind 컴포넌트로 변환해줘.\n- 간격·폰트 크기를 최대한 똑같이 맞출 것\n- 반복 요소는 props 를 받는 하위 컴포넌트로 분리\n- 반응형: 모바일 390px / 데스크톱 1440px\n- 이미지는 placeholder 로\n마지막에 디자인과 다를 수 있는 부분을 목록으로 알려줘." },
-          { tool: "cursor", useCase: "AI 코드 에디터", tag: "에디터", recommendation: "매일 쓰는 에디터 자체를 AI로 바꾸고 싶다면 Cursor. 다중 파일 리팩터링에 특히 강해요.", prompt: "@src/components 안의 모든 Button 사용처를 새 <Button variant> API 로 바꿔줘.\n기존 className 조합은 variant='primary' | 'ghost' | 'danger' 로 매핑하고,\n작업이 끝나면 바꾼 파일 목록과 매핑 표를 보여줘." },
+          { tool: "cursor", useCase: "AI 코드 에디터", tag: "에디터", recommendation: "매일 쓰는 에디터 자체를 AI로 바꾸고 싶다면 Cursor. 여러 파일에 걸친 코드를 한꺼번에 정리·수정할 때 좋아요.", prompt: "@src/components 안의 모든 Button 사용처를 새 <Button variant> API 로 바꿔줘.\n기존 className 조합은 variant='primary' | 'ghost' | 'danger' 로 매핑하고,\n작업이 끝나면 바꾼 파일 목록과 매핑 표를 보여줘." },
           { tool: "bolt", useCase: "풀스택 앱 프로토타이핑", tag: "프로토타입", recommendation: "아이디어를 시험해 볼 첫 버전(MVP)을 빠르게 띄워야 한다면 Bolt.new.", prompt: "할 일 관리 웹앱 MVP 를 만들어줘.\n기능: 이메일 로그인, 프로젝트별 할 일 목록, 마감일·우선순위, 드래그로 순서 변경\n스택: React + Vite + Tailwind + Supabase\n첫 화면은 샘플 데이터로 바로 동작하게 해줘." },
         ],
       },
@@ -1466,11 +1466,11 @@ export const ARCHIVE: Category[] = [
         id: "delegate",
         name: "작업 맡기기",
         nameEn: "DELEGATE",
-        desc: "웹 검색·정리를 대신",
+        desc: "웹·파일 작업을 대신",
         icon: Workflow,
         tools: [
           { tool: "chatgpt", useCase: "에이전트 모드", tag: "에이전트", recommendation: "웹을 돌아다니며 조사하고 정리하는 일은 ChatGPT 에이전트에게 맡겨 보세요. 결제 같은 중요한 단계는 직접 확인해요.", prompt: "다음 주 서울에서 열리는 AI 관련 무료 행사 5개를 찾아 날짜, 장소, 신청 링크를 표로 정리해줘." },
-          { tool: "claudecode", useCase: "파일 · 코드 작업 자동화", tag: "에이전트", recommendation: "폴더 안 파일 정리나 반복 스크립트 작성은 Claude Code에 맡겨요.", prompt: "이 폴더의 영수증 사진 파일 이름을 '날짜_가게이름' 형식으로 바꾸는 스크립트를 만들고, 바꾸기 전에 목록부터 보여줘." },
+          { tool: "claudecode", useCase: "파일 · 코드 작업 자동화", tag: "에이전트", recommendation: "웹 대신 내 컴퓨터의 폴더 정리나 반복 작업이라면 Claude Code에 맡겨요.", prompt: "이 폴더의 영수증 사진 파일 이름을 '날짜_가게이름' 형식으로 바꾸는 스크립트를 만들고, 바꾸기 전에 목록부터 보여줘." },
         ],
       },
     ],
