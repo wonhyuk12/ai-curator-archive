@@ -102,7 +102,7 @@ function PaletteDialog({ category, onClose, onPick }: Omit<Props, "open">) {
           <kbd className="rounded-md border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/40">ESC</kbd>
         </div>
         <div ref={listRef} id="palette-list" role="listbox" className="thin-scroll max-h-[50vh] overflow-y-auto p-2">
-          {hits.length === 0 && <div className="px-4 py-10 text-center font-mono text-xs tracking-widest text-white/35">NO MATCH — 다른 키워드를 시도해 보세요</div>}
+          {hits.length === 0 && <div className="px-4 py-10 text-center font-mono text-xs tracking-widest text-white/35">찾는 결과가 없어요 — 다른 키워드를 시도해 보세요</div>}
           {hits.map((h, i) => {
             const acc = h.category.accent;
             const isActive = i === active;

@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import { Backdrop } from "@/components/ui/Backdrop";
 import { Crosshairs } from "@/components/ui/Crosshairs";
 import { ScrambleText } from "@/components/ui/ScrambleText";
+import { ARCHIVE, TOOLS } from "@/data/archive";
+
+const TASKS = ARCHIVE.length;
+const TOOL_COUNT = Object.keys(TOOLS).length;
 
 const PRIZE = process.env.NEXT_PUBLIC_KIOSK_PRIZE ?? "스타벅스 아메리카노";
 
@@ -19,8 +23,8 @@ type Dest = {
 };
 
 const DESTS: Dest[] = [
-  { key: "news", href: "/news/index.html", accent: "#00F0FF", label: "AI 소식", en: "NEWS · MODELS · PRICE", desc: "최신 모델 · 요금 비교 · 진화 타임라인" },
-  { key: "archive", href: "/", accent: "#FF2E88", label: "작업별 AI\n기능 추천", en: "ARCHIVE · BY TASK", desc: "개발 · 디자인 · 공부 · 영상 편집" },
+  { key: "news", href: "/news/index.html", accent: "#00F0FF", label: "AI 소식", en: "최신 모델 · 요금 · 소식", desc: "최신 모델 · 요금 비교 · 진화 타임라인" },
+  { key: "archive", href: "/", accent: "#FF2E88", label: "작업별 AI\n기능 추천", en: `작업 ${TASKS}가지 · AI 툴 ${TOOL_COUNT}개`, desc: "개발 · 디자인 · 공부 · 글쓰기 · 발표 · 취업 …" },
 ];
 
 export function KioskStart() {
@@ -67,7 +71,7 @@ export function KioskStart() {
           animate={{ opacity: [1, 0.25, 1] }}
           transition={{ duration: 1.8, repeat: Infinity }}
         >
-          [ TOUCH TO START ]
+          [ 원하는 버튼을 눌러 시작하세요 ]
         </motion.div>
         <h1 className="mt-[1.4vh] text-[clamp(30px,8.4vh,84px)] font-extrabold leading-[1.02] tracking-[-0.045em]">
           <ScrambleText text="지금 AI, 무엇이 새롭고" duration={900} className="block" />

@@ -1,6 +1,6 @@
 # AI 큐레이터 + AI ARCHIVE
 
-AI 소식과 모델을 한눈에 보는 **AI 큐레이터**와, 직업별로 쓸 만한 AI 툴을 마인드맵으로 정리한 **AI ARCHIVE**를 한 저장소에 담았어요. 두 사이트는 서로 링크로 이어져 있어요.
+AI 소식과 모델을 한눈에 보는 **AI 큐레이터**와, 하고 싶은 작업별로 쓸 만한 AI 툴을 마인드맵으로 정리한 **AI ARCHIVE**를 한 저장소에 담았어요. 두 사이트는 서로 링크로 이어져 있어요.
 
 | AI 큐레이터 | AI ARCHIVE | 마인드맵 |
 |---|---|---|
@@ -22,7 +22,7 @@ npm run dev      # 두 사이트를 동시에 실행
 - AI 큐레이터 → http://localhost:3001
 - AI ARCHIVE → http://localhost:3000
 
-두 사이트 사이의 이동 버튼(큐레이터의 "직업별 AI 찾기", ARCHIVE의 "← AI 큐레이터")은 내 컴퓨터에서 실행하면 자동으로 위의 로컬 주소로 연결돼요.
+두 사이트 사이의 이동 버튼(큐레이터의 "작업별 AI 찾기", ARCHIVE의 "← AI 큐레이터")은 내 컴퓨터에서 실행하면 자동으로 위의 로컬 주소로 연결돼요.
 
 | 명령 | 하는 일 |
 |---|---|
@@ -35,7 +35,8 @@ npm run dev      # 두 사이트를 동시에 실행
 ### AI 큐레이터 (`curator/`)
 HTML·CSS·JavaScript만으로 된 정적 사이트예요. 빌드 과정이 없어요.
 
-- **LLM 차트**: 최신 · 화제성 · 요금(API / 무료 / Pro / Max) · 급상승(OpenRouter 사용량) · 관심
+- **AI 모델 순위**: 최신순 · 요금(개발자용 API / 무료 / 기본 유료 / 최상위 유료) · 인기(OpenRouter 30일 사용량)
+- **주요 소식**: 공식 발표만, "무엇이 바뀌었나 · 나에게 왜 중요한가"와 원문 링크
 - **AI 진화 타임라인**: GPT, Claude, Gemini, Llama·Muse, DeepSeek, Mistral, Grok 7개 계열의 출시 기록 (항목마다 공식 출처 링크)
 - **검색**: 모델·계열 자동완성, 주요 소식과 같은 카테고리 탭, 주요 소식 안 검색창
 - **알림함**: 최근 30일 출시·업데이트 소식
@@ -43,7 +44,7 @@ HTML·CSS·JavaScript만으로 된 정적 사이트예요. 빌드 과정이 없�
 ### AI ARCHIVE (`archive/`)
 Next.js 16 + TypeScript + Tailwind CSS + Framer Motion + React Flow로 만든 사이트예요.
 
-- 개발자 · 디자이너 · 공부 · 영상 편집 4개 직업별 AI 툴 54개
+- 개발 · 디자인 · 공부 · 영상 편집 · 글쓰기 · 마케팅 · 사무 · 발표 · 외국어 · 데이터 분석 · 취업 · 연구 · 음악 · 자동화 · 3D·게임 — 15개 작업, AI 툴 69개
 - 분야 → 툴로 펼쳐지는 마인드맵, ⌘K 검색
 - 툴마다 왜 좋은지 · 활용법 · 바로 쓸 수 있는 예시 프롬프트(복사 버튼)
 
@@ -53,18 +54,18 @@ Next.js 16 + TypeScript + Tailwind CSS + Framer Motion + React Flow로 만든 �
 
 | 바꾸고 싶은 것 | 파일 |
 |---|---|
-| ARCHIVE의 직업·분야·툴·프롬프트 | `archive/data/archive.ts` |
+| ARCHIVE의 작업·분야·툴·프롬프트 | `archive/data/archive.ts` |
 | 큐레이터의 차트 모델·API 요금 | `curator/js/data.js` → `MODELS` |
 | AI 진화 타임라인 · 계열 · 검색 별명 | `curator/js/data.js` → `TIMELINES`, `FAMILIES` |
 | 구독 요금 (무료·Pro·Max) | `curator/js/data.js` → `SUBSCRIPTIONS` |
-| 급상승 (OpenRouter 사용량) | `curator/js/data.js` → `TRENDING` |
+| 인기 (OpenRouter 30일 사용량) | `curator/js/data.js` → `POPULAR` |
 | 주요 소식 | `curator/js/data.js` → `NEWS` |
 
-**실제 데이터와 예시 데이터**
-- 실제 데이터(2026-09-30 기준 · 출처 링크 포함): 진화 타임라인, 차트 모델 정보, API·구독 요금, 급상승, ARCHIVE 툴 정보
-- 예시 데이터(디자인 확인용): 큐레이터의 화제성 점수·등락률, 주요 소식, 작업물, 상단 지수 카드 — 화면에 `예시` 표시가 있어요
+**모든 데이터는 실제 데이터예요** (2026-10-22 확인 · 항목마다 출처 링크)
+- 모델 정보·API 요금은 각 회사 공식 요금 페이지, 소식은 공식 발표 기준이에요.
+- 출처끼리 금액이 다른 구독 요금제는 넣지 않았어요. 실제 자료를 찾을 수 없는 점수·지수·예시 소식은 모두 지웠어요.
 
-AI는 빨리 바뀌니까 요금·모델·급상승은 주기적으로 갱신해 주세요. 각 데이터 위에 기준 날짜(`TIMELINE_CHECKED`, `ARCHIVE_CHECKED`, `TRENDING.checked`)가 있어요.
+AI는 빨리 바뀌니까 요금·모델·인기는 주기적으로 갱신해 주세요. 기준 날짜는 `curator/js/data.js`의 `CHECKED`, `POPULAR.checked`와 `archive/data/archive.ts`의 `ARCHIVE_CHECKED`예요.
 
 ## 배포하기 (Vercel 예시)
 

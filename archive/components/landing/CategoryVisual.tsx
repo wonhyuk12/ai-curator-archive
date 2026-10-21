@@ -11,8 +11,13 @@ export function CategoryVisual({ slug, accent, active }: { slug: string; accent:
       return <Torus accent={accent} active={active} />;
     case "study":
       return <Stack accent={accent} active={active} />;
-    default:
+    case "video":
       return <Waveform accent={accent} active={active} />;
+    default: {
+      // 새로 추가한 작업은 네 가지 그림을 돌아가며 써요
+      const V = [Stack, Torus, Cube, Waveform][[...slug].reduce((n, ch) => n + ch.charCodeAt(0), 0) % 4];
+      return <V accent={accent} active={active} />;
+    }
   }
 }
 

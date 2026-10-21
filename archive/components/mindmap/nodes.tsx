@@ -71,9 +71,10 @@ export const RootNode = memo(function RootNode({ data }: NodeProps<MapNode>) {
       <Handles />
       <div className="min-w-0 flex-1">
         <div className="font-mono text-[10px] font-medium tracking-[0.2em] opacity-60">
-          [{category.index}] ROOT
+          [{category.index}] 작업
         </div>
-        <div className="truncate text-[28px] font-extrabold leading-tight tracking-[-0.04em]">{category.name}</div>
+        {/* 긴 이름(예: 취업·자기소개서)은 글자를 줄여 한 줄에 다 보이게 */}
+        <div className="truncate font-extrabold leading-tight tracking-[-0.04em]" style={{ fontSize: category.name.length > 6 ? 20 : category.name.length > 4 ? 24 : 28 }}>{category.name}</div>
       </div>
       <Toggle expanded={expanded} accent={accent} dark />
     </motion.div>
@@ -115,9 +116,9 @@ export const FieldNode = memo(function FieldNode({ data }: NodeProps<MapNode>) {
       </span>
       <div className="min-w-0 flex-1">
         <div className="truncate text-[17px] font-bold tracking-[-0.02em] text-white">{g.label}</div>
-        <div className="mt-0.5 flex items-center gap-2 font-mono text-[9.5px] tracking-[0.16em] text-white/45">
-          <span className="truncate">{g.labelEn}</span>
-          <span style={{ color: accent }}>·{String(g.children.length).padStart(2, "0")}</span>
+        {/* 이 분야에서 AI로 할 수 있는 일 (두 줄까지) · 툴 개수 */}
+        <div className="mt-0.5 line-clamp-2 text-[11px] leading-[1.3] text-white/55">
+          {g.field!.desc} <span className="whitespace-nowrap" style={{ color: accent }}>· 툴 {g.children.length}개</span>
         </div>
       </div>
       <Toggle expanded={expanded} accent={accent} />

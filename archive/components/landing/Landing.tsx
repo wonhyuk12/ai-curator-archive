@@ -56,7 +56,8 @@ export function Landing() {
     setExpanding({ category, rect });
   };
 
-  const totalTools = ARCHIVE.reduce((n, c) => n + c.fields.reduce((m, f) => m + f.tools.length, 0), 0);
+  // 여러 작업에 같이 나오는 툴은 한 번만 세요
+  const totalTools = new Set(ARCHIVE.flatMap((c) => c.fields.flatMap((f) => f.tools.map((t) => t.tool)))).size;
 
   const rise = {
     hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
@@ -83,7 +84,7 @@ export function Landing() {
             </span>
             AI_ARCHIVE
           </div>
-          <div className="hidden md:block">{"// "}INDEX OF AGENTS &amp; TOOLS</div>
+          <div className="hidden md:block">{"// "}하고 싶은 작업에 맞는 AI 찾기</div>
           <div className="flex items-center gap-4">
             <a href={curatorUrl} className="flex items-center gap-2 text-white/70 transition-colors hover:text-[#00F0FF]">
               ← AI 큐레이터
@@ -97,7 +98,7 @@ export function Landing() {
           <motion.div variants={rise} className="mb-6 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-white/45">
             <span className="text-white">[00]</span>
             <span className="h-px w-10 bg-white/30" />
-            <span>CURATED ARCHIVE — v2026</span>
+            <span>작업별 AI 툴 모음</span>
           </motion.div>
 
           <motion.h1
@@ -121,15 +122,15 @@ export function Landing() {
 
           <div className="mt-8 grid gap-8 md:mt-10 md:grid-cols-12 md:items-end">
             <motion.p variants={rise} className="text-xl font-semibold leading-snug tracking-[-0.02em] text-white/90 md:col-span-6 md:text-3xl">
-              직업별로 정리한
+              작업별로 정리한
               <br />
-              AI 에이전트 &amp; 툴 아카이브<span className="caret ml-1 inline-block h-[0.9em] w-[0.45em] translate-y-[0.1em] bg-white/80" />
+              AI 툴 · 사용법 · 예시 프롬프트<span className="caret ml-1 inline-block h-[0.9em] w-[0.45em] translate-y-[0.1em] bg-white/80" />
             </motion.p>
             <motion.dl variants={rise} className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 font-mono md:col-span-6 md:ml-auto md:w-full md:max-w-[460px]">
               {[
-                ["CATEGORIES", String(ARCHIVE.length).padStart(2, "0")],
-                ["FIELDS", String(ARCHIVE.reduce((n, c) => n + c.fields.length, 0)).padStart(2, "0")],
-                ["TOOLS", String(totalTools).padStart(2, "0")],
+                ["작업", String(ARCHIVE.length).padStart(2, "0")],
+                ["세부 분야", String(ARCHIVE.reduce((n, c) => n + c.fields.length, 0)).padStart(2, "0")],
+                ["AI 툴", String(totalTools).padStart(2, "0")],
               ].map(([k, v]) => (
                 <div key={k} className="bg-ink/80 px-4 py-4 backdrop-blur">
                   <dt className="text-[9px] tracking-[0.22em] text-white/40">{k}</dt>
@@ -142,8 +143,8 @@ export function Landing() {
 
         {/* ── Bento grid ──────────────────────────────── */}
         <motion.div variants={rise} className="mb-5 flex items-center justify-between font-mono text-[11px] tracking-[0.2em] text-white/45">
-          <span>{"// "}SELECT A PROFESSION</span>
-          <span className="hidden md:inline">CLICK TO ENTER MIND MAP →</span>
+          <span>{"// "}하고 싶은 작업을 고르세요</span>
+          <span className="hidden md:inline">눌러서 마인드맵 보기 →</span>
         </motion.div>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
@@ -176,7 +177,7 @@ export function Landing() {
         </motion.div>
 
         <motion.footer variants={rise} className="flex flex-col gap-2 pt-8 font-mono text-[10px] tracking-[0.2em] text-white/35 md:flex-row md:justify-between">
-          <span>© 2026 AI ARCHIVE — CURATED BY HAND</span>
+          <span>툴마다 공식 사이트 기준으로 확인했어요</span>
           <span>툴 정보 {ARCHIVE_CHECKED.replaceAll("-", ".")} 기준</span>
         </motion.footer>
       </motion.div>

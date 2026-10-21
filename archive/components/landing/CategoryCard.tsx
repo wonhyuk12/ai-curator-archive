@@ -160,26 +160,27 @@ export function CategoryCard({
           <div className={wide ? "max-w-[46%] max-md:max-w-none" : ""}>
             <div className={`mb-4 flex flex-wrap gap-1.5 ${size === "tall" ? "max-w-[62%]" : ""}`}>
               {category.fields.map((f) => (
-                <span key={f.id} className="rounded-full border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white/55">
-                  {f.nameEn}
+                <span key={f.id} className="rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-[11px] text-white/60">
+                  {f.name}
                 </span>
               ))}
             </div>
             <h2
               className={`font-sans font-extrabold leading-[0.92] tracking-[-0.04em] text-white ${
-                big ? "text-6xl md:text-8xl" : "text-5xl md:text-6xl"
+                big ? "text-6xl md:text-8xl" : category.name.length > 6 ? "text-4xl md:text-[44px]" : "text-5xl md:text-6xl"
               }`}
             >
               {category.name}
             </h2>
             <p className="mt-3 max-w-sm text-sm text-white/55">{category.tagline}</p>
             <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-4 font-mono text-[11px] tracking-[0.2em]">
-              <span className="text-white/40">{category.fields.length} FIELDS</span>
+              <span className="font-sans tracking-normal text-white/50">세부 분야 {category.fields.length}개</span>
               <span className="flex items-baseline gap-1.5">
+                <span className="font-sans tracking-normal text-white/60">AI 툴</span>
                 <span className="font-display text-3xl font-medium tracking-tight" style={{ color: accent, textShadow: `0 0 24px ${accent}88` }}>
                   {String(tools).padStart(2, "0")}
                 </span>
-                <span className="text-white/60">TOOLS</span>
+                <span className="font-sans tracking-normal text-white/60">개</span>
               </span>
             </div>
           </div>

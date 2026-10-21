@@ -256,7 +256,7 @@ export function demoData(qs: Question[]): Dataset {
   const sessions: Session[] = [], events: Event[] = [], surveys: Survey[] = [], raffles: Raffle[] = [];
   const now = Date.now();
   const clickables: Record<string, string[]> = {
-    "/news": ["요금", "급상승", "GPT-6.1 Sol", "Claude Opus 5.5", "진화", "검색: gpt", "알림", "주요 소식 검색", "직업별 AI 찾기"],
+    "/news": ["요금", "인기", "GPT-6.1 Sol", "Claude Opus 5.5", "진화", "검색: gpt", "알림", "주요 소식 검색", "작업별 AI 찾기"],
     "/": ["개발자 DEVELOPER", "디자이너 DESIGNER", "공부 STUDY", "영상 편집 VIDEO EDITING"],
     "/developer": ["프론트엔드", "백엔드", "Claude Code", "Cursor", "마인드맵 전체 보기", "복사"],
     "/study": ["노트 · 정리", "Gemini Notebook", "튜터 · 질의응답"],

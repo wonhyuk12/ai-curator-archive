@@ -17,8 +17,8 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI ARCHIVE — 직업별 AI 에이전트 & 툴 아카이브",
-  description: "개발자, 디자이너, 공부, 영상 편집. 직업별로 정리한 AI 에이전트 & 툴 아카이브.",
+  title: "AI ARCHIVE — 작업별 AI 툴 추천",
+  description: "개발, 디자인, 공부, 글쓰기, 발표, 데이터 분석 등 하고 싶은 작업에 맞는 AI 툴과 사용법, 예시 프롬프트.",
 };
 
 export const viewport: Viewport = {

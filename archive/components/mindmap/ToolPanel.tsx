@@ -8,9 +8,9 @@ import { monogram, toolOccurrences, type GNode } from "@/lib/graph";
 import { Crosshairs } from "@/components/ui/Crosshairs";
 
 const PRICING_STYLE: Record<Pricing, { label: string; color: string }> = {
-  Free: { label: "FREE", color: "#C6FF00" },
-  Freemium: { label: "FREE + PAID", color: "#ffffff" },
-  Paid: { label: "PAID", color: "#FF6B00" },
+  Free: { label: "무료", color: "#C6FF00" },
+  Freemium: { label: "무료 + 유료", color: "#ffffff" },
+  Paid: { label: "유료", color: "#FF6B00" },
 };
 
 export function ToolPanel({
@@ -111,7 +111,7 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
     <motion.div key={node.id} className="relative p-6 md:p-7" variants={stagger} initial="hidden" animate="show">
       <motion.div variants={item} className="flex items-center justify-between font-mono text-[10px] tracking-[0.2em] text-white/45">
         <span>
-          <span style={{ color: accent }}>[TOOL]</span> {"// "}{node.field!.nameEn}
+          <span style={{ color: accent }}>AI 툴</span> {"· "}<span className="font-sans tracking-normal">{node.field!.name}</span>
         </span>
         <button type="button" onClick={onClose} aria-label="닫기" className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/70 transition-colors hover:border-white/30 hover:text-white">
           <X className="h-4 w-4" />

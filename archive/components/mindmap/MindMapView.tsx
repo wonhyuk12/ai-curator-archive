@@ -198,10 +198,10 @@ export function MindMapView({ slug }: { slug: string }) {
           type="button"
           onClick={() => setPaletteOpen(true)}
           data-accent={accent}
-          className="flex h-10 items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-3 text-sm text-white/50 transition-colors hover:border-white/25 hover:text-white md:w-72"
+          className="flex h-10 items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-3 text-sm text-white/50 transition-colors hover:border-white/25 hover:text-white md:w-44 lg:w-72"
         >
           <Search className="h-4 w-4" />
-          <span className="hidden flex-1 text-left md:inline">노드 검색…</span>
+          <span className="hidden flex-1 text-left md:inline">툴 검색…</span>
           <kbd className="hidden rounded-md border border-white/10 px-1.5 py-0.5 font-mono text-[10px] md:inline">⌘K</kbd>
         </button>
 
@@ -257,30 +257,30 @@ export function MindMapView({ slug }: { slug: string }) {
             className="pointer-events-none absolute left-5 top-[88px] font-mono max-[640px]:hidden text-[10px] leading-5 tracking-[0.18em] text-white/40"
           >
             <div className="text-white/70">
-              {"// "}{category.nameEn} <span style={{ color: accent }}>MIND MAP</span>
+              {"// "}<span className="font-sans tracking-normal">{category.name}</span> <span style={{ color: accent }}>마인드맵</span>
             </div>
             <div>
-              {category.fields.length} FIELDS · {tools} TOOLS
+              세부 분야 {category.fields.length}개 · 툴 {tools}개
             </div>
             <div className="mt-3 space-y-1">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-4 rounded-full" style={{ background: accent }} /> L1 CATEGORY
+                <span className="h-2 w-4 rounded-full" style={{ background: accent }} /> 작업
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-2 w-4 rounded-sm border" style={{ borderColor: accent }} /> L2 FIELD
+                <span className="h-2 w-4 rounded-sm border" style={{ borderColor: accent }} /> 세부 분야
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-2 w-4 rounded-sm border border-white/40" /> L3 TOOL
+                <span className="h-2 w-4 rounded-sm border border-white/40" /> AI 툴
               </div>
             </div>
-            <div className="mt-3 text-white/30">CLICK NODE TO EXPAND</div>
+            <div className="mt-3 text-white/30">눌러서 펼치기 · 툴을 누르면 사용법</div>
           </motion.div>
         </div>
       )}
       {isMobile === true && (
         <div className="thin-scroll absolute inset-0 overflow-y-auto pt-[68px]">
           <div className="px-4 pt-5 font-mono text-[10px] tracking-[0.18em] text-white/40">
-            {"// "}{category.nameEn} <span style={{ color: accent }}>TREE</span> · {tools} TOOLS
+            {"// "}{category.nameEn} <span style={{ color: accent }}>목록</span> · 툴 {tools}개
           </div>
           <MobileTree
             category={category}
