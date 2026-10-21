@@ -26,8 +26,8 @@ html.kiosk ::-webkit-scrollbar { width: 0; height: 0; }      /* 작은 스크롤
   padding: 0 16px 0 12px; background: linear-gradient(120deg, var(--kq-cyan), #7af7ff 45%, var(--kq-pink));
   color: #050505; font-weight: 800; animation: kq-glow 2.4s ease-in-out infinite;
 }
-.kq-dock-survey b { font-size: 15px; }
-.kq-dock-survey small { font-size: 11.5px; font-weight: 700; opacity: .75; }
+.kq-dock-survey b { font-size: 16px; }
+.kq-dock-survey small { font-size: 14px; font-weight: 800; opacity: .9; }
 .kq-dot { width: 8px; height: 8px; border-radius: 50%; background: #050505; animation: kq-blink 1.2s steps(1) infinite; }
 .kq-dock.done .kq-dock-survey { background: rgba(198, 255, 0, .14); color: var(--kq-lime); animation: none; box-shadow: inset 0 0 0 1px rgba(198, 255, 0, .5); }
 .kq-dock.done .kq-dot { display: none; }
