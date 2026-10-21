@@ -44,6 +44,12 @@ if [ -z "$CHROME" ]; then
   CHROME="$(command -v chromium-browser || command -v chromium)"
 fi
 
+# 한글 글꼴 (없으면 키오스크 화면의 한글이 네모로 깨져요)
+if ! fc-list :lang=ko 2>/dev/null | grep -q .; then
+  echo "한글 글꼴을 설치해요..."
+  sudo apt-get update && sudo apt-get install -y fonts-nanum fonts-noto-cjk || sudo apt-get install -y fonts-nanum
+fi
+
 mkdir -p "$KDIR"
 
 # 1) 크롬 키오스크 실행 스크립트 (꺼지면 3초 뒤 다시 실행)
