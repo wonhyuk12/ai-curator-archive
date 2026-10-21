@@ -12,6 +12,7 @@ import { Backdrop } from "@/components/ui/Backdrop";
 import { CommandPalette } from "./CommandPalette";
 import { FlowCanvas, type ViewRequest } from "./FlowCanvas";
 import { domId, MobileTree } from "./MobileTree";
+import { MapHint } from "./MapHint";
 import { ToolPanel } from "./ToolPanel";
 import { useKiosk } from "@/lib/useKiosk";
 
@@ -245,6 +246,7 @@ export function MindMapView({ slug }: { slug: string }) {
               onPaneClick={() => setSelectedId(null)}
             />
           </ReactFlowProvider>
+          {kiosk && <MapHint graph={graph} root={slug} expanded={expanded} selectedId={selectedId} accent={accent} />}
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
