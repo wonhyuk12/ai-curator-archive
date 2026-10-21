@@ -115,7 +115,7 @@ export const FieldNode = memo(function FieldNode({ data }: NodeProps<MapNode>) {
         <Icon className="h-5 w-5" strokeWidth={1.5} />
       </span>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[17px] font-bold tracking-[-0.02em] text-white">{g.label}</div>
+        <div className="truncate font-bold tracking-[-0.02em] text-white" style={{ fontSize: g.label.length > 8 ? 14 : g.label.length > 6 ? 15.5 : 17 }}>{g.label}</div>
         {/* 이 분야에서 AI로 할 수 있는 일 (두 줄까지) · 툴 개수 */}
         <div className="mt-0.5 line-clamp-2 text-[11px] leading-[1.3] text-white/55">
           {g.field!.desc} <span className="whitespace-nowrap" style={{ color: accent }}>· 툴 {g.children.length}개</span>

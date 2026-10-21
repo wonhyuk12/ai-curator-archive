@@ -913,7 +913,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "tutor",
-        name: "튜터 · 질의응답",
+        name: "튜터·질의응답",
         nameEn: "AI TUTOR",
         desc: "모르는 것 물어보기",
         icon: MessagesSquare,
@@ -996,7 +996,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "shortform",
-        name: "숏폼 · 리퍼포징",
+        name: "숏폼 만들기",
         nameEn: "SHORT-FORM",
         desc: "숏폼으로 바꾸기",
         icon: Smartphone,
@@ -1088,7 +1088,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "visual",
-        name: "카드뉴스 · 이미지",
+        name: "카드뉴스·이미지",
         nameEn: "VISUAL",
         desc: "SNS용 그림 빠르게 만들기",
         icon: Image,
@@ -1257,7 +1257,7 @@ export const ARCHIVE: Category[] = [
     fields: [
       {
         id: "analyze",
-        name: "표 분석 · 그래프",
+        name: "표 분석·그래프",
         nameEn: "ANALYZE",
         desc: "파일 올리고 말로 질문",
         icon: ChartColumn,
@@ -1325,7 +1325,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "resume",
-        name: "이력서 · 포트폴리오",
+        name: "이력서·포트폴리오",
         nameEn: "RESUME",
         desc: "보기 좋게 정리하기",
         icon: ClipboardList,
@@ -1360,7 +1360,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "read",
-        name: "논문 읽기 · 요약",
+        name: "논문 읽기·요약",
         nameEn: "READ",
         desc: "어려운 논문 쉽게 이해",
         icon: BookOpenText,
@@ -1372,7 +1372,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "evidence",
-        name: "근거 · 인용 확인",
+        name: "근거·인용 확인",
         nameEn: "EVIDENCE",
         desc: "주장이 맞는지 확인",
         icon: Quote,
@@ -1394,7 +1394,7 @@ export const ARCHIVE: Category[] = [
     fields: [
       {
         id: "compose",
-        name: "작곡 · 배경음악",
+        name: "작곡·배경음악",
         nameEn: "COMPOSE",
         desc: "말로 설명하면 음악 완성",
         icon: Music,
@@ -1405,7 +1405,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "voice",
-        name: "목소리 · 내레이션",
+        name: "목소리·내레이션",
         nameEn: "VOICE",
         desc: "글을 자연스러운 목소리로",
         icon: Volume2,
@@ -1449,7 +1449,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "agent",
-        name: "AI 에이전트 만들기",
+        name: "AI 에이전트",
         nameEn: "AI AGENTS",
         desc: "스스로 판단해 일하는 AI",
         icon: Bot,
@@ -1460,7 +1460,7 @@ export const ARCHIVE: Category[] = [
       },
       {
         id: "delegate",
-        name: "컴퓨터 작업 맡기기",
+        name: "작업 맡기기",
         nameEn: "DELEGATE",
         desc: "웹 검색·정리를 대신",
         icon: Workflow,
