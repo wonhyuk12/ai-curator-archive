@@ -79,6 +79,47 @@ AI는 빨리 바뀌니까 요금·모델·급상승은 주기적으로 갱신해
 - ARCHIVE → 큐레이터: 환경 변수 `NEXT_PUBLIC_CURATOR_URL`에 큐레이터 주소를 넣고 다시 빌드
 - 큐레이터 → ARCHIVE: `curator/js/app.js` 맨 위 `ARCHIVE_URL`의 배포 주소를 수정
 
+## 키오스크 모드 (라즈베리파이 터치 화면)
+
+AI ARCHIVE 앱 하나가 키오스크 전체를 보여 줘요. 큐레이터는 빌드할 때 `archive/public/news`로 자동 복사돼서 `/news/`에서 열려요.
+
+| 주소 | 화면 |
+|---|---|
+| `/kiosk` | 시작 화면: "AI 소식" · "작업별 AI 기능 추천" 두 버튼 |
+| `/news/` | AI 큐레이터 |
+| `/` | AI ARCHIVE |
+| `/admin` | 관리자 분석 페이지 (로그인 필요) |
+
+- 키오스크 모드에서는 화면 아래에 **[처음으로] [설문 참여]** 버튼이 떠요. 2분 동안 조작이 없으면 첫 화면으로 돌아가요.
+- 설문 13문항(`archive/public/kiosk/questions.json`에서 수정), 화면 키보드(한/영/숫자) 내장, 끝나면 경품 추첨 응모(전화번호는 설문과 연결하지 않고 따로 저장).
+- 기록: 페이지 이동·머문 시간·클릭·설문을 어느 페이지에서 열었는지 → Supabase에 저장 → `/admin`에서 비교 분석, CSV 내려받기.
+- 일반 브라우저로 볼 때는 키오스크 기능이 꺼져 있어요. `?kiosk=1`로 켜고 `?kiosk=0`으로 꺼요.
+
+### 1) Supabase 준비
+1. [supabase.com](https://supabase.com)에서 새 프로젝트 만들기 (지역: Seoul)
+2. SQL Editor에 `kiosk/supabase.sql` 전체를 붙여넣고, 맨 아래 `admin@example.com`을 관리자 이메일로 바꾼 뒤 Run
+3. Authentication → Users → Add user로 그 이메일의 관리자 계정 만들기, Sign In / Providers에서 회원가입(Allow new users to sign up) 끄기
+4. Project Settings → API에서 **Project URL**과 **anon public** 키를 복사 (service_role 키는 절대 넣지 마세요)
+
+anon 키는 브라우저에 공개되지만, 권한 설정으로 "쓰기만" 가능하고 읽기는 관리자만 할 수 있어요.
+
+### 2) 환경 변수
+`archive/.env.example`을 `archive/.env.local`로 복사해서 값을 채우세요. Vercel에 올릴 때는 같은 이름으로 Environment Variables에 넣어요.
+
+### 3) 배포
+Vercel에서 이 저장소로 새 프로젝트를 만들고 **Root Directory를 `archive`**로, "Include files outside of the root directory"를 켜 두세요(빌드 때 `../curator`를 복사해요).
+
+### 4) 라즈베리파이
+파이에서 터미널을 열고:
+
+```bash
+curl -O https://raw.githubusercontent.com/wonhyuk12/ai-curator-archive/main/kiosk/setup-pi.sh
+bash setup-pi.sh https://내-배포-주소/kiosk
+sudo reboot
+```
+
+부팅하면 Chromium이 전체 화면 키오스크로 열려요(꺼져도 자동 재시작, 화면 꺼짐·페이지 확대·스와이프 뒤로가기 끔). 해제는 `bash setup-pi.sh --uninstall`.
+
 ## 문제 해결
 
 - **포트가 이미 사용 중이라고 나와요**: 3000이나 3001을 다른 프로그램이 쓰고 있어요. 그 프로그램을 끄거나, 루트 `package.json`의 `3001`과 `archive/components/landing/Landing.tsx`·`curator/js/app.js`의 로컬 주소를 같이 바꿔 주세요.

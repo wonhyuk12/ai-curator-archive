@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
@@ -35,6 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-dvh">
         <Providers>{children}</Providers>
+        {/* 키오스크 위젯: /kiosk 에서 켠 키오스크 모드일 때만 동작 (일반 방문자는 바로 종료) */}
+        <Script src="/kiosk/kiosk.js" strategy="afterInteractive" />
       </body>
     </html>
   );

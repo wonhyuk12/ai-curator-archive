@@ -17,6 +17,7 @@ import { Maximize2, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Category } from "@/data/archive";
 import { ancestors, layoutTree, NODE_SIZE, visibleIds, type Graph, type Pos } from "@/lib/graph";
+import { useKiosk } from "@/lib/useKiosk";
 import { edgeTypes, type FlowEdgeType } from "./FlowEdge";
 import { nodeTypes, type MapNode } from "./nodes";
 
@@ -51,6 +52,7 @@ export function FlowCanvas({
   onPaneClick: () => void;
 }) {
   const rf = useReactFlow<MapNode, FlowEdgeType>();
+  const kiosk = useKiosk(); // 터치 키오스크: 한 손가락 이동·두 손가락 확대는 기본, 큰 "전체 보기"만
   const reduce = useReducedMotion();
   const { accent } = category;
 
@@ -237,7 +239,7 @@ export function FlowCanvas({
     >
       <Background id="dots" variant={BackgroundVariant.Dots} gap={26} size={1.1} color="rgba(255,255,255,0.14)" />
       <Background id="major" variant={BackgroundVariant.Lines} gap={260} lineWidth={0.5} color="rgba(255,255,255,0.035)" />
-      <MiniMap
+      {!kiosk && <MiniMap
         position="bottom-right"
         pannable
         zoomable
@@ -248,11 +250,27 @@ export function FlowCanvas({
         nodeColor={(n) => (n.type === "root" ? accent : n.type === "field" ? `${accent}aa` : "rgba(255,255,255,0.35)")}
         nodeStrokeWidth={0}
         style={{ width: 200, height: 130 }}
-      />
+      />}
       <Panel position="bottom-left" className="!m-4">
-        <Hud accent={accent} />
+        {kiosk ? <KioskFit accent={accent} /> : <Hud accent={accent} />}
       </Panel>
     </ReactFlow>
+  );
+}
+
+// 키오스크(터치): 길을 잃었을 때 누르는 큰 "전체 보기" 버튼 하나
+function KioskFit({ accent }: { accent: string }) {
+  const rf = useReactFlow();
+  return (
+    <button
+      type="button"
+      data-track="마인드맵 전체 보기"
+      onClick={() => rf.fitView({ padding: 0.18, duration: 700 })}
+      className="flex h-[52px] items-center gap-2 rounded-2xl border bg-black/70 px-5 text-[15px] font-bold text-white backdrop-blur-xl"
+      style={{ borderColor: `${accent}88`, boxShadow: `0 0 24px -6px ${accent}` }}
+    >
+      <Maximize2 className="h-5 w-5" style={{ color: accent }} /> 전체 보기
+    </button>
   );
 }
 

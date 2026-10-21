@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { ALL_TOOL_NAMES, ARCHIVE, ARCHIVE_CHECKED, type Category } from "@/data/archive";
 import { Backdrop } from "@/components/ui/Backdrop";
+import { useKiosk } from "@/lib/useKiosk";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { BootSequence } from "./BootSequence";
 import { CategoryCard } from "./CategoryCard";
@@ -14,12 +15,13 @@ import { CategoryCard } from "./CategoryCard";
 const CURATOR_URL = process.env.NEXT_PUBLIC_CURATOR_URL ?? "https://ai-curator-ten.vercel.app/";
 function useCuratorUrl() {
   const [url, setUrl] = useState(CURATOR_URL);
+  const kiosk = useKiosk(); // 키오스크: 같은 주소(/news)의 큐레이터로
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_CURATOR_URL && ["localhost", "127.0.0.1"].includes(window.location.hostname)) {
       setUrl("http://localhost:3001/"); // eslint-disable-line react-hooks/set-state-in-effect -- 브라우저에서만 알 수 있는 값
     }
   }, []);
-  return url;
+  return kiosk ? "/news/index.html" : url;
 }
 
 // Boot plays once per full page load; client-side navigation back to "/" skips it.
@@ -118,7 +120,7 @@ export function Landing() {
               <br />
               AI 에이전트 &amp; 툴 아카이브<span className="caret ml-1 inline-block h-[0.9em] w-[0.45em] translate-y-[0.1em] bg-white/80" />
             </motion.p>
-            <motion.dl variants={rise} className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 font-mono md:col-span-6 md:ml-auto md:w-[460px]">
+            <motion.dl variants={rise} className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 font-mono md:col-span-6 md:ml-auto md:w-full md:max-w-[460px]">
               {[
                 ["CATEGORIES", String(ARCHIVE.length).padStart(2, "0")],
                 ["FIELDS", String(ARCHIVE.reduce((n, c) => n + c.fields.length, 0)).padStart(2, "0")],

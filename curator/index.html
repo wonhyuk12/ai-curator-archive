@@ -71,6 +71,12 @@
 <div class="toast" id="toast" hidden role="status"></div>
 
 <!-- 데이터 먼저, 화면 코드는 그다음 -->
+<!-- 키오스크(/news/ 경로로 서비스될 때)에서만 설문·이용 기록 위젯을 불러와요 -->
+<script>
+  if (location.pathname.startsWith("/news/")) {
+    const s = document.createElement("script"); s.src = "/kiosk/kiosk.js"; document.head.appendChild(s);
+  }
+</script>
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>

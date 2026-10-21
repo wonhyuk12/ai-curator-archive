@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 정적 파일: 큐레이터 복사본(public/news)과 키오스크 위젯·외부 라이브러리
+    "public/**",
   ]),
 ]);
 

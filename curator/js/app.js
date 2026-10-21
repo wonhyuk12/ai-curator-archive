@@ -4,8 +4,9 @@
 const $ = (s) => document.querySelector(s);
 
 // AI ARCHIVE 링크: npm run dev 로 띄운 경우(localhost)는 로컬 AI ARCHIVE(localhost:3000), 그 밖(배포·파일 더블클릭)은 배포된 주소
-const ARCHIVE_URL = ["localhost", "127.0.0.1"].includes(location.hostname)
-  ? "http://localhost:3000/" : "https://ai-archive-weld.vercel.app/";
+// 키오스크(/news/ 경로)에서는 같은 주소의 AI ARCHIVE(/)로
+const ARCHIVE_URL = location.pathname.startsWith("/news/") ? "/"
+  : ["localhost", "127.0.0.1"].includes(location.hostname) ? "http://localhost:3000/" : "https://ai-archive-weld.vercel.app/";
 document.querySelectorAll("a.to-archive").forEach((a) => (a.href = ARCHIVE_URL));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const cls = (v) => (v > 0 ? "up" : v < 0 ? "down" : "flat");

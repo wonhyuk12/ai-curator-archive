@@ -8,3 +8,6 @@ next-env.d.ts
 !.env.example
 .DS_Store
 npm-debug.log*
+
+# 키오스크용으로 자동 복사되는 큐레이터 (원본은 curator/)
+archive/public/news/
