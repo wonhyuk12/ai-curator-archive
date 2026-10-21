@@ -237,7 +237,7 @@
   // 아래 가운데 고정 버튼: 처음으로 · 설문 참여 (마인드맵 조작 영역을 막지 않게 작게)
   const dock = h(`<div class="kq-dock">
       <button type="button" class="kq-dock-home" aria-label="처음 화면으로">⌂ 처음으로</button>
-      <button type="button" class="kq-dock-survey"><span class="kq-dot"></span><b>설문 참여</b><small>1분 · 커피 추첨</small></button>
+      <button type="button" class="kq-dock-survey">${ICON.cup}<b>설문 참여</b><small>1분 · 커피 추첨</small></button>
     </div>`);
   root.appendChild(dock);
   dock.querySelector(".kq-dock-home").onclick = () => goHome("home");
@@ -249,6 +249,19 @@
     dock.querySelector(".kq-dock-survey small").textContent = done ? "고마워요" : "1분 · 커피 추첨";
   }
   refreshDock();
+
+  // 설문 버튼 위로 말풍선: 12초마다 6초씩 (설문 중이거나 끝냈으면 안 보여요)
+  const call = h(`<button type="button" class="kq-call">${ICON.cup}<span></span></button>`);
+  root.appendChild(call);
+  call.onclick = () => { call.classList.remove("show"); openSurvey(); };
+  cfgReady.then(() => { call.querySelector("span").innerHTML = `<b>1분</b>이면 끝! 설문하고 <b>${esc(prize())}</b> 받아 가세요`; });
+  const showCall = () => {
+    if (LS.get("kiosk.survey")?.completed || root.querySelector(".kq-ov") || document.querySelector("[data-map-hint]")) return; // 마인드맵 안내와 겹치지 않게
+    call.classList.add("show");
+    setTimeout(() => call.classList.remove("show"), 6000);
+  };
+  setTimeout(showCall, 2500);
+  setInterval(showCall, 12000);
 
   function goHome(reason) {
     endSession(reason);

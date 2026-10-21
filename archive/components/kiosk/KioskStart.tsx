@@ -120,22 +120,31 @@ export function KioskStart() {
         ))}
       </section>
 
-      {/* 추첨 배너 */}
+      {/* 추첨 배너: 계속 은은하게 빛나요 */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="relative z-10 mx-auto mt-[2.4vh] flex items-center gap-3 overflow-hidden rounded-full border border-[#FF6B00]/40 bg-[#FF6B00]/10 px-5 py-[0.9vh] text-[clamp(12px,2.2vh,17px)] font-semibold"
+        animate={{
+          opacity: 1,
+          y: 0,
+          boxShadow: ["0 0 0px 0px rgba(255,107,0,0)", "0 0 34px 2px rgba(255,107,0,.55)", "0 0 0px 0px rgba(255,107,0,0)"],
+          scale: [1, 1.035, 1],
+        }}
+        transition={{ delay: 0.7, boxShadow: { duration: 1.8, repeat: Infinity }, scale: { duration: 1.8, repeat: Infinity } }}
+        className="relative z-10 mx-auto mt-[2.4vh] flex items-center gap-3 overflow-hidden rounded-full border-2 border-[#FF6B00]/70 bg-[#FF6B00]/15 px-6 py-[1.3vh] text-[clamp(15px,3vh,22px)] font-bold"
       >
-        <span className="text-[1.3em]">☕</span>
+        <svg aria-hidden viewBox="0 0 24 24" className="h-[1.4em] w-[1.4em] shrink-0 text-[#ffb37a]">
+          <path d="M4 8h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z" fill="none" stroke="currentColor" strokeWidth="2" />
+          <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="currentColor" strokeWidth="2" />
+          <path d="M8 2.5c-.8 1 .8 2 0 3M12 2.5c-.8 1 .8 2 0 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
         <span>
           둘러보고 <b className="text-[#ffb37a]">1분 설문</b>에 참여하면 추첨을 통해 <b className="text-[#ffb37a]">{PRIZE}</b>를 드려요
         </span>
         <motion.i
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent"
           animate={{ left: ["-40%", "140%"] }}
-          transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 1.2 }}
+          transition={{ duration: 2, repeat: Infinity, repeatDelay: 0.6 }}
         />
       </motion.div>
 
