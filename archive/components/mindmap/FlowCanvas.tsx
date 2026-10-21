@@ -151,10 +151,12 @@ export function FlowCanvas({
     const duration = reduce ? 0 : 900;
     // Keep targets clear of the detail panel when it's open.
     const inset = rightInset;
+    // 키오스크는 화면 아래 고정 버튼(처음으로·설문) 높이만큼 비우고 맞춰요
+    const bottom = kiosk ? 84 : 0;
     const fitTo = (b: ReturnType<typeof bounds>, padding: number, maxZoom: number) => {
       if (!Number.isFinite(b.x)) return;
-      const zoom = Math.min(maxZoom, ((paneW - inset) * (1 - padding)) / b.width, (paneH * (1 - padding)) / b.height);
-      rf.setCenter(b.x + b.width / 2 + inset / 2 / zoom, b.y + b.height / 2, { zoom, duration });
+      const zoom = Math.min(maxZoom, ((paneW - inset) * (1 - padding)) / b.width, ((paneH - bottom) * (1 - padding)) / b.height);
+      rf.setCenter(b.x + b.width / 2 + inset / 2 / zoom, b.y + b.height / 2 + bottom / 2 / zoom, { zoom, duration });
     };
     const run = () => {
       if (view.kind === "fit") fitTo(bounds([...t.keys()]), 0.14, 1);

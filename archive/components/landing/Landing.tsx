@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ALL_TOOL_NAMES, ARCHIVE, ARCHIVE_CHECKED, type Category } from "@/data/archive";
+import { ALL_TOOL_NAMES, ARCHIVE, ARCHIVE_CHECKED, GROUP_NAMES, type Category, type TaskGroup } from "@/data/archive";
 import { Backdrop } from "@/components/ui/Backdrop";
 import { useKiosk } from "@/lib/useKiosk";
 import { KioskExit } from "@/components/kiosk/KioskExit";
@@ -36,6 +36,9 @@ export function Landing() {
   const [booting, setBooting] = useState(!hasBooted);
   const [ready, setReady] = useState(hasBooted);
   const [hovered, setHovered] = useState<string | null>(null);
+  // 작업이 많아서 분류 칩으로 걸러 봐요
+  const [group, setGroup] = useState<TaskGroup | "all">("all");
+  const shown = group === "all" ? ARCHIVE : ARCHIVE.filter((c) => c.group === group);
   const [expanding, setExpanding] = useState<Expanding>(null);
   const curatorUrl = useCuratorUrl();
   const kiosk = useKiosk();
@@ -147,8 +150,23 @@ export function Landing() {
           <span className="hidden md:inline">눌러서 마인드맵 보기 →</span>
         </motion.div>
 
+        <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="작업 분류">
+          {([["all", `전체 ${ARCHIVE.length}`], ...(Object.entries(GROUP_NAMES) as [TaskGroup, string][]).map(([k, v]) => [k, `${v} ${ARCHIVE.filter((c) => c.group === k).length}`])] as [TaskGroup | "all", string][]).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setGroup(k)}
+              aria-pressed={group === k}
+              data-track={`작업 분류: ${k}`}
+              className={`min-h-[44px] rounded-full border px-4 text-sm font-semibold transition-colors ${group === k ? "border-[#00F0FF] bg-[#00F0FF]/15 text-[#00F0FF]" : "border-white/15 text-white/70"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-          {ARCHIVE.map((c, i) => (
+          {shown.map((c, i) => (
             <CategoryCard
               key={c.slug}
               category={c}

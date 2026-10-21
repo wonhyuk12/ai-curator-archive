@@ -449,7 +449,7 @@ function renderSuggest() {
     sugItems = suggestList(qInput.value).items;
     const icon = (it) => it.type === "fam" ? logo(FAMILIES[it.key].co, 28)
       : it.type === "model" ? modelLogo(MODELS.find((m) => m.id === it.id), 28)
-      : `<span class="sg-ic">${it.type === "feat" ? "⚡" : "⌕"}</span>`;
+      : `<span class="sg-ic">${it.type === "feat" ? "•" : "⌕"}</span>`;
     body = (toks.length ? "" : `<div class="sg-head">AI 계열과 모델 · 최신순</div>`) + sugItems.map((it, i) => `
       <button type="button" role="option" id="sg-${i}" class="sg-item sg-${it.type}" data-i="${i}" aria-selected="false">
         ${icon(it)}<span class="sg-txt"><b>${hl(it.label, toks)}</b><small>${esc(it.sub)}</small></span>
