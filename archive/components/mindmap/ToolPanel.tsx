@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Check, Copy, CornerDownLeft, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { TOOLS, type Category, type Pricing } from "@/data/archive";
+import { ENTRY_GUIDES } from "@/data/entry-guides";
 import { monogram, toolOccurrences, type GNode } from "@/lib/graph";
 import { Crosshairs } from "@/components/ui/Crosshairs";
 
@@ -44,6 +45,7 @@ export function ToolPanel({
             key="panel"
             role="dialog"
             aria-label={`${node.label} 상세`}
+            data-tool-panel
             data-accent={category.accent}
             initial={mobile ? { y: "100%" } : { x: "110%" }}
             animate={mobile ? { y: 0 } : { x: 0 }}
@@ -97,6 +99,10 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
   const entry = node.entry!;
   const price = PRICING_STYLE[tool.pricing];
   const usedIn = toolOccurrences(entry.tool).filter((o) => o.nodeId !== node.id);
+  // 여러 작업에 나오는 툴은 이 작업 맥락에 맞춘 설명을, 아니면 툴 공통 설명을 보여요
+  const guide = ENTRY_GUIDES[node.id];
+  const why = guide?.why ?? tool.strengths;
+  const steps = guide?.steps ?? tool.howTo;
 
   const stagger = {
     hidden: {},
@@ -126,7 +132,7 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
           {monogram(tool.name)}
         </span>
         <div className="min-w-0">
-          <h2 className="truncate font-display text-4xl font-bold tracking-[-0.04em] text-white">{tool.name}</h2>
+          <h2 className="truncate font-display font-bold tracking-[-0.04em] text-white" style={{ fontSize: tool.name.length > 14 ? 26 : tool.name.length > 9 ? 30 : 36 }}>{tool.name}</h2>
           <p className="mt-1 text-sm text-white/60">{entry.useCase}</p>
         </div>
       </motion.div>
@@ -141,10 +147,6 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
         <span className="rounded-full border border-white/10 px-2.5 py-1 text-white/50">{node.field!.name}</span>
       </motion.div>
 
-      <motion.p variants={item} className="mt-6 text-[15px] leading-relaxed text-white/75">
-        {tool.description}
-      </motion.p>
-
       <motion.div
         variants={item}
         className="relative mt-6 overflow-hidden rounded-2xl border p-5"
@@ -152,15 +154,15 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
       >
         <div className="absolute inset-y-0 left-0 w-[3px]" style={{ background: accent, boxShadow: `0 0 16px ${accent}` }} />
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em]" style={{ color: accent }}>
-          <CornerDownLeft className="h-3 w-3" /> 이 작업엔 이걸 써라
+          <CornerDownLeft className="h-3 w-3" /> 이 작업에 추천하는 이유
         </div>
         <p className="mt-2 text-[15px] font-medium leading-relaxed text-white">{entry.recommendation}</p>
       </motion.div>
 
       <motion.section variants={item} className="mt-8">
-        <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}왜 좋은가</h3>
+        <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}이 작업에서 좋은 점</h3>
         <ul className="space-y-2.5">
-          {tool.strengths.map((s) => (
+          {why.map((s) => (
             <li key={s} className="flex gap-3 text-[14px] leading-relaxed text-white/80">
               <Check className="mt-1 h-3.5 w-3.5 shrink-0" style={{ color: accent }} strokeWidth={2.5} />
               {s}
@@ -170,9 +172,9 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
       </motion.section>
 
       <motion.section variants={item} className="mt-8">
-        <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}이렇게 활용하세요</h3>
+        <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}이렇게 써 보세요</h3>
         <ol className="space-y-3">
-          {tool.howTo.map((step, i) => (
+          {steps.map((step, i) => (
             <li key={step} className="flex gap-3 text-[14px] leading-relaxed text-white/80">
               <span
                 className="grid h-6 w-6 shrink-0 place-items-center rounded-md border font-mono text-[10px]"
@@ -201,6 +203,11 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
           {entry.prompt.includes("[") && <p className="mt-2 text-[11px] text-white/35">[대괄호] 부분은 내 상황에 맞게 바꿔서 쓰세요.</p>}
         </motion.section>
       )}
+
+      <motion.section variants={item} className="mt-8">
+        <h3 className="mb-3 font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}툴 소개</h3>
+        <p className="text-[14px] leading-relaxed text-white/70">{tool.description}</p>
+      </motion.section>
 
       <motion.a
         variants={item}
@@ -275,7 +282,6 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
         </motion.section>
       )}
 
-      <div className="mt-8 border-t border-white/10 pt-4 font-mono text-[9px] tracking-[0.2em] text-white/25">NODE_ID: {node.id}</div>
       <Crosshairs inset={10} color={`${accent}66`} />
     </motion.div>
   );
