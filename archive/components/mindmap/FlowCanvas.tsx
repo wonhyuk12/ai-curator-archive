@@ -252,7 +252,7 @@ export function FlowCanvas({
         style={{ width: 200, height: 130 }}
       />}
       {kiosk ? (
-        <Panel position="bottom-right" className="!mb-7 !mr-4">
+        <Panel position="bottom-right" className="!mb-7 !mr-4 max-[640px]:!mb-24">
           <KioskFit accent={accent} />
         </Panel>
       ) : (

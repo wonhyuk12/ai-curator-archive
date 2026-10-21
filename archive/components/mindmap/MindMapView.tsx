@@ -13,6 +13,7 @@ import { CommandPalette } from "./CommandPalette";
 import { FlowCanvas, type ViewRequest } from "./FlowCanvas";
 import { domId, MobileTree } from "./MobileTree";
 import { ToolPanel } from "./ToolPanel";
+import { useKiosk } from "@/lib/useKiosk";
 
 type ViewRequestInput = ViewRequest extends infer V ? (V extends ViewRequest ? Omit<V, "nonce"> : never) : never;
 
@@ -32,7 +33,10 @@ export function MindMapView({ slug }: { slug: string }) {
   const category = getCategory(slug)!;
   const { accent } = category;
   const graph = useMemo(() => buildGraph(category), [category]);
-  const isMobile = useIsMobile();
+  const kiosk = useKiosk();
+  const narrow = useIsMobile();
+  // 키오스크는 화면 크기와 상관없이 항상 마인드맵 (좁은 세로 화면이어도 목록으로 바꾸지 않아요)
+  const isMobile = narrow === null ? null : narrow && !kiosk;
 
   const [expanded, setExpanded] = useState(() => new Set([slug]));
   const [selectedId, setSelectedId] = useState<string | null>(null);

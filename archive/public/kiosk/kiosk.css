@@ -20,7 +20,7 @@ html.kiosk ::-webkit-scrollbar { width: 0; height: 0; }      /* 작은 스크롤
   background: rgba(8, 8, 10, .82); border: 1px solid var(--kq-line); backdrop-filter: blur(14px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, .55), 0 0 30px -10px rgba(0, 240, 255, .6);
 }
-.kq-dock button { border: 0; border-radius: 999px; min-height: 44px; display: flex; align-items: center; gap: 8px; }
+.kq-dock button { border: 0; border-radius: 999px; min-height: 44px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .kq-dock-home { padding: 0 14px; background: rgba(255, 255, 255, .06); font-size: 14px; font-weight: 600; color: var(--kq-sub); }
 .kq-dock-survey {
   padding: 0 16px 0 12px; background: linear-gradient(120deg, var(--kq-cyan), #7af7ff 45%, var(--kq-pink));
