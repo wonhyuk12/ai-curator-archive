@@ -12,6 +12,7 @@ import { Backdrop } from "@/components/ui/Backdrop";
 import { CommandPalette } from "./CommandPalette";
 import { FlowCanvas, type ViewRequest } from "./FlowCanvas";
 import { domId, MobileTree } from "./MobileTree";
+import { KioskExit } from "@/components/kiosk/KioskExit";
 import { MapHint } from "./MapHint";
 import { ToolPanel } from "./ToolPanel";
 import { useKiosk } from "@/lib/useKiosk";
@@ -227,6 +228,7 @@ export function MindMapView({ slug }: { slug: string }) {
             <span className="hidden lg:inline">모두 접기</span>
           </button>
         </div>
+        {kiosk && <KioskExit />}
       </motion.header>
 
       {/* ── Canvas / Tree ───────────────────────────────── */}

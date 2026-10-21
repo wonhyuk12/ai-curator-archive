@@ -267,6 +267,7 @@
     endSession(reason);
     location.href = "/kiosk";
   }
+  window.KIOSK.goHome = goHome; // 페이지 안 "나가기" 버튼에서도 써요
 
   /* ───────── 2분 무반응 → 첫 화면 ───────── */
   let last = Date.now(), warnEl = null;

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ALL_TOOL_NAMES, ARCHIVE, ARCHIVE_CHECKED, type Category } from "@/data/archive";
 import { Backdrop } from "@/components/ui/Backdrop";
 import { useKiosk } from "@/lib/useKiosk";
+import { KioskExit } from "@/components/kiosk/KioskExit";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { BootSequence } from "./BootSequence";
 import { CategoryCard } from "./CategoryCard";
@@ -37,6 +38,7 @@ export function Landing() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [expanding, setExpanding] = useState<Expanding>(null);
   const curatorUrl = useCuratorUrl();
+  const kiosk = useKiosk();
 
   const onBootDone = useCallback(() => {
     hasBooted = true;
@@ -82,9 +84,12 @@ export function Landing() {
             AI_ARCHIVE
           </div>
           <div className="hidden md:block">{"// "}INDEX OF AGENTS &amp; TOOLS</div>
-          <a href={curatorUrl} className="flex items-center gap-2 text-white/70 transition-colors hover:text-[#00F0FF]">
-            ← AI 큐레이터
-          </a>
+          <div className="flex items-center gap-4">
+            <a href={curatorUrl} className="flex items-center gap-2 text-white/70 transition-colors hover:text-[#00F0FF]">
+              ← AI 큐레이터
+            </a>
+            {kiosk && <KioskExit />}
+          </div>
         </motion.header>
 
         {/* ── Hero ────────────────────────────────────── */}

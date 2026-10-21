@@ -5,6 +5,7 @@ interface KioskApi {
   track(type: string, data?: Record<string, unknown>): void;
   flush(): Promise<void>;
   enabled(): boolean;
+  goHome?(reason: string): void;
 }
 interface Window {
   KIOSK?: KioskApi;
