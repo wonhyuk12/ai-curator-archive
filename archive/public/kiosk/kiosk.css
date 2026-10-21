@@ -227,3 +227,18 @@ html.kiosk body:has(.a-feed) { padding-bottom: 90px; }
 /* 터치한 자리 표시 */
 .kq-ripple { position: fixed; width: 44px; height: 44px; margin: -22px; border-radius: 50%; border: 2px solid rgba(0, 240, 255, .8); pointer-events: none; z-index: 2147483647; animation: kq-ripple .55s ease-out forwards; }
 @keyframes kq-ripple { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+
+/* AI 소식(큐레이터) 화면의 나가기 버튼 */
+html.kiosk .k-exit {
+  display: flex; align-items: center; gap: 6px; flex: none; height: 40px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid rgba(255, 46, 136, .6); background: rgba(255, 46, 136, .1); color: #fff;
+  font: inherit; font-size: 14px; font-weight: 700; white-space: nowrap; box-shadow: 0 0 18px -6px #FF2E88;
+}
+html.kiosk .k-exit svg { width: 16px; height: 16px; color: #FF2E88; }
+html.kiosk .k-exit:active { background: rgba(255, 46, 136, .25); }
+html.kiosk header .search { min-width: 0; }
+@media (max-width: 960px) {
+  html.kiosk .to-archive .full { display: none; }
+  html.kiosk .to-archive .short { display: inline; }
+}
+@media (max-width: 760px) { html.kiosk header .search > span { display: none; } }
