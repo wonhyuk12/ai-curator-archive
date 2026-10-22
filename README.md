@@ -126,3 +126,6 @@ sudo reboot
 
 - **포트가 이미 사용 중이라고 나와요**: 3000이나 3001을 다른 프로그램이 쓰고 있어요. 그 프로그램을 끄거나, 루트 `package.json`의 `3001`과 `archive/components/landing/Landing.tsx`·`curator/js/app.js`의 로컬 주소를 같이 바꿔 주세요.
 - **`npm install` 후 ARCHIVE 패키지가 없어요**: `npm install --prefix archive`를 한 번 더 실행하세요.
+
+## 라이선스
+[MIT](LICENSE)
