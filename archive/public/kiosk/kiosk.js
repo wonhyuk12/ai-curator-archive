@@ -1,6 +1,7 @@
 /*
  * AI 키오스크 위젯 — 키오스크 모드일 때만 동작해요 (/kiosk 첫 화면에서 켜짐, ?kiosk=0 으로 끔).
  *  - 사용 기록: 세션(한 사람) 단위로 페이지·머문 시간·클릭·설문을 기록 → Supabase (끊기면 임시 저장 후 재전송)
+ *  - 키오스크 밖(휴대폰·PC) 방문도 기록만 해요 (kiosk_id "web", 화면 위젯 없음, 30분 쉬면 새 방문)
  *  - 2분 무반응이면 첫 화면(/kiosk)으로 복귀 (10초 전 안내)
  *  - 첫 화면을 뺀 모든 페이지에 [처음으로] [설문 참여] 버튼
  *  - 설문 13문항 (한 화면 한 문항, 버튼 선택 + 선택 입력란, 화면 한글 키보드), 완료 후 추첨 응모(선택)
@@ -117,6 +118,7 @@
   function track(type, data = {}) {
     const s = session();
     if (!s) return;
+    if (s.entry === "web") LS.set("kiosk.session", { ...s, lastAt: Date.now() });
     enqueue("events", { session_id: s.id, ts: now(), type, page: data.page ?? path(), target: data.target ?? null, duration_ms: data.duration_ms ?? null, meta: data.meta ?? null });
   }
   function startSession(entry) {
@@ -126,7 +128,7 @@
     LS.set("kiosk.session", s);
     LS.del("kiosk.survey");
     LS.del("curator.notiSeen"); // 새 손님에게는 최근 소식이 다시 NEW로 보이게 (AI 소식 알림함 읽음 기록)
-    enqueue("sessions", { id: s.id, started_at: now(), entry, kiosk_id: kioskId, screen_w: screen.width, screen_h: screen.height, user_agent: navigator.userAgent.slice(0, 200) });
+    enqueue("sessions", { id: s.id, started_at: now(), entry, kiosk_id: entry === "web" ? "web" : kioskId, screen_w: screen.width, screen_h: screen.height, user_agent: navigator.userAgent.slice(0, 200) });
     track("session_start", { page: "/kiosk", target: entry });
     flush();
     return s;
@@ -177,7 +179,17 @@
   }, true);
 
   window.KIOSK = { startSession, endSession, track, flush, session, enabled: on };
-  if (!on()) return; // ── 여기부터는 키오스크 모드에서만 ──
+  // 키오스크 밖 방문: 기록만 하고 끝 (관리자 페이지는 제외)
+  const WEB_GAP = 30 * 60e3;
+  if (!on()) {
+    if (location.pathname.startsWith("/admin")) return;
+    const s = session();
+    if (!s || s.entry !== "web" || Date.now() - (s.lastAt || s.startedAt) > WEB_GAP) { LS.del("kiosk.session"); startSession("web"); }
+    enterPage();
+    return;
+  }
+  if (session()?.entry === "web") LS.del("kiosk.session"); // 같은 브라우저에서 키오스크 모드를 켜면 새 세션으로
+  // ── 여기부터는 키오스크 모드에서만 ──
 
   document.documentElement.classList.add("kiosk");
   const css = document.createElement("link");

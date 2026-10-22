@@ -213,7 +213,7 @@ function Dashboard({ data, qs, demo, updatedAt, loading, includeTest, onIncludeT
         <Seg value={period} onChange={(v) => setPeriod(v as Period)} options={[["all", "전체"], ["today", "오늘"], ["7d", "7일"], ["30d", "30일"]]} />
         <select value={kiosk} onChange={(e) => setKiosk(e.target.value)} className="rounded-xl border border-white/15 bg-black px-3 py-2 text-sm">
           <option value="all">모든 키오스크</option>
-          {kiosks.map((k) => <option key={k} value={k}>{k}</option>)}
+          {kiosks.map((k) => <option key={k} value={k}>{k === "web" ? "키오스크 밖 방문" : k}</option>)}
         </select>
         <label className="flex items-center gap-1.5 text-sm text-white/60">
           <input type="checkbox" checked={includeTest} onChange={(e) => onIncludeTest(e.target.checked)} /> 시험 기록 포함
