@@ -25,6 +25,21 @@ const COMPANIES = {
   naver:     { name: "네이버", c: "#03C75A", img: "", url: "https://navercorp.com/tech/hyperclovax" },
   lg:        { name: "LG AI연구원", c: "#A50034", img: "", url: "https://www.lgresearch.ai/" },
   kakao:     { name: "카카오", c: "#FEE500", img: "", url: "https://www.kakaocorp.com/" },
+  wrtn: { name: "뤼튼", c: "#6B4EFF", img: "", url: "https://wrtn.ai/" },
+  bytedance: { name: "ByteDance Seed", c: "#3C8CE7", img: "", url: "https://seed.bytedance.com/en/" },
+  tencent: { name: "Tencent", c: "#0052D9", img: "", url: "https://hunyuan.tencent.com/" },
+  stepfun: { name: "StepFun", c: "#1F6FEB", img: "", url: "https://www.stepfun.com/" },
+  thinkingmachines: { name: "Thinking Machines", c: "#2B2B2B", img: "", url: "https://thinkingmachines.ai/" },
+  perplexity: { name: "Perplexity", c: "#20808D", img: "", url: "https://www.perplexity.ai/" },
+  ibm: { name: "IBM", c: "#0F62FE", img: "", url: "https://www.ibm.com/granite" },
+  meituan: { name: "Meituan", c: "#FFC300", img: "", url: "https://longcat.ai/" },
+  sakana: { name: "Sakana AI", c: "#D6334A", img: "", url: "https://sakana.ai/" },
+  liquid: { name: "Liquid AI", c: "#5B4BDB", img: "", url: "https://www.liquid.ai/" },
+  inception: { name: "Inception", c: "#7A5AF8", img: "", url: "https://www.inceptionlabs.ai/" },
+  reflection: { name: "Reflection AI", c: "#3A3F4B", img: "", url: "https://reflection.ai/" },
+  poolside: { name: "Poolside", c: "#0E7C86", img: "", url: "https://poolside.ai/" },
+  microsoft: { name: "Microsoft AI", c: "#00A4EF", img: "", url: "https://microsoft.ai/news/" },
+  baidu: { name: "Baidu", c: "#2932E1", img: "", url: "https://ernie.baidu.com/" },
 };
 
 // 모델별 로고 (LLM 차트·상세창에 쓰여요). 이미지 경로나 data URL을 넣으면 그 로고가 떠요.
@@ -228,6 +243,70 @@ const MODELS = [
     price: null,
     line: "네이버 추론 모델 · 2025.6.30 공개", use: ["네이버 HyperCLOVA X (공식 페이지 참고)"],
     features: ["단계별 추론", "글·이미지 함께 이해"], src: "https://navercorp.com/tech/hyperclovax" },
+  { id: "seed21turbo", date: "2026-06-23", family: "seed", name: "Seed2.1 Turbo", co: "bytedance", kind: "chat",
+    price: { in: 0.5, out: 2.5, note: "BytePlus 공식 요금 (25.6만 토큰 이하) (2026-10-23 확인)", source: "https://ai.byteplus.com/ark/region:ap-southeast-1/docs/model-pricing" },
+    line: "Seed2.1의 작고 빠른 버전, 에이전트·코딩용 · 2026.6.23", use: ["Doubao 앱", "BytePlus API", "OpenRouter"],
+    features: ["여러 단계 업무·도구 사용", "코딩", "이미지·영상 이해"], src: "https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity" },
+  { id: "seed20code", date: "2026-02-14", family: "seed", name: "Seed2.0 Code", co: "bytedance", kind: "chat",
+    price: { in: 0.5, out: 3.0, note: "BytePlus 공식 요금 (12.8만 토큰 이하, 그 이상은 $1 / $6) (2026-10-23 확인)", source: "https://ai.byteplus.com/ark/region:ap-southeast-1/docs/model-pricing" },
+    line: "코딩 전용 Seed2.0 모델 · 2026.2.14", use: ["TRAE", "BytePlus API", "OpenRouter"],
+    features: ["코딩 에이전트 작업", "화면(프론트엔드) 코딩", "여러 프로그래밍 언어"], src: "https://seed.bytedance.com/en/blog/seed-2-0-official-launch" },
+  { id: "hy4", date: "2026-08-28", family: "hunyuan", name: "Hy4 preview", co: "tencent", kind: "chat",
+    price: { in: 0.834, out: 2.501, note: "OpenRouter 판매 가격 · 공식 요금은 위안화(100만 토큰당 ¥6 / ¥18) (2026-10-23 확인)", source: "https://openrouter.ai/tencent/hy4-preview" },
+    line: "코딩·사무 업무용 대형 공개 모델 (미리보기) · 2026.8.28", use: ["Yuanbao 앱", "Tencent Cloud API", "OpenRouter", "모델 파일 공개 (Apache-2.0)"],
+    features: ["코딩", "사무 업무", "100만 토큰 문맥"], src: "https://www.tencent.com/zh-hk/tencent-releases-and-open-sources-tencent-hy4-preview/" },
+  { id: "step5", date: "2026-09-20", family: "step", name: "Step 5 Preview", co: "stepfun", kind: "chat",
+    price: { in: 1.0, out: 2.7, note: "StepFun 공식 요금 (2026-10-23 확인)", source: "https://platform.stepfun.ai/docs/en/guides/pricing/details" },
+    line: "에이전트 작업용 StepFun 대표 모델 · 2026.9.20", use: ["StepFun API", "OpenRouter", "모델 파일 공개"],
+    features: ["에이전트 작업", "100만 토큰 문맥", "글·이미지·영상 입력"], src: "https://www.cls.cn/detail/2488037" },
+  { id: "inkling", date: "2026-07-15", family: "inkling", name: "Inkling", co: "thinkingmachines", kind: "chat",
+    price: { in: 1.0, out: 4.05, note: "Tinker 공식 요금 (2026-10-23 확인)", source: "https://tinker-docs.thinkingmachines.ai/tinker/models/" },
+    line: "직접 맞춤 학습시킬 수 있는 공개 모델 · 2026.7.15", use: ["Tinker API", "OpenRouter", "모델 파일 공개 (Apache-2.0)"],
+    features: ["맞춤 학습(파인튜닝)", "글·이미지·음성 이해", "생각하는 양 조절"], src: "https://thinkingmachines.ai/news/introducing-inkling/" },
+  { id: "inklingsmall", date: "2026-07-30", family: "inkling", name: "Inkling-Small", co: "thinkingmachines", kind: "chat",
+    price: { in: 0.3, out: 1.2, note: "Tinker 공식 요금 (OpenRouter는 $0.45 / $1.20) (2026-10-23 확인)", source: "https://tinker-docs.thinkingmachines.ai/tinker/models/" },
+    line: "Inkling의 작고 저렴한 공개 모델 · 2026.7.30", use: ["Tinker API", "OpenRouter", "모델 파일 공개 (Apache-2.0)"],
+    features: ["음성·이미지 이해", "100만 토큰 문맥", "맞춤 학습"], src: "https://thinkingmachines.ai/news/inkling-small/" },
+  { id: "sonarpro", date: "2025-11-15", family: "sonar", name: "Sonar Pro Search", co: "perplexity", kind: "chat",
+    price: { in: 3.0, out: 15.0, note: "OpenRouter 판매 가격 + 요청 1천 번당 $18 (2026-10-23 확인)", source: "https://openrouter.ai/perplexity/sonar-pro-search" },
+    line: "여러 번 검색해서 답하는 웹 조사용 모델 · 2025.11.15", use: ["Perplexity API", "OpenRouter"],
+    features: ["여러 단계 웹 검색", "웹 페이지 읽기", "출처 달린 답변"], src: "https://community.perplexity.ai/t/pro-search-now-generally-available-for-sonar-pro/4742" },
+  { id: "granite42", date: "2026-08-25", family: "granite", name: "Granite 4.2 8B", co: "ibm", kind: "chat",
+    price: { in: 0.06, out: 0.25, note: "OpenRouter 판매 가격 (2026-10-23 확인)", source: "https://openrouter.ai/ibm-granite/granite-4.2-8b" },
+    line: "기업 업무용 작은 공개 모델 · 2026.8.25", use: ["watsonx", "OpenRouter", "모델 파일 공개 (Apache-2.0)"],
+    features: ["생각 모드 켜기·끄기", "도구 사용", "작아서 내 컴퓨터에서도 실행"], src: "https://research.ibm.com/blog/introducing-granite-4-2" },
+  { id: "longcat2", date: "2026-06-30", family: "longcat", name: "LongCat-2.0", co: "meituan", kind: "chat",
+    price: { in: 0.75, out: 2.95, note: "LongCat 공식 요금 (기간 한정 할인 $0.30 / $1.20) (2026-10-23 확인)", source: "https://longcat.chat/platform/docs/Pricing/LongCat-2.0.html" },
+    line: "코딩·긴 작업용 초대형 공개 모델 · 2026.6.30", use: ["longcat.ai", "LongCat API", "모델 파일 공개 (MIT)"],
+    features: ["코딩", "100만 토큰 문맥", "긴 작업"], src: "https://longcat.chat/platform/docs/ChangeLog.html" },
+  { id: "fuguultra", date: "2026-09-11", family: "fugu", name: "Fugu Ultra v2", co: "sakana", kind: "chat",
+    price: { in: 5.0, out: 30.0, note: "Sakana 공식 요금 (27.2만 토큰 넘으면 $10 / $45) (2026-10-23 확인)", source: "https://console.sakana.ai/pricing" },
+    line: "여러 모델에 일을 나눠 맡기는 조율 시스템 · 2026.9.11", use: ["Sakana API", "OpenRouter"],
+    features: ["어려운 추론", "연구·개발 작업", "여러 모델 조율"], src: "https://sakana.ai/fugu-max-release/" },
+  { id: "lfm25", date: "2026-10-13", family: "lfm", name: "LFM2.5-24B-A2B", co: "liquid", kind: "chat",
+    price: { in: 0.1, out: 1.0, note: "Liquid 공식 요금 (OpenRouter는 $0.05 / $0.70) (2026-10-23 확인)", source: "https://www.liquid.ai/blog/lfm2-5-24b-a2b" },
+    line: "기기 안에서도 도는 빠른 에이전트 모델 · 2026.10.13", use: ["Liquid API", "OpenRouter", "모델 파일 공개 (LFM Open License)"],
+    features: ["가벼운 크기", "도구 사용", "생각한 뒤 답하기"], src: "https://www.liquid.ai/blog/lfm2-5-24b-a2b" },
+  { id: "mercury3", date: "2026-10-19", family: "mercury", name: "Mercury 3", co: "inception", kind: "chat",
+    price: { in: 0.2, out: 0.7, note: "Inception 공식 정가 (출시 할인 $0.10 / $0.35) (2026-10-23 확인)", source: "https://www.inceptionlabs.ai/blog/introducing-mercury-3" },
+    line: "글을 한꺼번에 만들어 아주 빠른 모델 (확산 방식) · 2026.10.19", use: ["Inception API", "OpenRouter"],
+    features: ["초당 약 1,000토큰", "100만 토큰 문맥", "빠른 응답"], src: "https://www.inceptionlabs.ai/blog/introducing-mercury-3" },
+  { id: "beam1", date: "2026-10-05", family: "beam", name: "Beam 1.0", co: "reflection", kind: "chat",
+    price: { in: 0.25, out: 1.0, note: "OpenRouter 판매 가격 (공식 토큰 요금 없음) (2026-10-23 확인)", source: "https://openrouter.ai/reflection/beam-1.0-501b-a23b" },
+    line: "코딩·에이전트용 미국 공개 모델 · 2026.10.5", use: ["Reflection API", "OpenRouter", "모델 파일 공개 (Apache-2.0)"],
+    features: ["코딩", "에이전트 작업", "생각 강도 조절"], src: "https://reflection.ai/blog/introducing-beam" },
+  { id: "lagunas21", date: "2026-07-21", family: "laguna", name: "Laguna S 2.1", co: "poolside", kind: "chat",
+    price: { in: 0.09, out: 0.18, note: "OpenRouter 판매 가격 (2026-10-23 확인)", source: "https://openrouter.ai/poolside/laguna-s-2.1" },
+    line: "긴 코딩 작업용 에이전트 모델 · 2026.7.21", use: ["Poolside API", "OpenRouter", "모델 파일 공개"],
+    features: ["긴 코딩 작업", "100만 토큰 문맥", "생각 모드 조절"], src: "https://poolside.ai/blog/introducing-laguna-s-2-1" },
+  { id: "maicode11", date: "2026-10-07", family: "mai", name: "MAI-Code-1.1-Flash", co: "microsoft", kind: "chat",
+    price: null, priceText: "공식 API 요금이 없어요. GitHub Copilot 안에서 써요.",
+    line: "GitHub Copilot에 들어간 Microsoft 자체 코딩 모델 · 2026.10.7", use: ["GitHub Copilot", "VS Code"],
+    features: ["이전 버전보다 비용 1/4", "토큰 25% 절약", "코딩"], src: "https://microsoft.ai/news/mai-code-1-1-flash-br-better-faster-at-a-quarter-of-the-cost/" },
+  { id: "ernie51", date: "2026-05-09", family: "ernie", name: "ERNIE 5.1", co: "baidu", kind: "chat",
+    price: null, priceText: "공식 요금은 위안화예요: 100만 토큰당 입력 ¥4 / 출력 ¥18 (3.2만 토큰 이하).",
+    line: "Baidu 대표 모델, 글쓰기·검색 강화 · 2026.5.9", use: ["ERNIE 앱", "Baidu Qianfan API"],
+    features: ["에이전트·검색 성능 향상", "글쓰기", "이전보다 작고 효율적"], src: "https://ernie.baidu.com/blog/posts/ernie-5.1-0508-release/" },
 ];
 
 // 주요 소식 — 실제 발표만 (최신이 위). what = 무엇이 바뀌었나, why = 나에게 왜 중요한가, link = 원문
@@ -507,6 +586,20 @@ const SPECS = {
   commandaplus: { or: "cohere/command-a-plus", ctx: 192000, out: 64000, in: ["text", "image"] },
   solarpro4: { or: "upstage/solar-pro4", ctx: 524288, out: 131072, in: ["text"] },
   solarmini4: { or: "upstage/solar-mini4", ctx: 524288, out: 131072, in: ["text"] },
+  seed21turbo: { or: "bytedance-seed/seed-2-1-turbo", ctx: 262144, out: null, in: ["text", "image", "video"] },
+  seed20code: { or: "bytedance-seed/seed-2.0-code", ctx: 262144, out: 131072, in: ["text", "image", "video"] },
+  hy4: { or: "tencent/hy4-preview", ctx: 1048576, out: 64000, in: ["text"], hf: "tencent/Hy4-preview" },
+  step5: { or: "stepfun/step-5-preview", ctx: 1048576, out: 64000, in: ["text", "image", "video"], hf: "stepfun-ai/Step-5-Preview" },
+  inkling: { or: "thinkingmachines/inkling", ctx: 524288, out: null, in: ["text", "image", "audio"], hf: "thinkingmachines/Inkling" },
+  inklingsmall: { or: "thinkingmachines/inkling-small", ctx: 524288, out: 262144, in: ["text", "image", "audio"], hf: "thinkingmachines/Inkling-Small" },
+  sonarpro: { or: "perplexity/sonar-pro-search", ctx: 200000, out: 8000, in: ["text", "image"] },
+  granite42: { or: "ibm-granite/granite-4.2-8b", ctx: 131072, out: null, in: ["text"], hf: "ibm-granite/granite-4.2-8b" },
+  longcat2: { or: "meituan/longcat-2.0", ctx: 1048756, out: 262144, in: ["text"], hf: "meituan-longcat/LongCat-2.0" },
+  fuguultra: { or: "sakana/fugu-ultra-v2", ctx: 1000000, out: 128000, in: ["text", "image", "file"] },
+  lfm25: { or: "liquid/lfm-2.5-24b-a2b", ctx: 128000, out: 8192, in: ["text"], hf: "LiquidAI/LFM2.5-24B-A2B" },
+  mercury3: { or: "inception/mercury-3", ctx: 1000000, out: 131072, in: ["text"] },
+  beam1: { or: "reflection/beam-1.0-501b-a23b", ctx: 1048576, out: 131072, in: ["text"], hf: "reflection/Beam-1.0-501B-A23B" },
+  lagunas21: { or: "poolside/laguna-s-2.1", ctx: 1048576, out: 131072, in: ["text"], hf: "poolside/Laguna-S-2.1" },
 };
 
 // AI 서비스 전체 인기 — Similarweb 생성형 AI 웹사이트 방문 비율 (전 세계, 2026년 9월, 2026-10-12 발표)
@@ -520,6 +613,17 @@ const TRAFFIC = { month: "2026년 9월", source: "https://x.com/Similarweb/statu
     { name: "Copilot", author: "Microsoft", usage: "copilot", share: 1.5, prev: 2.0 },
     { name: "Perplexity", author: "Perplexity", usage: "perplexity", share: 0.9, prev: 2.5 },
 ] };
+
+// 성능 — 제3자 측정 (2026-10-23 확인). 측정마다 재는 능력이 달라요
+// arena = LMArena(사람들이 두 답을 보고 더 나은 쪽을 고른 투표로 매긴 점수), [순위, 점수]. 전체 순위는 이 사이트에 없는 모델까지 포함한 순위예요
+// aa = Artificial Analysis, [종합 지능 지수, 초당 출력 토큰]
+const PERF_CHECKED = "2026-10-23";
+const PERF = {
+  arenaText: { title: "대화 실력", src: "https://arena.ai/leaderboard/text", by: "LMArena 텍스트 대화 투표 점수", data: { argon: [1, 1517], wonder: [3, 1509], haiku55: [126, 1425], large4: [111, 1434], sol61: [27, 1480], sonnet55: [29, 1478], opus55: [2, 1509], grok47: [96, 1441], astra: [32, 1476], g38flash: [9, 1496], muse13: [10, 1496], fable: [5, 1503], dsflash: [34, 1476], dsv4pro: [57, 1465], luna6: [91, 1442], g35lite: [71, 1455], grok43: [93, 1442], medium35: [119, 1426], qwen38max: [23, 1483], kimik3: [18, 1487], glm53: [26, 1481], glm53flash: [35, 1476], minimaxm3: [97, 1440], mimopro: [28, 1480], mimoflash: [81, 1448], nemo3ultra: [122, 1426], nova2lite: [245, 1335], solarpro4: [183, 1387] } },
+  arenaWeb: { title: "웹 화면 만들기", src: "https://arena.ai/leaderboard/webdev", by: "LMArena 웹 개발(WebDev) 투표 점수", data: { opus55: [1, 1807], astra: [2, 1775], sonnet55: [3, 1767], sol61: [4, 1749], fable: [5, 1743], qwen38max: [10, 1673], argon: [11, 1673], dsflash: [13, 1664], muse13: [15, 1657], kimik3: [16, 1655], wonder: [17, 1651], grok47: [18, 1637], mimoflash: [19, 1634], mimopro: [22, 1625], glm53: [24, 1623], glm53flash: [29, 1608], g38flash: [34, 1585], haiku55: [35, 1585], dsv4pro: [36, 1582], luna6: [38, 1578], large4: [45, 1543], musopen: [52, 1527], minimaxm3: [67, 1482], g35lite: [88, 1434], solarpro4: [111, 1370], grok43: [117, 1357], medium35: [134, 1264] } },
+  arenaImg: { title: "이미지 만들기", src: "https://arena.ai/leaderboard/text-to-image", by: "LMArena 글로 이미지 만들기 투표 점수", data: { nb21: [6, 1328], nbpro: [16, 1248] } },
+  aa: { src: "https://artificialanalysis.ai/leaderboards/models", data: { argon: [53, 82], wonder: [52, 149], haiku55: [43, 236], large4: [38, 87], sol61: [52, 55], sonnet55: [56, 134], opus55: [58, 96], grok47: [46, 97], astra: [53, 57], g38flash: [41, 142], fable: [53, 68], dsflash: [45, 204], dsv4pro: [36, 92], luna6: [38, 135], g35lite: [22, 430], musopen: [39, 162], medium35: [14, 161], small4: [11, 185], qwen38max: [45, 42], kimik3: [44, 37], glm53: [45, 78], glm53flash: [42, 69], minimaxm3: [29, 87], mimopro: [46, 53], mimoflash: [38, 58], nemo3ultra: [23, 154], nova2lite: [13, 182], commandaplus: [13, 149], solarpro4: [27, 120], step5: [44, null] } },
+};
 
 // 많이 쓰이는 곳 — 서비스별 (2026-10-23 확인)
 // countries: Similarweb 웹사이트 방문 나라별 비율 상위 5곳 (2026년 9월, 페이지 표기상 PC 방문 기준일 수 있음)
@@ -575,23 +679,81 @@ const POPULAR = { checked: "2026-10-20", source: "https://openrouter.ai/rankings
     { name: "Claude Opus 5.5", author: "Anthropic", co: "anthropic", model: "opus55", tokens: 17.1e12, change: null },
 ] };
 
-// 구독 요금 — 실제 데이터 (미국 기준 월 요금 USD, 2026-10-22 확인). tier: "pro" = 기본 유료, "max" = 최상위 유료
-// free = 무료 요금제에 포함된 것 (출처에 적힌 경우만). 출처끼리 금액이 다른 요금제(ChatGPT Go, Google AI Plus, SuperGrok Lite 등)는 뺐어요.
+// 구독 요금제 — 공식 요금 페이지 (2026-10-23 확인). 미국 달러 월 요금(월 결제), 한국 원화는 공식 한국 페이지에 있을 때만
+// tier: "free" = 무료, "pro" = 가장 싼 유료, "max" = 가장 비싼 개인 요금제. usd: null = 공식 가격을 확인하지 못함
+// f = 기능: search 웹 검색 · research 깊은 조사 · image 이미지 만들기 · video 영상 만들기 · voice 음성 대화 · file 파일 분석 · code 코딩 에이전트 · memory 기억 · apps 앱 연결
+const SUB_CHECKED = "2026-10-23";
+const FEATURE_NAMES = { search: "웹 검색", research: "깊은 조사", image: "이미지 만들기", video: "영상 만들기", voice: "음성 대화", file: "파일 분석", code: "코딩 에이전트", memory: "기억", apps: "앱 연결" };
 const SUBSCRIPTIONS = {
-  openai:    { service: "ChatGPT", source: "https://www.cloudzero.com/blog/how-much-does-chatgpt-cost/",
-               plans: [["Free", 0], ["Plus", 20, "pro"], ["Pro 5x", 100], ["Pro 20x", 200, "max"]] },
-  anthropic: { service: "Claude", source: "https://claude.com/pricing", free: "Sonnet · Haiku 모델",
-               plans: [["Free", 0], ["Pro", 20, "pro"], ["Max 5x", 100], ["Max 20x", 200, "max"]] },
-  google:    { service: "Google AI (Gemini)", source: "https://www.engadget.com/2176060/",
-               plans: [["Free", 0], ["AI Pro", 19.99, "pro"], ["AI Ultra 5x", 99.99], ["AI Ultra 20x", 199.99, "max"]] },
-  xai:       { service: "Grok", source: "https://krater.ai/blog/grok-pricing",
-               plans: [["Free", 0], ["SuperGrok", 30, "pro"], ["SuperGrok Heavy", 300, "max"]] },
-  meta:      { service: "Meta Muse", source: "https://www.tikr.com/blog/meta-launches-muse-wonder-its-first-frontier-ai-model-can-it-pay-for-the-capex",
-               plans: [["Free", 0], ["유료", 20, "pro"], ["상위 유료", 100, "max"]] },
-  mistral:   { service: "Mistral Le Chat", source: "https://mistral.ai/pricing",
-               plans: [["Free", 0], ["Pro", 14.99, "pro"]], note: "최상위 개인 요금제 없음 (Team $24.99/인)" },
-  deepseek:  { service: "DeepSeek", source: "https://www.deepseek.com/",
-               plans: [["Free", 0]], note: "유료 구독 없음 · 앱은 전부 무료" },
+  openai: { service: "ChatGPT", co: "openai", korea: true, source: "https://chatgpt.com/pricing",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["GPT-6 Luna", "GPT-5 Thinking Mini"], limits: "GPT-6 대화는 사실상 무제한, 파일·이미지·음성·깊은 조사는 적게", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+      { name: "Go", usd: 8, tier: "pro", models: ["GPT-6 Luna", "GPT-5 Thinking Mini"], limits: "무료보다 많이 · 광고가 붙을 수 있어요", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+      { name: "Plus", usd: 20, models: ["GPT-6.1 Sol", "GPT-6 Astra", "GPT-6 Luna 등"], limits: "더 많은 메시지·파일 (한도 있음)", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+      { name: "Pro 100", usd: 100, models: ["Plus 모델 전부 + Pro 추론"], limits: "Plus보다 훨씬 많이", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+      { name: "Pro 200", usd: 200, models: ["Pro 100과 같음"], limits: "Pro 100보다 많이", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+      { name: "Pro 500", usd: 500, tier: "max", models: ["Pro 모델 + 초고속 GPT-6 Astra·6.1 Sol"], limits: "가장 많이", f: ["search", "research", "image", "voice", "file", "code", "memory", "apps"] },
+    ] },
+  google: { service: "Gemini (Google AI)", co: "google", korea: true, source: "https://gemini.google/subscriptions/?hl=en",
+    plans: [
+      { name: "무료", usd: 0, krw: 0, tier: "free", models: ["Flash-Lite 모델"], limits: "기본 한도", f: ["research", "image", "voice", "file"] },
+      { name: "AI Plus", usd: 4.99, krw: 7500, tier: "pro", models: ["Flash 모델"], limits: "무료의 2배", f: ["research", "image", "video", "voice", "file", "apps"] },
+      { name: "AI Pro", usd: 19.99, models: ["Gemini 4 Argon", "Pro 모델", "Flash 모델"], limits: "무료의 4배", f: ["research", "image", "video", "voice", "file", "code", "apps"] },
+      { name: "AI Ultra 5x", usd: 99.99, krw: 119000, models: ["Gemini 4 Argon 최대", "Deep Think"], limits: "AI Pro의 5배", f: ["research", "image", "video", "voice", "file", "code", "apps"] },
+      { name: "AI Ultra 20x", usd: 199.99, krw: 300000, tier: "max", models: ["Gemini 4 Argon 최대", "Deep Think"], limits: "AI Pro의 20배", f: ["research", "image", "video", "voice", "file", "code", "apps"] },
+    ] },
+  anthropic: { service: "Claude", co: "anthropic", korea: true, source: "https://claude.com/pricing",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["Sonnet", "Haiku"], limits: "5시간마다 한도가 다시 채워져요", f: ["search", "voice", "file", "memory", "apps"] },
+      { name: "Pro", usd: 20, tier: "pro", models: ["Opus", "Sonnet", "Haiku", "Fable (사용 크레딧)"], limits: "5시간마다 무료의 5배 이상, 주간 한도 있음", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
+      { name: "Max 5x · 20x", usd: 100, from: true, tier: "max", models: ["Opus", "Sonnet", "Haiku", "Fable (주간 한도의 50%까지)"], limits: "5시간마다 Pro의 5배 또는 20배", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
+    ] },
+  deepseek: { service: "DeepSeek", co: "deepseek", source: "https://www.deepseek.com/en", note: "유료 구독이 없어요",
+    plans: [{ name: "무료 웹·앱", usd: 0, tier: "free", models: ["DeepSeek V4.1 Flash"], limits: "공개된 한도 없음", f: ["search", "file"] }] },
+  xai: { service: "Grok", co: "xai", source: "https://x.ai/pricing",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["모델 이름 미공개"], limits: "대화·에이전트 요청 적게", f: ["image"] },
+      { name: "Plus", usd: 8, tier: "pro", models: ["모델 이름 미공개"], limits: "기본 사용량", f: ["image", "voice", "code"] },
+      { name: "Premium", usd: 30, models: ["최신 Grok 모델"], limits: "Plus의 4배", f: ["image", "video", "voice", "code"] },
+      { name: "Super", usd: 100, models: ["최신 Grok 모델"], limits: "Plus의 15배", f: ["image", "video", "voice", "code"] },
+      { name: "Ultra", usd: 200, tier: "max", models: ["최신 Grok 모델"], limits: "Plus의 50배, 붐빌 때 우선", f: ["image", "video", "voice", "code"] },
+    ] },
+  copilot: { service: "Microsoft Copilot", co: "microsoft", korea: true, source: "https://www.microsoft.com/en-us/copilot/pricing/individuals", note: "유료 AI는 Microsoft 365 구독에 들어 있어요",
+    plans: [
+      { name: "Copilot 무료", usd: 0, krw: 0, tier: "free", models: ["모델 이름 미공개"], limits: "기본 한도", f: ["search", "image", "voice", "file"] },
+      { name: "Microsoft 365 Personal", usd: 9.99, krw: 12500, tier: "pro", models: ["모델 이름 미공개"], limits: "무료보다 많이", f: ["image", "voice", "file", "apps"] },
+      { name: "Microsoft 365 Premium", usd: 19.99, krw: 29000, models: ["모델 이름 미공개"], limits: "넉넉하게", f: ["research", "image", "voice", "file", "apps"] },
+      { name: "Microsoft 365 Pro", usd: 99.99, krw: 149000, tier: "max", models: ["모델 이름 미공개"], limits: "가장 많이", f: ["research", "image", "voice", "file", "apps"] },
+    ] },
+  perplexity: { service: "Perplexity", co: "perplexity", source: "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["자동 선택 (직접 못 골라요)"], limits: "Pro 검색 하루 3번, 깊은 조사 한 달 1번", f: ["search", "research", "file"] },
+      { name: "Pro", usd: null, tier: "pro", models: ["GPT-6.1 Sol", "Claude Sonnet 5.5", "Gemini 3.8 Flash", "Grok 4.7", "Kimi K3 등"], limits: "주간 한도", f: ["search", "research", "image", "video", "file", "code"] },
+      { name: "Max", usd: 200, tier: "max", models: ["Pro 모델 + GPT-6 Astra", "Gemini 4 Argon", "Claude Opus 5.5", "Claude Fable 5.1"], limits: "높은 한도", f: ["search", "research", "image", "video", "file", "memory"] },
+    ] },
+  meta: { service: "Meta Muse", co: "meta", korea: false, source: "https://www.meta.com/help/subscriptions/1021145227643680/", note: "미국에서 먼저 서비스 중",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["Muse Spark"], limits: "한도 미공개", f: ["search", "memory", "apps"] },
+      { name: "Power", usd: 20, tier: "pro", models: ["Muse Spark"], limits: "주마다 Muse 토큰 5억 개", f: ["search", "memory", "apps"] },
+      { name: "Maximum", usd: 100, tier: "max", models: ["Muse Spark"], limits: "주마다 Muse 토큰 30억 개", f: ["search", "memory", "apps"] },
+    ] },
+  mistral: { service: "Mistral (Le Chat · Vibe)", co: "mistral", source: "https://mistral.ai/pricing", note: "Pro보다 위 개인 요금제는 없어요",
+    plans: [
+      { name: "Free", usd: 0, tier: "free", models: ["최신 모델 (이름 미공개)"], limits: "메시지·웹 검색·코딩 적게", f: ["search", "image", "code", "apps"] },
+      { name: "Pro", usd: 14.99, tier: "pro", models: ["최상위 모델 (이름 미공개)"], limits: "더 많이, 이미지 최대 무료의 40배, API 크레딧 $15", f: ["search", "image", "voice", "file", "code", "apps"] },
+    ] },
+  alibaba: { service: "Qwen Chat", co: "alibaba", source: "https://chat.qwen.ai/", note: "공식 유료 요금제를 찾지 못했어요",
+    plans: [{ name: "무료", usd: 0, tier: "free", models: ["Qwen 모델"], limits: "공개된 한도 없음", f: [] }] },
+  moonshot: { service: "Kimi", co: "moonshot", source: "https://www.kimi.com/membership/pricing", note: "중간 요금제 $39·$99도 있어요",
+    plans: [
+      { name: "Adagio (무료)", usd: 0, tier: "free", models: ["Kimi K3"], limits: "에이전트 작업 1개, 예약 작업 2개", f: ["research", "file", "memory"] },
+      { name: "Plus", usd: 19, tier: "pro", models: ["Kimi 모델"], limits: "에이전트 크레딧 더 많이, 동시에 2개", f: ["research", "file", "code", "apps"] },
+      { name: "Ultra", usd: 199, tier: "max", models: ["Kimi K3 (100만 토큰)"], limits: "에이전트 크레딧 10배, 동시에 4개", f: ["research", "file", "code", "memory", "apps"] },
+    ] },
+  zai: { service: "Z.ai (GLM)", co: "zai", source: "https://chat.z.ai/", note: "채팅 유료 요금제는 없고, 코딩 전용 요금제(GLM Coding Plan)가 $18부터예요",
+    plans: [{ name: "채팅 무료", usd: 0, tier: "free", models: ["GLM-5.3-Flash"], limits: "공개된 한도 없음", f: ["code", "apps"] }] },
+  wrtn: { service: "뤼튼", co: "wrtn", korea: true, source: "https://wrtn.ai/", note: "한국 서비스 · 공식 요금 페이지가 없어요",
+    plans: [{ name: "무료", usd: 0, krw: 0, tier: "free", models: ["GPT-5 (홈 화면 표시)"], limits: "공개된 한도 없음", f: ["file"] }] },
 };
 
 // 모델 이름 별명: 특정 모델만 찾을 때 (예: "소네트" → Claude Sonnet)
@@ -645,6 +807,20 @@ const FAMILIES = {
   exaone: { name: "EXAONE", co: "lg", now: "K-EXAONE", aliases: ["exaone", "엑사원", "lg", "엘지"] },
   kanana: { name: "Kanana", co: "kakao", now: "Kanana-2", aliases: ["kanana", "카나나", "kakao", "카카오"] },
   hyperclova: { name: "HyperCLOVA X", co: "naver", now: "HyperCLOVA X THINK · SEED · DASH", aliases: ["hyperclova", "하이퍼클로바", "클로바", "clova", "naver", "네이버"] },
+  seed: { name: "ByteDance Seed", co: "bytedance", now: "Seed2.1 Turbo · Seed2.0 Code", aliases: ["seed", "bytedance", "바이트댄스", "doubao"] },
+  hunyuan: { name: "Tencent Hunyuan", co: "tencent", now: "Hy4 preview", aliases: ["hunyuan", "hy4", "tencent", "텐센트", "훈위안"] },
+  step: { name: "StepFun Step", co: "stepfun", now: "Step 5 Preview", aliases: ["step", "stepfun", "스텝펀"] },
+  inkling: { name: "Inkling", co: "thinkingmachines", now: "Inkling · Inkling-Small", aliases: ["inkling", "thinking machines", "씽킹머신"] },
+  sonar: { name: "Perplexity Sonar", co: "perplexity", now: "Sonar Pro Search", aliases: ["sonar", "perplexity", "퍼플렉시티"] },
+  granite: { name: "IBM Granite", co: "ibm", now: "Granite 4.2", aliases: ["granite", "ibm", "그래나이트"] },
+  longcat: { name: "LongCat", co: "meituan", now: "LongCat-2.0", aliases: ["longcat", "meituan", "메이퇀", "롱캣"] },
+  fugu: { name: "Sakana Fugu", co: "sakana", now: "Fugu Ultra v2", aliases: ["fugu", "sakana", "사카나"] },
+  lfm: { name: "Liquid LFM", co: "liquid", now: "LFM2.5", aliases: ["lfm", "liquid", "리퀴드"] },
+  mercury: { name: "Inception Mercury", co: "inception", now: "Mercury 3", aliases: ["mercury", "inception", "머큐리"] },
+  beam: { name: "Reflection Beam", co: "reflection", now: "Beam 1.0", aliases: ["beam", "reflection", "리플렉션"] },
+  laguna: { name: "Poolside Laguna", co: "poolside", now: "Laguna S 2.1", aliases: ["laguna", "poolside", "풀사이드"] },
+  mai: { name: "Microsoft MAI", co: "microsoft", now: "MAI-Code-1.1-Flash", aliases: ["mai", "microsoft", "마이크로소프트", "copilot"] },
+  ernie: { name: "Baidu ERNIE", co: "baidu", now: "ERNIE 5.1", aliases: ["ernie", "baidu", "바이두", "어니"] },
 };
 
 const TIMELINES = {
@@ -1114,6 +1290,82 @@ const TIMELINES = {
     { date: "2025-06-30", precision: "day", kind: "release", name: "HyperCLOVA X THINK",
       summary: "네이버 추론 모델",
       specs: ["단계별 추론", "글·이미지 함께 이해"], source: "https://navercorp.com/tech/hyperclovax" },
+  ],
+  seed: [
+    { date: "2026-02-14", precision: "day", kind: "release", name: "Seed2.0 Code",
+      summary: "코딩 전용 Seed2.0 모델",
+      specs: ["코딩 에이전트 작업", "화면(프론트엔드) 코딩"], source: "https://seed.bytedance.com/en/blog/seed-2-0-official-launch" },
+    { date: "2026-06-23", precision: "day", kind: "release", name: "Seed2.1 Turbo",
+      summary: "Seed2.1의 작고 빠른 버전, 에이전트·코딩용",
+      specs: ["여러 단계 업무·도구 사용", "코딩"], source: "https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity" },
+  ],
+  hunyuan: [
+    { date: "2026-08-28", precision: "day", kind: "release", name: "Hy4 preview",
+      summary: "코딩·사무 업무용 대형 공개 모델 (미리보기)",
+      specs: ["코딩", "사무 업무"], source: "https://www.tencent.com/zh-hk/tencent-releases-and-open-sources-tencent-hy4-preview/" },
+  ],
+  step: [
+    { date: "2026-09-20", precision: "day", kind: "release", name: "Step 5 Preview",
+      summary: "에이전트 작업용 StepFun 대표 모델",
+      specs: ["에이전트 작업", "100만 토큰 문맥"], source: "https://www.cls.cn/detail/2488037" },
+  ],
+  inkling: [
+    { date: "2026-07-15", precision: "day", kind: "release", name: "Inkling",
+      summary: "직접 맞춤 학습시킬 수 있는 공개 모델",
+      specs: ["맞춤 학습(파인튜닝)", "글·이미지·음성 이해"], source: "https://thinkingmachines.ai/news/introducing-inkling/" },
+    { date: "2026-07-30", precision: "day", kind: "release", name: "Inkling-Small",
+      summary: "Inkling의 작고 저렴한 공개 모델",
+      specs: ["음성·이미지 이해", "100만 토큰 문맥"], source: "https://thinkingmachines.ai/news/inkling-small/" },
+  ],
+  sonar: [
+    { date: "2025-11-15", precision: "day", kind: "release", name: "Sonar Pro Search",
+      summary: "여러 번 검색해서 답하는 웹 조사용 모델",
+      specs: ["여러 단계 웹 검색", "웹 페이지 읽기"], source: "https://community.perplexity.ai/t/pro-search-now-generally-available-for-sonar-pro/4742" },
+  ],
+  granite: [
+    { date: "2026-08-25", precision: "day", kind: "release", name: "Granite 4.2 8B",
+      summary: "기업 업무용 작은 공개 모델",
+      specs: ["생각 모드 켜기·끄기", "도구 사용"], source: "https://research.ibm.com/blog/introducing-granite-4-2" },
+  ],
+  longcat: [
+    { date: "2026-06-30", precision: "day", kind: "release", name: "LongCat-2.0",
+      summary: "코딩·긴 작업용 초대형 공개 모델",
+      specs: ["코딩", "100만 토큰 문맥"], source: "https://longcat.chat/platform/docs/ChangeLog.html" },
+  ],
+  fugu: [
+    { date: "2026-09-11", precision: "day", kind: "release", name: "Fugu Ultra v2",
+      summary: "여러 모델에 일을 나눠 맡기는 조율 시스템",
+      specs: ["어려운 추론", "연구·개발 작업"], source: "https://sakana.ai/fugu-max-release/" },
+  ],
+  lfm: [
+    { date: "2026-10-13", precision: "day", kind: "release", name: "LFM2.5-24B-A2B",
+      summary: "기기 안에서도 도는 빠른 에이전트 모델",
+      specs: ["가벼운 크기", "도구 사용"], source: "https://www.liquid.ai/blog/lfm2-5-24b-a2b" },
+  ],
+  mercury: [
+    { date: "2026-10-19", precision: "day", kind: "release", name: "Mercury 3",
+      summary: "글을 한꺼번에 만들어 아주 빠른 모델 (확산 방식)",
+      specs: ["초당 약 1,000토큰", "100만 토큰 문맥"], source: "https://www.inceptionlabs.ai/blog/introducing-mercury-3" },
+  ],
+  beam: [
+    { date: "2026-10-05", precision: "day", kind: "release", name: "Beam 1.0",
+      summary: "코딩·에이전트용 미국 공개 모델",
+      specs: ["코딩", "에이전트 작업"], source: "https://reflection.ai/blog/introducing-beam" },
+  ],
+  laguna: [
+    { date: "2026-07-21", precision: "day", kind: "release", name: "Laguna S 2.1",
+      summary: "긴 코딩 작업용 에이전트 모델",
+      specs: ["긴 코딩 작업", "100만 토큰 문맥"], source: "https://poolside.ai/blog/introducing-laguna-s-2-1" },
+  ],
+  mai: [
+    { date: "2026-10-07", precision: "day", kind: "release", name: "MAI-Code-1.1-Flash",
+      summary: "GitHub Copilot에 들어간 Microsoft 자체 코딩 모델",
+      specs: ["이전 버전보다 비용 1/4", "토큰 25% 절약"], source: "https://microsoft.ai/news/mai-code-1-1-flash-br-better-faster-at-a-quarter-of-the-cost/" },
+  ],
+  ernie: [
+    { date: "2026-05-09", precision: "day", kind: "release", name: "ERNIE 5.1",
+      summary: "Baidu 대표 모델, 글쓰기·검색 강화",
+      specs: ["에이전트·검색 성능 향상", "글쓰기"], source: "https://ernie.baidu.com/blog/posts/ernie-5.1-0508-release/" },
   ],
 };
 

@@ -36,11 +36,12 @@
   <!-- LLM 차트 -->
   <section class="a-chart card" aria-labelledby="chartTitle">
     <div class="head"><h2 id="chartTitle">AI 모델 순위</h2><button type="button" class="gloss-btn" id="glossBtn">용어 풀이</button></div>
-    <p class="sec-help">대화형 AI 모델(LLM)을 새로 나온 순서, 요금, 인기로 비교해요. 눌러서 자세히 보기</p>
+    <p class="sec-help">AI 모델과 서비스를 새로 나온 순서, 요금, 인기, 성능으로 비교해요. 눌러서 자세히 보기</p>
     <div class="tabs" id="rankTabs" role="group" aria-label="정렬">
       <button type="button" data-k="new" aria-pressed="true">최신순</button>
       <button type="button" data-k="price" aria-pressed="false">요금</button>
       <button type="button" data-k="pop" aria-pressed="false">인기</button>
+      <button type="button" data-k="perf" aria-pressed="false">성능</button>
     </div>
     <div class="pmode" id="kmode" role="group" aria-label="모델 종류">
       <button type="button" data-km="all" aria-pressed="true">전체</button>
@@ -50,13 +51,19 @@
     <div class="pmode" id="pmode" role="group" aria-label="요금 종류" hidden>
       <button type="button" data-pm="api" aria-pressed="true">개발자용 API</button>
       <button type="button" data-pm="free" aria-pressed="false">무료</button>
-      <button type="button" data-pm="pro" aria-pressed="false">기본 유료</button>
-      <button type="button" data-pm="max" aria-pressed="false">최상위 유료</button>
+      <button type="button" data-pm="pro" aria-pressed="false">가장 싼 유료</button>
+      <button type="button" data-pm="max" aria-pressed="false">가장 비싼</button>
     </div>
     <div class="pmode" id="popmode" role="group" aria-label="인기 기준" hidden>
       <button type="button" data-pp="all" aria-pressed="true">AI 서비스 전체</button>
       <button type="button" data-pp="dev" aria-pressed="false">개발자 사용량</button>
       <button type="button" data-pp="task" aria-pressed="false">작업별 1위</button>
+    </div>
+    <div class="pmode" id="perfmode" role="group" aria-label="성능 기준" hidden>
+      <button type="button" data-pf="text" aria-pressed="true">대화 실력</button>
+      <button type="button" data-pf="web" aria-pressed="false">웹 화면</button>
+      <button type="button" data-pf="aa" aria-pressed="false">종합 점수</button>
+      <button type="button" data-pf="speed" aria-pressed="false">속도</button>
     </div>
     <p class="crit" id="crit"></p>
     <div class="rows" id="rows"></div>
