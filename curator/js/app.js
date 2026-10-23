@@ -88,13 +88,30 @@ function popRows() {
       <span class="pr num"><b>${fmtTok(t.tokens)} 토큰</b><small class="${t.change === null ? "flat" : t.change >= 0 ? "up" : "down"}">${t.change === null ? "새로 나옴" : `한 달 전보다 ${pct(t.change)}`}</small></span>
     </button>`).join("");
 }
+// 전체 인기: 서비스별 웹사이트 방문 비율 (TRAFFIC)
+let popMode = "all";
+function trafficRows() {
+  const max = Math.max(...TRAFFIC.items.map((t) => t.share));
+  return TRAFFIC.items.map((t, i) => {
+    const d = Math.round((t.share - t.prev) * 10) / 10;
+    return `
+    <button type="button" class="row row-price" data-traffic="${i}">
+      <span class="rk">${i + 1}</span>
+      ${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
+      <span class="nm"><b>${esc(t.name)}</b><small>${esc(t.co ? COMPANIES[t.co].name : t.author)}</small>${meter(t.share, max)}</span>
+      <span class="pr num"><b>${t.share.toFixed(1)}%</b><small class="${d > 0 ? "up" : d < 0 ? "down" : "flat"}">1년 전 ${t.prev.toFixed(1)}%</small></span>
+    </button>`;
+  }).join("");
+}
 // 차트 아래 설명: 탭마다 무엇을 기준으로 줄 세웠는지, 왜 보는지
 const LEGENDS = {
   new: () => `최신순 = 공식 출시일 순서예요. 지금 어떤 AI가 새로 나왔는지 볼 수 있어요 · ${CHECKED} 확인`,
   price: () => priceMode === "api"
     ? `API 요금 = 개발자가 자기 프로그램에서 AI를 불러 쓸 때 내는 돈이에요. 100만 토큰(한글 약 50만~100만 자)당 입력 / 출력 가격, 싼 순서. 막대 = 입력 3 : 출력 1로 섞은 평균 단가 (길수록 비쌈) · 같은 종류끼리만 비교 · ${CHECKED} 확인`
     : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 기준 USD) · ${CHECKED} 확인`,
-  pop: () => `인기 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
+  pop: () => popMode === "all"
+    ? `AI 서비스 전체 인기 = 사람들이 AI 웹사이트에 들어간 횟수 중 각 서비스의 비율이에요 (Similarweb, 전 세계, ${TRAFFIC.month}). 휴대폰 앱 사용은 빠져요 · 오른쪽 작은 글씨 = 1년 전 비율`
+    : `개발자 사용량 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
 function setLegend() { $(".a-chart .legend").textContent = LEGENDS[rankKey](); }
 // 구독 요금: 서비스별 Pro급 / Max급 월 요금 (SUBSCRIPTIONS)
@@ -117,8 +134,9 @@ function subRows(tier) {
 }
 function renderRows() {
   $("#pmode").hidden = rankKey !== "price";
+  $("#popmode").hidden = rankKey !== "pop";
   $("#kmode").hidden = rankKey === "pop" || (rankKey === "price" && priceMode !== "api");
-  if (rankKey === "pop") { $("#rows").innerHTML = popRows(); return; }
+  if (rankKey === "pop") { $("#rows").innerHTML = popMode === "all" ? trafficRows() : popRows(); return; }
   if (rankKey === "price" && priceMode !== "api") { $("#rows").innerHTML = subRows(priceMode); return; }
   let list = ofKind(byNewest(MODELS));
   // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순 (같은 종류끼리)
@@ -152,9 +170,16 @@ $("#pmode").addEventListener("click", (e) => {
   $("#pmode").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
   renderRows(); setLegend();
 });
+$("#popmode").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-pp]"); if (!b) return;
+  popMode = b.dataset.pp;
+  $("#popmode").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  renderRows(); setLegend();
+});
 $("#rows").addEventListener("click", (e) => {
   const b = e.target.closest(".row"); if (!b) return;
   if (b.dataset.sub) return openFamily(CO_FAMILY[b.dataset.sub]);
+  if (b.dataset.traffic !== undefined) { const t = TRAFFIC.items[+b.dataset.traffic]; if (t.co && CO_FAMILY[t.co]) openFamily(CO_FAMILY[t.co]); return; }
   if (b.dataset.pop === undefined) return openModel(b.dataset.id);
   const t = POPULAR.items[+b.dataset.pop];
   if (t.model) openModel(t.model);                            // 목록에 있는 모델

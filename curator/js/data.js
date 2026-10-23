@@ -443,6 +443,18 @@ const TOKENS = [["보고서 10쪽 요약", "입력 8K · 출력 1K"], ["코드 �
 // '인기' 탭 — 실제 데이터: OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델
 // tokens = 30일 동안 처리한 토큰(글자 조각) 수, change = 그 전 30일과 비교 (null = 새로 나온 모델)
 // 갱신: https://openrouter.ai/rankings 의 This Month 표를 보고 items 와 checked 를 고치면 돼요
+// AI 서비스 전체 인기 — Similarweb 생성형 AI 웹사이트 방문 비율 (전 세계, 2026년 9월, 2026-10-12 발표)
+// 앱·API 사용은 빠져요. prev = 1년 전(2025년 10월) 비율. 같은 수치를 OfficeChai·FourWeekMBA 두 곳에서 확인
+const TRAFFIC = { month: "2026년 9월", source: "https://x.com/Similarweb/status/2109561054883717264", items: [
+    { name: "ChatGPT", co: "openai", share: 56.4, prev: 71.8 },
+    { name: "Gemini", co: "google", share: 25.0, prev: 13.6 },
+    { name: "Claude", co: "anthropic", share: 9.6, prev: 2.3 },
+    { name: "DeepSeek", co: "deepseek", share: 3.4, prev: 4.1 },
+    { name: "Grok", co: "xai", share: 2.3, prev: 2.8 },
+    { name: "Copilot", author: "Microsoft", share: 1.5, prev: 2.0 },
+    { name: "Perplexity", author: "Perplexity", share: 0.9, prev: 2.5 },
+] };
+
 const POPULAR = { checked: "2026-10-20", source: "https://openrouter.ai/rankings", items: [
     { name: "DeepSeek V4.1 Flash", author: "DeepSeek", co: "deepseek", model: "dsflash", tokens: 125e12, change: 5.02 },
     { name: "Space Bunny Alpha", author: "이름 비공개 테스트 모델", tokens: 56.7e12, change: null },
