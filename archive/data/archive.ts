@@ -104,7 +104,7 @@ export interface ToolEntry {
   /** 한 줄 용도 — 노드 카드에 표시 */
   useCase: string;
   tag: string;
-  /** "이 작업엔 이걸 써라" */
+  /** 이 작업에 추천하는 이유 (툴 패널 맨 위) */
   recommendation: string;
   /** 이 작업에 바로 쓸 수 있는 예시 프롬프트 (프롬프트 입력이 없는 툴은 생략) */
   prompt?: string;
@@ -176,7 +176,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://claude.ai",
     related: ["claudecode", "chatgpt", "cursor"],
-    strengths: ["긴 문서·코드도 한 번에 읽어요", "지시를 꼼꼼히 따르고 구조적인 코드·글을 써요", "스크린샷을 보고 코드나 분석 결과로 변환"],
+    strengths: ["긴 문서·코드도 한 번에 읽어요", "조건이 많은 지시를 담아 코드·글을 맡길 수 있어요", "스크린샷을 보고 코드나 분석 결과로 변환"],
     howTo: ["역할·목표·제약 조건을 목록으로 명확히 적어요", "관련 파일·스크린샷·예시를 함께 첨부해요", "결과를 받으면 '이 부분은 이렇게' 식으로 구체적으로 피드백해요"],
   },
   cursor: {
@@ -262,11 +262,11 @@ const TOOL_TABLE = defineTools({
   },
   midjourney: {
     name: "Midjourney",
-    description: "분위기와 색감 표현이 뛰어난 이미지 생성 AI. V8 세대는 HD 모드에서 업스케일 없이 2K 이미지를 만들어요. 분위기 참고 이미지·대표 이미지·컨셉 아트 제작에 많이 써요.",
+    description: "글로 설명하면 그림을 만드는 이미지 생성 AI. V8 세대는 HD 모드에서 업스케일 없이 2K 이미지를 만들어요. 분위기 참고 이미지·대표 이미지·컨셉 아트 제작에 많이 써요.",
     pricing: "Paid",
     url: "https://www.midjourney.com",
     related: ["firefly", "ideogram", "recraft"],
-    strengths: ["분위기·색감 표현이 뛰어나요", "스타일 레퍼런스로 일관된 톤의 이미지 시리즈 제작", "업스케일·변형·부분 수정 등 후작업 도구"],
+    strengths: ["분위기 참고 이미지·컨셉 아트에 많이 써요", "스타일 레퍼런스로 일관된 톤의 이미지 시리즈 제작", "업스케일·변형·부분 수정 등 후작업 도구"],
     howTo: ["주제 → 스타일 → 조명 → 구도 순서로 영어 프롬프트를 써요", "--ar로 비율을 지정해요 (예: 4:5, 16:9)", "마음에 드는 결과를 Vary·스타일 레퍼런스로 발전시켜요"],
   },
   firefly: {
@@ -311,7 +311,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://www.canva.com",
     related: ["looka", "firefly", "capcut"],
-    strengths: ["수많은 템플릿으로 누구나 빠르게 디자인", "Magic Studio로 문구·이미지·사이즈 변환 자동화", "브랜드 키트로 팀 전체 디자인 통일"],
+    strengths: ["템플릿을 골라 내용만 바꾸는 디자인", "Magic Studio로 문구·이미지·사이즈 변환 자동화", "브랜드 키트로 팀 전체 디자인 통일"],
     howTo: ["브랜드 키트(로고·색·폰트)를 먼저 등록해요", "Magic Design에 원하는 콘텐츠를 설명해 템플릿을 만들어요", "Magic Resize로 채널별 사이즈를 한 번에 변환해요"],
   },
   stitch: {
@@ -356,7 +356,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://lumalabs.ai",
     related: ["runway", "meshy", "kling"],
-    strengths: ["사실적인 카메라 움직임의 영상 생성", "이미지 한 장을 자연스러운 모션 영상으로", "시작·끝 프레임 지정으로 연출 제어"],
+    strengths: ["사실적인 카메라 움직임의 영상 생성", "이미지 한 장을 움직이는 영상으로", "시작·끝 프레임 지정으로 연출 제어"],
     howTo: ["기준 이미지를 올리거나 장면을 설명해요", "카메라 움직임(dolly, orbit 등)을 명시해요", "여러 번 생성해 가장 자연스러운 컷을 골라요"],
   },
   elicit: {
@@ -374,7 +374,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://consensus.app",
     related: ["elicit", "perplexity"],
-    strengths: ["피어 리뷰 논문만 검색 대상", "Consensus Meter로 연구 결과의 합의 정도를 시각화", "질문에 대한 근거 요약을 빠르게 제공"],
+    strengths: ["피어 리뷰 논문만 검색 대상", "Consensus Meter로 연구 결과의 합의 정도를 시각화", "질문에 대한 논문 근거를 요약해 보여 줘요"],
     howTo: ["예/아니오로 답할 수 있는 질문 형태로 입력해요", "합의 미터와 개별 논문 요약을 확인해요", "인용할 논문은 원문과 저널을 확인해요"],
   },
   notebooklm: {
@@ -442,11 +442,11 @@ const TOOL_TABLE = defineTools({
   },
   deepl: {
     name: "DeepL",
-    description: "자연스러운 번역 품질로 유명한 AI 번역기. DeepL Write로 문장 교정까지.",
+    description: "문서·PDF를 통째로 번역하는 AI 번역기. DeepL Write로 문장 교정까지.",
     pricing: "Freemium",
     url: "https://www.deepl.com",
     related: ["grammarly", "speak"],
-    strengths: ["문맥을 살린 자연스러운 번역 품질", "PDF·Word 문서를 서식 그대로 번역", "DeepL Write로 문장 교정·스타일 개선"],
+    strengths: ["문서 서식을 유지한 채 번역", "PDF·Word 문서를 서식 그대로 번역", "DeepL Write로 문장 교정·스타일 개선"],
     howTo: ["번역할 텍스트나 문서 파일을 올려요", "격식체/비격식체 등 어조를 선택해요", "용어집에 전공 용어를 등록해 번역을 일관되게 유지해요"],
   },
   grammarly: {
@@ -523,11 +523,11 @@ const TOOL_TABLE = defineTools({
   },
   vrew: {
     name: "Vrew",
-    description: "음성 인식 기반 자동 자막과 컷 편집에 강한 국산 영상 편집기. 한국어 인식률이 뛰어나요.",
+    description: "음성 인식으로 자동 자막을 달고 자막을 고치듯 컷 편집하는 국산 영상 편집기예요.",
     pricing: "Freemium",
     url: "https://vrew.ai",
     related: ["capcut", "typecast", "descript"],
-    strengths: ["한국어 음성 인식 정확도가 뛰어나요", "자막이 자동 생성되고 텍스트처럼 컷 편집", "AI 목소리·텍스트로 영상 만들기 지원"],
+    strengths: ["한국 회사가 만든 한국어 음성 인식", "자막이 자동 생성되고 텍스트처럼 컷 편집", "AI 목소리·텍스트로 영상 만들기 지원"],
     howTo: ["영상을 불러오면 음성 분석으로 자막이 자동 생성돼요", "오타·싱크를 문서 편집하듯 고쳐요", "자막 스타일을 지정하고 내보내요"],
   },
   heygen: {
@@ -545,7 +545,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://typecast.ai",
     related: ["elevenlabs", "vrew", "heygen"],
-    strengths: ["자연스러운 한국어 AI 성우", "감정·속도·톤을 문장 단위로 조절", "다양한 캐릭터 보이스"],
+    strengths: ["한국어 AI 성우 목소리", "감정·속도·톤을 문장 단위로 조절", "다양한 캐릭터 보이스"],
     howTo: ["대본을 붙여넣고 캐릭터 보이스를 골라요", "문장별로 감정·속도를 조절해요", "오디오 파일로 받아 편집기에 넣어요"],
   },
   opusclip: {
@@ -595,11 +595,11 @@ const TOOL_TABLE = defineTools({
   },
   elevenlabs: {
     name: "ElevenLabs",
-    description: "자연스러운 AI 음성 서비스. 글 읽어 주기(TTS), 목소리 복제, 효과음 생성, 다국어 더빙까지.",
+    description: "AI 음성 서비스. 글 읽어 주기(TTS), 목소리 복제, 효과음 생성, 다국어 더빙까지.",
     pricing: "Freemium",
     url: "https://elevenlabs.io",
     related: ["typecast", "heygen", "suno"],
-    strengths: ["사람 같은 자연스러운 음성 합성", "텍스트로 효과음 생성", "음성 복제·다국어 더빙 지원"],
+    strengths: ["글을 사람 목소리처럼 읽어 주는 음성 합성", "텍스트로 효과음 생성", "음성 복제·다국어 더빙 지원"],
     howTo: ["글 읽어 주기는 대본과 목소리를 골라 만들어요", "효과음은 소리 상황을 구체적으로 영어로 설명해요", "여러 버전을 들어보고 골라 받아요"],
   },
   wrtn: {
@@ -761,7 +761,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://rosebud.ai",
     related: ["claude", "cursor", "scenario"],
-    strengths: ["코딩 없이 대화로 게임 제작", "템플릿에서 시작해 빠르게 수정", "만든 게임을 링크로 바로 공유"],
+    strengths: ["코딩 없이 대화로 게임 제작", "템플릿에서 시작해 수정", "만든 게임을 링크로 바로 공유"],
     howTo: ["장르·규칙·조작 방법을 한 문단으로 설명해요", "만들어진 게임을 해 보고 '점프를 더 높게'처럼 고쳐 달라고 해요", "완성되면 공유 링크로 친구에게 보내요"],
   },
   magicschool: {
@@ -829,7 +829,7 @@ const TOOL_TABLE = defineTools({
   },
   leonardo: {
     name: "Leonardo AI",
-    description: "이미지·영상 생성 AI. 게임 그래픽·캐릭터·일러스트를 같은 스타일로 만들기 좋아요.",
+    description: "이미지·영상 생성 AI. 내 그림을 학습시켜 게임 그래픽·캐릭터를 같은 스타일로 만들어요.",
     pricing: "Freemium",
     url: "https://leonardo.ai",
     related: ["midjourney", "krea", "scenario"],
@@ -941,7 +941,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://replit.com",
     related: ["lovable", "bolt", "cursor"],
-    strengths: ["설치 없이 브라우저에서 바로 개발", "말로 만든 앱을 바로 실행·공개", "코드를 보며 배우기 좋아요"],
+    strengths: ["설치 없이 브라우저에서 바로 개발", "말로 만든 앱을 바로 실행·공개", "만든 결과의 코드를 보며 배울 수 있어요"],
     howTo: ["만들고 싶은 앱을 설명해요", "만들어진 앱을 실행해 보고 고칠 점을 말해요", "공유 링크로 친구에게 보여 줘요"],
   },
   codecademy: {
@@ -1031,7 +1031,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Paid",
     url: "https://www.adcreative.ai",
     related: ["predis", "canva"],
-    strengths: ["광고 크기별 이미지를 한 번에", "브랜드 색·로고 적용", "여러 버전을 빠르게 비교"],
+    strengths: ["광고 크기별 이미지를 한 번에", "브랜드 색·로고 적용", "여러 버전을 만들어 비교"],
     howTo: ["브랜드 로고·색을 등록해요", "상품과 광고 목적을 적어요", "만들어진 소재 중 골라 내려받아요"],
   },
   predis: {
@@ -1112,7 +1112,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://ifttt.com",
     related: ["zapier", "make"],
-    strengths: ["가장 쉬운 자동화", "스마트홈 기기 연결", "무료로 시작"],
+    strengths: ["조건 하나·동작 하나의 간단한 자동화", "스마트홈 기기 연결", "무료로 시작"],
     howTo: ["시작 조건(If)을 골라요", "할 일(Then)을 골라요", "켜고 동작을 확인해요"],
   },
   pika: {
@@ -1225,7 +1225,7 @@ const TOOL_TABLE = defineTools({
   },
   msdesigner: {
     name: "Microsoft Designer",
-    description: "SNS 게시물·초대장·카드 같은 디자인을 AI로 빠르게 만드는 그래픽 앱이에요. 무료로 시작할 수 있어요.",
+    description: "SNS 게시물·초대장·카드 같은 디자인을 AI로 만드는 그래픽 앱이에요. 무료로 시작할 수 있어요.",
     pricing: "Freemium",
     url: "https://designer.microsoft.com",
     related: ["canva", "adobeexpress"],
@@ -1238,7 +1238,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://www.adobe.com/express/",
     related: ["canva", "msdesigner", "firefly"],
-    strengths: ["템플릿이 많아 빠르게 시작", "Firefly 이미지 생성 연동", "브랜드 키트"],
+    strengths: ["템플릿에서 시작", "Firefly 이미지 생성 연동", "브랜드 키트"],
     howTo: ["만들 디자인 종류를 골라요", "템플릿에 내용을 넣어요", "AI로 이미지나 문구를 추가해요"],
   },
   powerbi: {
@@ -1333,7 +1333,7 @@ const TOOL_TABLE = defineTools({
   },
   uxpilot: {
     name: "UX Pilot",
-    description: "AI로 화면 뼈대 그림(와이어프레임)과 화면 디자인을 빠르게 만드는 도구예요.",
+    description: "AI로 화면 뼈대 그림(와이어프레임)과 화면 디자인을 만드는 도구예요.",
     pricing: "Freemium",
     url: "https://uxpilot.ai",
     related: ["figma", "stitch"],
@@ -1450,7 +1450,7 @@ const TOOL_TABLE = defineTools({
   },
   whimsical: {
     name: "Whimsical",
-    description: "순서도·마인드맵·화면 뼈대 그림(와이어프레임)을 AI로 빠르게 그리는 도구예요.",
+    description: "순서도·마인드맵·화면 뼈대 그림(와이어프레임)을 AI로 그리는 도구예요.",
     pricing: "Freemium",
     url: "https://whimsical.com/ai",
     related: ["miro", "napkin"],
@@ -1463,7 +1463,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Freemium",
     url: "https://huggingface.co",
     related: ["ollama", "lmstudio"],
-    strengths: ["공개 모델이 가장 많이 모인 곳", "웹에서 바로 써 보는 데모", "한국 모델(EXAONE·Kanana 등)도 있어요"],
+    strengths: ["공개 AI 모델을 모아 둔 곳", "웹에서 바로 써 보는 데모", "한국 모델(EXAONE·Kanana 등)도 있어요"],
     howTo: ["찾는 모델 이름을 검색해요", "모델 설명과 라이선스를 확인해요", "데모로 써 보거나 내려받아요"],
   },
   ollama: {
@@ -1517,11 +1517,11 @@ export const ARCHIVE: Category[] = [
         id: "design",
         name: "디자인",
         nameEn: "DESIGN",
-        desc: "화면 시안 빠르게",
+        desc: "화면 시안 만들기",
         icon: PenTool,
         tools: [
-          { tool: "figma", useCase: "UI 디자인 툴", tag: "디자인", recommendation: "디자이너가 만든 화면을 넘겨받을 땐 Figma로. 개발 모드(Dev Mode)에서 크기·색 값을 바로 확인하세요.", prompt: "SaaS 대시보드 첫 화면을 만들어줘.\n- 왼쪽 사이드바: 홈, 프로젝트, 팀, 설정\n- 상단: 검색창, 알림, 프로필\n- 본문: KPI 카드 4개 + 최근 활동 테이블\n- 다크 테마, 8pt 그리드, 모든 레이어 오토 레이아웃" },
-          { tool: "gemini", useCase: "디자인 시안 생성", tag: "이미지 생성", recommendation: "디자이너 없이 시안 방향을 잡아야 할 때, Gemini로 무드와 레이아웃 시안을 빠르게 뽑아 보세요.", prompt: "[반려식물 관리 앱]의 모바일 홈 화면 디자인 시안 이미지를 3가지 스타일로 만들어줘.\n① 미니멀 화이트 ② 다크 네온 ③ 파스텔 일러스트\n각 시안마다 색상 팔레트(HEX)와 추천 폰트도 적어줘." },
+          { tool: "figma", useCase: "UI 디자인 툴", tag: "디자인", recommendation: "디자이너가 만든 화면을 넘겨받을 땐 Figma로. 개발 모드(Dev Mode)에서 크기·색 값을 바로 확인하세요.", prompt: "SaaS 대시보드 첫 화면을 만들어줘.\n- 왼쪽 사이드바: 홈, 프로젝트, 팀, 설정\n- 상단: 검색창, 알림, 프로필\n- 본문: 핵심 숫자 카드 4개(매출, 사용자 수 등) + 최근 활동 표\n- 어두운 테마, 간격은 8px 단위, 모든 요소에 오토 레이아웃(자동 정렬)" },
+          { tool: "gemini", useCase: "디자인 시안 생성", tag: "이미지 생성", recommendation: "디자이너 없이 시안 방향을 잡아야 할 때, Gemini에 분위기를 설명하고 시안 이미지를 여러 개 받아 비교해 보세요.", prompt: "[반려식물 관리 앱]의 모바일 홈 화면 디자인 시안 이미지를 3가지 스타일로 만들어줘.\n① 미니멀 화이트 ② 다크 네온 ③ 파스텔 일러스트\n각 시안마다 색상 팔레트(HEX)와 추천 폰트도 적어줘." },
           { tool: "v0", useCase: "UI 컴포넌트 생성", tag: "코드 생성", recommendation: "대시보드·폼 같은 표준 UI는 v0로 뼈대를 만들고 코드로 가져와 다듬으세요.", prompt: "Next.js + Tailwind + shadcn/ui 로 가격표 섹션을 만들어줘.\n- 플랜 3개: Free / Pro / Team\n- 월간·연간 토글 (연간 20% 할인 배지)\n- Pro 플랜 강조 스타일\n- 모바일에서는 세로로 쌓이게, aria 속성 포함" },
         ],
       },
@@ -1532,9 +1532,9 @@ export const ARCHIVE: Category[] = [
         desc: "디자인을 코드로",
         icon: LayoutTemplate,
         tools: [
-          { tool: "claude", useCase: "디자인 → 코드 변환", tag: "코드 생성", recommendation: "시안 스크린샷을 그대로 붙여넣고 컴포넌트 코드로 바꿀 땐 Claude가 간격·글자 크기까지 꼼꼼히 맞춰요.", prompt: "첨부한 디자인 스크린샷을 React + TypeScript + Tailwind 컴포넌트로 변환해줘.\n- 간격·폰트 크기를 최대한 똑같이 맞출 것\n- 반복 요소는 props 를 받는 하위 컴포넌트로 분리\n- 반응형: 모바일 390px / 데스크톱 1440px\n- 이미지는 placeholder 로\n마지막에 디자인과 다를 수 있는 부분을 목록으로 알려줘." },
-          { tool: "cursor", useCase: "AI 코드 에디터", tag: "에디터", recommendation: "매일 쓰는 에디터 자체를 AI로 바꾸고 싶다면 Cursor. 여러 파일에 걸친 코드를 한꺼번에 정리·수정할 때 좋아요.", prompt: "@src/components 안의 모든 Button 사용처를 새 <Button variant> API 로 바꿔줘.\n기존 className 조합은 variant='primary' | 'ghost' | 'danger' 로 매핑하고,\n작업이 끝나면 바꾼 파일 목록과 매핑 표를 보여줘." },
-          { tool: "bolt", useCase: "풀스택 앱 프로토타이핑", tag: "프로토타입", recommendation: "아이디어를 시험해 볼 첫 버전(MVP)을 빠르게 띄워야 한다면 Bolt.new.", prompt: "할 일 관리 웹앱 MVP 를 만들어줘.\n기능: 이메일 로그인, 프로젝트별 할 일 목록, 마감일·우선순위, 드래그로 순서 변경\n스택: React + Vite + Tailwind + Supabase\n첫 화면은 샘플 데이터로 바로 동작하게 해줘." },
+          { tool: "claude", useCase: "디자인 → 코드 변환", tag: "코드 생성", recommendation: "시안 스크린샷을 그대로 붙여넣고 컴포넌트 코드로 바꿀 땐 Claude에 스크린샷과 쓰는 기술(React 등)을 함께 주면 간격·글자 크기를 맞춘 코드를 받아요.", prompt: "첨부한 디자인 스크린샷을 React + TypeScript + Tailwind 컴포넌트로 변환해줘.\n- 간격·폰트 크기를 최대한 똑같이 맞출 것\n- 반복 요소는 props 를 받는 하위 컴포넌트로 분리\n- 반응형: 모바일 390px / 데스크톱 1440px\n- 이미지는 임시 이미지로\n마지막에 디자인과 다를 수 있는 부분을 목록으로 알려줘." },
+          { tool: "cursor", useCase: "AI 코드 에디터", tag: "에디터", recommendation: "매일 쓰는 에디터 자체를 AI로 바꾸고 싶다면 Cursor. 여러 파일에 걸친 코드를 한 번의 요청으로 함께 고칠 수 있어요.", prompt: "@src/components 안의 모든 Button 사용처를 새 <Button variant> API 로 바꿔줘.\n기존 className 조합은 variant='primary' | 'ghost' | 'danger' 로 매핑하고,\n작업이 끝나면 바꾼 파일 목록과 매핑 표를 보여줘." },
+          { tool: "bolt", useCase: "풀스택 앱 프로토타이핑", tag: "프로토타입", recommendation: "아이디어를 시험해 볼 첫 버전을 브라우저에서 바로 만들어 띄우려면 Bolt.new.", prompt: "할 일 관리 웹앱 첫 버전을 만들어줘.\n기능: 이메일 로그인, 프로젝트별 할 일 목록, 마감일·우선순위, 드래그로 순서 변경\n스택: React + Vite + Tailwind + Supabase\n첫 화면은 샘플 데이터로 바로 동작하게 해줘." },
         ],
       },
       {
@@ -1605,7 +1605,7 @@ export const ARCHIVE: Category[] = [
         desc: "앱·웹 화면 설계",
         icon: PenTool,
         tools: [
-          { tool: "figma", useCase: "UI 디자인 & 프로토타입", tag: "디자인", recommendation: "모든 UI 작업의 기본 캔버스. Figma AI로 반복 작업(리네이밍·목업)을 자동화하세요.", prompt: "모바일 핀테크 앱의 송금 플로우를 만들어줘.\n받는 사람 선택 → 금액 입력(키패드) → 확인 → 완료, 총 4개 화면.\n브랜드 컬러 #3B5BFF, iOS 스타일, 모든 레이어 오토 레이아웃 + 컴포넌트화." },
+          { tool: "figma", useCase: "UI 디자인 & 프로토타입", tag: "디자인", recommendation: "모든 UI 작업의 기본 캔버스. Figma AI로 레이어 이름 바꾸기·샘플 화면 채우기 같은 반복 작업을 맡기세요.", prompt: "모바일 핀테크 앱의 송금 플로우를 만들어줘.\n받는 사람 선택 → 금액 입력(키패드) → 확인 → 완료, 총 4개 화면.\n브랜드 색 #3B5BFF, 아이폰 스타일, 모든 요소에 오토 레이아웃(자동 정렬)을 적용하고 반복 요소는 컴포넌트로 만들어줘." },
           { tool: "framer", useCase: "AI 웹사이트 빌더", tag: "웹사이트 공개", recommendation: "디자인한 그대로 실제 사이트로 공개해야 한다면 Framer.", prompt: "건축 스튜디오 포트폴리오 웹사이트를 만들어줘.\n톤: 미니멀, 흑백 + 포인트 컬러 테라코타\n섹션: 풀스크린 히어로 이미지, 프로젝트 그리드(호버 시 확대), 스튜디오 소개, 연락처\n스크롤할 때 요소가 부드럽게 등장하는 애니메이션 포함." },
           { tool: "uizard", useCase: "스케치 → UI 목업", tag: "목업", recommendation: "화이트보드 스케치를 5분 만에 클릭 가능한 목업으로 만들 땐 Uizard.", prompt: "요가 클래스 예약 앱을 만들어줘.\n화면: 온보딩 3장, 클래스 목록(시간·난이도 필터), 강사 상세, 예약 확인\n분위기: 차분한 세이지 그린, 둥근 카드 UI" },
         ],
@@ -1642,7 +1642,7 @@ export const ARCHIVE: Category[] = [
         desc: "화면 뼈대 잡기",
         icon: LayoutTemplate,
         tools: [
-          { tool: "stitch", useCase: "프롬프트 → 앱 화면", tag: "UI 생성", recommendation: "앱 화면 초안을 여러 버전으로 빠르게 탐색할 땐 Stitch.", prompt: "독서 기록 앱의 모바일 화면 4개를 만들어줘.\n홈(오늘 읽은 페이지 그래프), 책 검색, 책 상세(별점·메모), 월간 통계\n라이트 모드, 차분한 네이비 포인트, 카드형 UI" },
+          { tool: "stitch", useCase: "프롬프트 → 앱 화면", tag: "UI 생성", recommendation: "앱 화면 초안을 여러 버전으로 만들어 비교할 땐 Stitch.", prompt: "독서 기록 앱의 모바일 화면 4개를 만들어줘.\n홈(오늘 읽은 페이지 그래프), 책 검색, 책 상세(별점·메모), 월간 통계\n라이트 모드, 차분한 네이비 포인트, 카드형 UI" },
           { tool: "relume", useCase: "사이트맵 & 와이어프레임", tag: "사이트 구조 설계", recommendation: "웹사이트에 어떤 페이지와 섹션이 필요한지(사이트 구조)를 먼저 잡아야 할 땐 Relume.", prompt: "스타트업용 회계 자동화 SaaS 의 마케팅 웹사이트.\n타깃: 스타트업 재무 담당자\n페이지: 홈, 기능, 가격, 고객 사례, 블로그, 문의\n홈에서는 고객 로고·보안 인증 같은 신뢰 요소를 강조해줘." },
           { tool: "v0", useCase: "동작하는 UI 프로토타입", tag: "코드 생성", recommendation: "개발자에게 '진짜 동작하는' 프로토타입을 넘기고 싶다면 v0.", prompt: "첨부한 와이어프레임을 실제로 클릭 가능한 프로토타입으로 만들어줘.\n탭 전환, 모달 열기/닫기, 폼 유효성 검사 메시지까지 동작하게.\n디자인은 흑백 와이어프레임 스타일 그대로 유지." },
         ],
@@ -1656,7 +1656,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "spline", useCase: "웹용 인터랙티브 3D", tag: "3D", recommendation: "랜딩 페이지에 인터랙티브 3D 오브젝트를 올릴 땐 Spline.", prompt: "a glossy chrome abstract blob with soft iridescent reflections, floating and slowly rotating, studio lighting" },
           { tool: "meshy", useCase: "텍스트 → 3D 모델", tag: "3D 생성", recommendation: "게임·AR용 3D 물체를 모델링 없이 만들어야 한다면 Meshy.", prompt: "low-poly cute cactus character in a terracotta pot, big round eyes, stylized, game-ready, PBR textures" },
-          { tool: "luma", useCase: "이미지 → 모션", tag: "모션", recommendation: "정지 이미지 시안에 자연스러운 카메라 무빙을 입힐 땐 Luma.", prompt: "첨부한 제품 이미지를 기준으로, 카메라가 제품 주위를 천천히 반 바퀴 도는 5초 영상. 부드러운 스튜디오 조명, 배경은 흐리게." },
+          { tool: "luma", useCase: "이미지 → 모션", tag: "모션", recommendation: "정지 이미지 시안에 카메라 움직임을 넣어 영상으로 만들 땐 Luma.", prompt: "첨부한 제품 이미지를 기준으로, 카메라가 제품 주위를 천천히 반 바퀴 도는 5초 영상. 부드러운 스튜디오 조명, 배경은 흐리게." },
         ],
       },
       {
@@ -1667,7 +1667,7 @@ export const ARCHIVE: Category[] = [
         icon: Palette,
         tools: [
           { tool: "khroma", useCase: "색 조합 추천", tag: "색", recommendation: "브랜드·화면 색 조합은 Khroma 추천으로 시작해요." },
-          { tool: "uxpilot", useCase: "AI 화면 디자인", tag: "UI 생성", recommendation: "화면 초안을 빠르게 여러 개 만들려면 UX Pilot." },
+          { tool: "uxpilot", useCase: "AI 화면 디자인", tag: "UI 생성", recommendation: "글로 설명한 화면 초안을 여러 개 만들어 비교하려면 UX Pilot." },
           { tool: "adobeexpress", useCase: "SNS·전단 디자인", tag: "그래픽", recommendation: "간단한 SNS 그래픽·전단은 Adobe Express 템플릿으로." },
           { tool: "msdesigner", useCase: "무료 그래픽 앱", tag: "그래픽", recommendation: "무료로 초대장·카드를 만들려면 Microsoft Designer." },
         ],
@@ -1740,7 +1740,7 @@ export const ARCHIVE: Category[] = [
         desc: "번역·글쓰기·회화",
         icon: Languages,
         tools: [
-          { tool: "deepl", useCase: "고품질 번역", tag: "번역", recommendation: "영어 논문·원서를 자연스러운 한국어로 읽고 싶다면 DeepL." },
+          { tool: "deepl", useCase: "고품질 번역", tag: "번역", recommendation: "영어 논문·원서를 PDF 그대로 한국어로 번역해 읽고 싶다면 DeepL." },
           { tool: "grammarly", useCase: "영문 교정", tag: "교정", recommendation: "영어 에세이·이메일 제출 전 마지막 점검은 Grammarly.", prompt: "Make this essay sound more academic and concise. Keep my original arguments and explain each major change." },
           { tool: "speak", useCase: "AI 회화 연습", tag: "회화", recommendation: "말하기 시험이나 면접 대비 스피킹 연습은 Speak.", prompt: "카페에서 음료를 주문하면서 알레르기를 설명하는 상황으로 롤플레이 해줘. 내가 틀린 표현은 대화가 끝난 뒤 정리해줘." },
         ],
@@ -1799,7 +1799,7 @@ export const ARCHIVE: Category[] = [
         desc: "자막·목소리 넣기",
         icon: Captions,
         tools: [
-          { tool: "vrew", useCase: "한국어 자동 자막", tag: "자막", recommendation: "한국어 말소리를 자동 자막으로 빠르게 뽑아야 한다면 Vrew." },
+          { tool: "vrew", useCase: "한국어 자동 자막", tag: "자막", recommendation: "한국어 말소리를 자동 자막으로 만들고 자막을 문서처럼 고치려면 Vrew." },
           { tool: "typecast", useCase: "한국어 AI 성우", tag: "AI 목소리", recommendation: "감정이 담긴 한국어 내레이션이 필요할 땐 Typecast." },
           { tool: "heygen", useCase: "아바타 · 다국어 더빙", tag: "더빙", recommendation: "내 영상을 입모양까지 맞춰 해외 언어로 더빙하려면 HeyGen." },
         ],
@@ -1825,7 +1825,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "suno", useCase: "보컬 포함 곡 생성", tag: "음악", recommendation: "영상 분위기에 맞는 오리지널 곡이 필요하다면 Suno.", prompt: "Style: lo-fi hip hop, mellow piano, vinyl crackle, 80 BPM, instrumental\nTitle: 새벽 공부" },
           { tool: "stableaudio", useCase: "저작권 걱정 적은 BGM", tag: "음악", recommendation: "영상에 넣을 BGM을 받아서 상업적으로 쓰려면 라이선스 데이터로 학습한 Stable Audio.", prompt: "cinematic ambient build-up, soft strings and pulsing synth, hopeful mood, for a product launch video, instrumental, 90 seconds" },
-          { tool: "elevenlabs", useCase: "효과음 · 음성 생성", tag: "사운드", recommendation: "딱 맞는 효과음이나 자연스러운 영어 내레이션은 ElevenLabs.", prompt: "heavy wooden door creaking open slowly in a large stone hall, with echo" },
+          { tool: "elevenlabs", useCase: "효과음 · 음성 생성", tag: "사운드", recommendation: "설명으로 효과음을 만들거나 영어 내레이션을 녹음 없이 만들려면 ElevenLabs.", prompt: "heavy wooden door creaking open slowly in a large stone hall, with echo" },
         ],
       },
       {
@@ -1859,9 +1859,9 @@ export const ARCHIVE: Category[] = [
         desc: "빈 화면에서 첫 문단까지",
         icon: FileText,
         tools: [
-          { tool: "claude", useCase: "긴 글 초안 · 구성", tag: "글쓰기", recommendation: "자연스러운 한국어 긴 글이 필요할 땐 Claude. 목차를 먼저 받고 문단별로 채우면 좋아요.", prompt: "주제: [주제]\n독자: [누가 읽는지]\n분량: 1,500자, 말투: 친근한 존댓말\n\n1) 제목 후보 5개\n2) 소제목 4개로 된 목차\n3) 목차대로 본문 초안\n을 써줘. 과장된 표현은 빼줘." },
+          { tool: "claude", useCase: "긴 글 초안 · 구성", tag: "글쓰기", recommendation: "한국어 긴 글이 필요할 땐 Claude. 목차를 먼저 받고 문단별로 채워 달라고 하세요.", prompt: "주제: [주제]\n독자: [누가 읽는지]\n분량: 1,500자, 말투: 친근한 존댓말\n\n1) 제목 후보 5개\n2) 소제목 4개로 된 목차\n3) 목차대로 본문 초안\n을 써줘. 과장된 표현은 빼줘." },
           { tool: "chatgpt", useCase: "아이디어 · 제목 뽑기", tag: "글쓰기", recommendation: "무엇을 쓸지 막막할 땐 ChatGPT에 아이디어와 제목 후보를 많이 받아 보세요.", prompt: "[블로그 주제]로 쓸 수 있는 글감 10개를 알려줘.\n각각 한 줄 설명과 클릭하고 싶어지는 제목 2개씩 붙여줘." },
-          { tool: "wrtn", useCase: "한국어 글쓰기 도구", tag: "글쓰기", recommendation: "블로그·소개글처럼 용도가 정해진 한국어 글은 뤼튼의 용도별 도구로 빠르게 시작해요.", prompt: "네이버 블로그용 [맛집 이름] 방문 후기를 써줘.\n분위기, 대표 메뉴 2개, 가격, 아쉬운 점을 넣고 사진 넣을 자리를 [사진]으로 표시해줘." },
+          { tool: "wrtn", useCase: "한국어 글쓰기 도구", tag: "글쓰기", recommendation: "블로그·소개글처럼 용도가 정해진 한국어 글은 뤼튼의 용도별 도구로 시작해요.", prompt: "네이버 블로그용 [맛집 이름] 방문 후기를 써줘.\n분위기, 대표 메뉴 2개, 가격, 아쉬운 점을 넣고 사진 넣을 자리를 [사진]으로 표시해줘." },
         ],
       },
       {
@@ -1874,7 +1874,7 @@ export const ARCHIVE: Category[] = [
           { tool: "claude", useCase: "문장 다듬기 · 줄이기", tag: "교정", recommendation: "내 글의 뜻은 그대로 두고 문장만 다듬고 싶을 땐 Claude에게 바뀐 부분 표시를 요청하세요.", prompt: "아래 글을 내 말투는 살리면서 더 읽기 쉽게 다듬어줘.\n- 긴 문장은 나누고, 반복되는 표현은 줄여줘\n- 고친 곳은 [원래 → 수정] 형식으로 따로 정리해줘\n\n[글 붙여넣기]" },
           { tool: "grammarly", useCase: "영어 글 교정", tag: "교정", recommendation: "영어로 쓴 글은 Grammarly로 문법과 어색한 표현을 마지막으로 점검해요.", prompt: "Make this paragraph clearer and more natural for a blog. Keep it friendly and under 120 words." },
           { tool: "deepl", useCase: "번역 · 다른 표현 찾기", tag: "번역", recommendation: "외국 자료를 인용하거나 영어 버전을 함께 낼 땐 DeepL로 자연스럽게 옮겨요." },
-          { tool: "wordtune", useCase: "다른 표현 찾기", tag: "표현", recommendation: "영어 문장을 더 자연스러운 표현으로 바꿔 보려면 Wordtune." },
+          { tool: "wordtune", useCase: "다른 표현 찾기", tag: "표현", recommendation: "영어 문장 하나를 여러 표현으로 바꿔 비교해 보려면 Wordtune." },
           { tool: "quillbot", useCase: "바꿔 쓰기·요약", tag: "표현", recommendation: "영어 글을 바꿔 쓰거나 줄일 땐 QuillBot." },
         ],
       },
@@ -1927,10 +1927,10 @@ export const ARCHIVE: Category[] = [
         id: "visual",
         name: "카드뉴스·이미지",
         nameEn: "VISUAL",
-        desc: "SNS용 그림 빠르게 만들기",
+        desc: "SNS용 그림 만들기",
         icon: Image,
         tools: [
-          { tool: "canva", useCase: "카드뉴스 · 포스터", tag: "그래픽", recommendation: "카드뉴스·포스터는 Canva 템플릿에 내용만 바꿔 넣는 게 가장 빨라요.", prompt: "'[주제]' 인스타그램 카드뉴스 5장을 만들어줘. 표지 1장, 내용 3장, 마지막 장은 매장 위치 안내." },
+          { tool: "canva", useCase: "카드뉴스 · 포스터", tag: "그래픽", recommendation: "카드뉴스·포스터는 Canva 템플릿을 골라 내용만 바꿔 넣으세요.", prompt: "'[주제]' 인스타그램 카드뉴스 5장을 만들어줘. 표지 1장, 내용 3장, 마지막 장은 매장 위치 안내." },
           { tool: "ideogram", useCase: "글자 들어간 이미지", tag: "이미지 생성", recommendation: "이미지 안에 행사명·가격 같은 글자가 정확히 들어가야 하면 Ideogram.", prompt: "Autumn sale poster for a small bakery, text \"FALL SALE 20% OFF\", warm orange tones, hand-drawn style, square" },
         ],
       },
@@ -2090,7 +2090,7 @@ export const ARCHIVE: Category[] = [
         id: "translate",
         name: "번역",
         nameEn: "TRANSLATE",
-        desc: "자연스러운 번역",
+        desc: "문서 번역",
         icon: Languages,
         tools: [
           { tool: "deepl", useCase: "문서 · 긴 글 번역", tag: "번역", recommendation: "논문·보고서처럼 긴 글은 DeepL이 문맥을 살려 자연스럽게 옮겨요." },
@@ -2151,7 +2151,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "julius", useCase: "데이터 파일 분석", tag: "분석", recommendation: "엑셀·CSV를 올리고 질문만으로 그래프까지 받고 싶다면 Julius AI.", prompt: "이 판매 데이터에서 월별 매출 추이를 선 그래프로 그리고, 매출이 가장 많이 오른 달과 이유가 될 만한 항목을 찾아줘." },
           { tool: "chatgpt", useCase: "데이터 분석 · 차트", tag: "분석", recommendation: "ChatGPT에 파일을 올리면 분석 과정을 설명하며 표와 그래프를 만들어 줘요.", prompt: "올린 설문 결과를 학년별로 나눠 만족도 평균을 비교하고, 막대그래프와 한 문단 요약을 만들어줘." },
-          { tool: "claude", useCase: "분석 결과 해석", tag: "분석", recommendation: "숫자가 뜻하는 바를 쉽게 풀어 설명받고 싶을 땐 Claude에 결과 표를 붙여넣어요.", prompt: "아래 분석 결과를 데이터를 모르는 사람도 이해하게 설명해줘. 주의해야 할 해석(인과관계 착각 등)도 알려줘.\n\n[결과 표]" },
+          { tool: "claude", useCase: "분석 결과 해석", tag: "분석", recommendation: "숫자가 뜻하는 바를 풀어 설명받고 싶을 땐 Claude에 결과 표를 붙여넣어요.", prompt: "아래 분석 결과를 데이터를 모르는 사람도 이해하게 설명해줘. 주의해야 할 해석(인과관계 착각 등)도 알려줘.\n\n[결과 표]" },
         ],
       },
       {
@@ -2278,7 +2278,7 @@ export const ARCHIVE: Category[] = [
         desc: "어려운 논문 쉽게 이해",
         icon: BookOpenText,
         tools: [
-          { tool: "scispace", useCase: "논문 PDF에 질문", tag: "읽기", recommendation: "모르는 문장·수식은 SciSpace에서 드래그해 쉽게 풀어 달라고 하세요.", prompt: "이 논문의 연구 질문, 방법, 주요 결과, 한계를 한국어로 각각 3줄씩 정리해줘." },
+          { tool: "scispace", useCase: "논문 PDF에 질문", tag: "읽기", recommendation: "모르는 문장·수식은 SciSpace에서 드래그해 풀어서 설명해 달라고 하세요.", prompt: "이 논문의 연구 질문, 방법, 주요 결과, 한계를 한국어로 각각 3줄씩 정리해줘." },
           { tool: "notebooklm", useCase: "여러 논문 묶어 질문", tag: "노트", recommendation: "읽을 논문이 여러 편이면 Gemini Notebook에 모두 넣고 비교 질문을 해요.", prompt: "올린 논문들이 공통으로 말하는 결론과 서로 다른 점을 표로 정리하고, 각 칸에 근거 논문을 적어줘." },
           { tool: "claude", useCase: "긴 논문 구조 분석", tag: "읽기", recommendation: "긴 논문을 통째로 넣고 논리 흐름과 약점을 물어볼 땐 Claude." },
         ],
@@ -2291,7 +2291,7 @@ export const ARCHIVE: Category[] = [
         icon: Quote,
         tools: [
           { tool: "perplexity", useCase: "출처 달린 사실 확인", tag: "검색", recommendation: "인용할 사실은 Perplexity로 찾고 원문 링크를 꼭 확인해요." },
-          { tool: "consensus", useCase: "주장별 연구 근거", tag: "논문", recommendation: "주장 하나가 연구로 뒷받침되는지 빠르게 보려면 Consensus." },
+          { tool: "consensus", useCase: "주장별 연구 근거", tag: "논문", recommendation: "주장 하나가 연구로 뒷받침되는지 논문 결과를 모아 보려면 Consensus." },
         ],
       },
       {
@@ -2336,7 +2336,7 @@ export const ARCHIVE: Category[] = [
         id: "voice",
         name: "목소리·내레이션",
         nameEn: "VOICE",
-        desc: "글을 자연스러운 목소리로",
+        desc: "글을 목소리로",
         icon: Volume2,
         tools: [
           { tool: "elevenlabs", useCase: "다국어 AI 음성", tag: "음성", recommendation: "영어 등 여러 언어 내레이션이나 효과음은 ElevenLabs.", prompt: "A warm, calm female narrator introducing a science documentary about the ocean." },
@@ -2385,7 +2385,7 @@ export const ARCHIVE: Category[] = [
         desc: "'이게 오면 저걸 해' 자동으로",
         icon: Plug,
         tools: [
-          { tool: "zapier", useCase: "쉬운 앱 연결", tag: "자동화", recommendation: "코딩 없이 가장 쉽게 시작하려면 Zapier. 연결되는 앱이 가장 많아요.", prompt: "새 Google 폼 응답이 오면 내용을 AI로 요약해서 Slack #문의 채널에 올려줘." },
+          { tool: "zapier", useCase: "쉬운 앱 연결", tag: "자동화", recommendation: "코딩 없이 앱끼리 연결하려면 Zapier.", prompt: "새 Google 폼 응답이 오면 내용을 AI로 요약해서 Slack #문의 채널에 올려줘." },
           { tool: "make", useCase: "복잡한 흐름 자동화", tag: "자동화", recommendation: "조건이 여러 갈래로 나뉘는 자동화는 흐름을 그림으로 보며 만드는 Make가 편해요." },
         ],
       },
@@ -2419,7 +2419,7 @@ export const ARCHIVE: Category[] = [
         icon: Workflow,
         tools: [
           { tool: "powerautomate", useCase: "Microsoft 365 자동화", tag: "자동화", recommendation: "Outlook·Teams·Excel 업무 자동화는 Power Automate." },
-          { tool: "ifttt", useCase: "가장 쉬운 자동화", tag: "자동화", recommendation: "스마트홈 기기나 간단한 앱 연결은 IFTTT로 무료로 시작해요." },
+          { tool: "ifttt", useCase: "간단한 자동화", tag: "자동화", recommendation: "스마트홈 기기나 간단한 앱 연결은 IFTTT로 무료로 시작해요." },
         ],
       },
     ],
@@ -2521,7 +2521,7 @@ export const ARCHIVE: Category[] = [
         desc: "설명을 그림으로",
         icon: Palette,
         tools: [
-          { tool: "msdesigner", useCase: "안내문·포스터", tag: "디자인", recommendation: "가정통신문·행사 포스터 같은 그림 자료는 Microsoft Designer로 빠르게 만들어요.", prompt: "학교 과학의 날 행사 포스터를 만들어줘. 10월 30일, 체육관, 밝고 재미있는 분위기." },
+          { tool: "msdesigner", useCase: "안내문·포스터", tag: "디자인", recommendation: "가정통신문·행사 포스터 같은 그림 자료는 Microsoft Designer에 설명을 적어 만들어요.", prompt: "학교 과학의 날 행사 포스터를 만들어줘. 10월 30일, 체육관, 밝고 재미있는 분위기." },
           { tool: "whimsical", useCase: "순서도·마인드맵", tag: "도식", recommendation: "개념의 흐름을 보여 줄 땐 Whimsical로 순서도나 마인드맵을 그려요.", prompt: "광합성의 과정(빛 흡수 → 물 분해 → 포도당 생성)을 순서도로 그려줘." },
         ],
       },
@@ -2589,7 +2589,7 @@ export const ARCHIVE: Category[] = [
         icon: Palette,
         tools: [
           { tool: "looka", useCase: "로고·브랜드 키트", tag: "브랜딩", recommendation: "사업 초기 로고와 명함이 필요하면 Looka로 시안을 받아요." },
-          { tool: "adobeexpress", useCase: "전단·SNS 홍보물", tag: "그래픽", recommendation: "개업 전단·SNS 홍보물은 Adobe Express 템플릿으로 빠르게 만들어요." },
+          { tool: "adobeexpress", useCase: "전단·SNS 홍보물", tag: "그래픽", recommendation: "개업 전단·SNS 홍보물은 Adobe Express 템플릿을 골라 만들어요." },
         ],
       },
     ],
@@ -2622,7 +2622,7 @@ export const ARCHIVE: Category[] = [
         desc: "찍은 영상 다듬기",
         icon: Scissors,
         tools: [
-          { tool: "captions", useCase: "자동 컷·자막", tag: "편집", recommendation: "말하는 영상을 휴대폰으로 빠르게 다듬을 땐 Captions." },
+          { tool: "captions", useCase: "자동 컷·자막", tag: "편집", recommendation: "말하는 영상을 휴대폰에서 자막·편집까지 끝내려면 Captions." },
           { tool: "clipchamp", useCase: "무료 온라인 편집", tag: "편집", recommendation: "윈도우 PC라면 기본으로 들어 있는 Clipchamp로 자르고 자막을 넣어요." },
         ],
       },
@@ -2633,7 +2633,7 @@ export const ARCHIVE: Category[] = [
         desc: "눈에 띄는 대표 이미지",
         icon: ImagePlus,
         tools: [
-          { tool: "playground", useCase: "썸네일 디자인", tag: "디자인", recommendation: "글자가 들어간 썸네일 시안은 Playground로 빠르게 만들어요.", prompt: "Bold YouTube thumbnail, text \"ROOM MAKEOVER IN 1 DAY\", bright yellow background, surprised person, high contrast" },
+          { tool: "playground", useCase: "썸네일 디자인", tag: "디자인", recommendation: "글자가 들어간 썸네일 시안은 Playground로 만들어요.", prompt: "Bold YouTube thumbnail, text \"ROOM MAKEOVER IN 1 DAY\", bright yellow background, surprised person, high contrast" },
           { tool: "ideogram", useCase: "글자 정확한 썸네일", tag: "이미지 생성", recommendation: "제목 글자가 정확히 들어가야 하면 Ideogram으로 만들어요.", prompt: "YouTube thumbnail with large text \"3 TIPS\", clean desk background, bold colors" },
         ],
       },
@@ -2734,14 +2734,14 @@ export const ARCHIVE: Category[] = [
         icon: Eraser,
         tools: [
           { tool: "photoshop", useCase: "지우기·배경 넓히기", tag: "편집", recommendation: "사진 속 사람·물건을 지우거나 배경을 넓힐 땐 Photoshop 생성형 채우기." },
-          { tool: "removebg", useCase: "배경 지우기", tag: "배경", recommendation: "제품 사진 배경만 깔끔하게 지우려면 remove.bg가 가장 간단해요." },
+          { tool: "removebg", useCase: "배경 지우기", tag: "배경", recommendation: "제품 사진 배경만 지우려면 remove.bg에 사진을 올리면 돼요." },
         ],
       },
       {
         id: "mobile",
         name: "휴대폰으로 편집",
         nameEn: "MOBILE",
-        desc: "앱으로 빠르게",
+        desc: "앱으로 만들기",
         icon: Smartphone,
         tools: [
           { tool: "picsart", useCase: "앱으로 보정·꾸미기", tag: "앱", recommendation: "휴대폰으로 보정하고 SNS용으로 꾸밀 땐 Picsart." },
@@ -2823,7 +2823,7 @@ export const ARCHIVE: Category[] = [
     nameEn: "CUSTOMER SUPPORT",
     accent: "#6366F1",
     icon: Headset,
-    tagline: "AI 상담원, 상담 관리, 답변 초안, 자동 분류 — 고객 응대를 빠르게",
+    tagline: "AI 상담원, 상담 관리, 답변 초안, 자동 분류 — 고객 응대 돕기",
     fields: [
       {
         id: "agent",
@@ -2888,7 +2888,7 @@ export const ARCHIVE: Category[] = [
         tools: [
           { tool: "chatgpt", useCase: "가장 많이 쓰는 AI 비서", tag: "대화형 AI", recommendation: "처음 AI를 써 본다면 ChatGPT로 시작해요. 무료로도 대부분 기능을 써 볼 수 있어요.", prompt: "오늘 저녁 냉장고에 있는 달걀, 두부, 대파로 만들 수 있는 요리 3가지를 알려줘." },
           { tool: "gemini", useCase: "Google과 연결된 AI 비서", tag: "대화형 AI", recommendation: "Gmail·드라이브·지도를 쓰고 있다면 Gemini가 편해요.", prompt: "이번 주 내 Gmail에서 중요한 일정만 뽑아 정리해줘." },
-          { tool: "claude", useCase: "긴 글·문서에 강한 AI 비서", tag: "대화형 AI", recommendation: "긴 문서를 읽히거나 글을 다듬을 땐 Claude가 꼼꼼해요." },
+          { tool: "claude", useCase: "긴 글·문서에 강한 AI 비서", tag: "대화형 AI", recommendation: "긴 문서를 읽히거나 글을 다듬을 땐 Claude에 문서를 통째로 올려요." },
         ],
       },
       {
