@@ -113,7 +113,25 @@ const LEGENDS = {
     ? `AI 서비스 전체 인기 = 사람들이 AI 웹사이트에 들어간 횟수 중 각 서비스의 비율이에요 (Similarweb, 전 세계, ${TRAFFIC.month}). 휴대폰 앱 사용은 빠져요 · 오른쪽 작은 글씨 = 1년 전 비율`
     : `개발자 사용량 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
-function setLegend() { $(".a-chart .legend").textContent = LEGENDS[rankKey](); }
+// 목록 위 "1위 기준" 한 줄: 무엇이 1위인지, 무엇으로 셌는지, 막대는 무엇인지
+const CRIT = {
+  new: () => ["가장 최근에 나온 모델", "회사 공식 출시일", ""],
+  price: () => priceMode === "api"
+    ? ["평균 단가가 가장 싼 모델", "100만 토큰당 요금 (입력 3 : 출력 1로 섞은 평균)", "막대 = 평균 단가, 길수록 비쌈"]
+    : priceMode === "free"
+      ? ["사람들이 가장 많이 쓰는 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month})`, ""]
+      : [`월 요금이 가장 싼 ${TIER_LABEL[priceMode]}`, "미국 기준 월 요금, 같은 값이면 많이 쓰는 순", ""],
+  pop: () => popMode === "all"
+    ? ["사람들이 가장 많이 들어가는 AI 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month})`, "막대 = 방문 비율"]
+    : ["개발자 프로그램이 가장 많이 쓴 모델", "OpenRouter에서 30일 동안 처리한 글의 양(토큰)", "막대 = 1위 대비 처리량"],
+};
+function setLegend() {
+  $(".a-chart .legend").textContent = LEGENDS[rankKey]();
+  const [top, by, bar] = CRIT[rankKey]();
+  $("#crit").innerHTML = `<b>1위</b> = ${esc(top)} · 기준: ${esc(by)}${bar ? ` · ${esc(bar)}` : ""}`;
+}
+// 서비스(회사)별 웹 방문 비율 — 무료·유료 목록을 많이 쓰는 순으로 줄 세울 때
+const shareOf = (co) => TRAFFIC.items.find((t) => t.co === co)?.share ?? 0;
 // 구독 요금: 서비스별 Pro급 / Max급 월 요금 (SUBSCRIPTIONS)
 let priceMode = "api";
 const tierOf = (sub, t) => sub.plans.find((p) => p[2] === t);
@@ -123,7 +141,8 @@ function subRows(tier) {
   const planOf = (sub) => (tier === "free" ? sub.plans.find((p) => p[1] === 0) : tierOf(sub, tier));
   const rows = Object.entries(SUBSCRIPTIONS).map(([co, sub]) => ({ co, sub, plan: planOf(sub) }))
     .sort((x, y) => (x.plan ? 0 : 1) - (y.plan ? 0 : 1)
-      || (tier === "free" ? (tierOf(x.sub, "pro")?.[1] ?? 0) - (tierOf(y.sub, "pro")?.[1] ?? 0) : (x.plan?.[1] ?? 0) - (y.plan?.[1] ?? 0)));
+      || (tier === "free" ? 0 : (x.plan?.[1] ?? 0) - (y.plan?.[1] ?? 0))
+      || shareOf(y.co) - shareOf(x.co));
   let rank = 0;
   return rows.map(({ co, sub, plan }) => `
     <button type="button" class="row row-price${plan ? "" : " row-none"}" data-sub="${co}">
@@ -237,6 +256,12 @@ function closeSheet() { $("#dim").hidden = true; document.body.style.overflow = 
 $("#dim").addEventListener("click", (e) => { if (e.target.id === "dim" || e.target.closest("[data-close]")) closeSheet(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 
+// 용어 풀이 시트
+$("#glossBtn").addEventListener("click", () => openSheet(`
+  <div class="sh-top"><div class="nm"><b>용어 풀이</b><small>이 화면에 나오는 말을 쉽게 풀었어요</small></div>
+    <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button></div>
+  <dl class="gloss">${GLOSSARY.map(([t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>`));
+
 function openModel(id, tab = "info") {
   const m = MODELS.find((x) => x.id === id);
   const state = { tab };
@@ -267,6 +292,7 @@ function pane(m, tab) {
   return `
     <div><h4>어디서 쓸 수 있나요</h4><div class="chips">${m.use.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
     <div><h4>주요 기능</h4><div class="chips">${m.features.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
+    ${specHTML(m)}
     ${m.price ? `<div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
@@ -274,6 +300,18 @@ function pane(m, tab) {
       : `<div><h4>API 요금</h4><p class="price-note">공개된 API 요금이 없어요. ${m.use.some((u) => u.includes("모델 파일")) ? "모델 파일을 무료로 내려받아 직접 실행할 수 있어요. " : ""}<a href="${esc(m.src)}" target="_blank" rel="noopener">공식 발표 ›</a></p></div>`}
     ${peerPriceHTML(m)}
     ${subHTML(m.co)}`;
+}
+// 사양: 한 번에 읽는 길이, 최대 출력, 넣을 수 있는 것, 공개 여부 (SPECS)
+const IN_NAMES = { text: "글", image: "이미지", file: "파일(PDF 등)", audio: "음성", video: "영상" };
+const fmtLen = (n) => `${Math.round(n / 1e4).toLocaleString("en-US")}만 토큰`;
+function specHTML(m) {
+  const s = SPECS[m.id]; if (!s) return "";
+  return `<div class="spec"><h4>사양</h4><div class="kv">
+    <div><span>한 번에 읽는 길이 <small>· 대화·문서를 기억하는 양</small></span><span class="num">${fmtLen(s.ctx)}</span></div>
+    ${s.out ? `<div><span>한 번에 써 주는 최대 길이</span><span class="num">${fmtLen(s.out)}</span></div>` : ""}
+    <div><span>넣을 수 있는 것</span><span>${s.in.map((x) => IN_NAMES[x]).join(" · ")}</span></div>
+    <div><span>모델 파일 공개</span><span>${s.hf ? `<a href="https://huggingface.co/${esc(s.hf)}" target="_blank" rel="noopener">공개 (내려받아 직접 실행 가능) ›</a>` : "비공개"}</span></div></div>
+    <p class="price-note">토큰 1만 개 ≈ 한글 5천~1만 자 · OpenRouter 공개 모델 목록 기준 · ${SPECS_CHECKED} 확인 · <a href="https://openrouter.ai/${esc(s.or)}" target="_blank" rel="noopener">출처 ›</a></p></div>`;
 }
 // 같은 회사 모델끼리 API 평균 단가 비교 (입력 3 : 출력 1)
 function peerPriceHTML(m) {
@@ -601,4 +639,3 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNoti(
 
 // 처음 그리기
 renderIdx(); renderRows(); setLegend(); renderFeed(); updateBell();
-$("#chartTime").textContent = `${CHECKED} 확인`;

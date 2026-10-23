@@ -443,6 +443,72 @@ const TOKENS = [["보고서 10쪽 요약", "입력 8K · 출력 1K"], ["코드 �
 // '인기' 탭 — 실제 데이터: OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델
 // tokens = 30일 동안 처리한 토큰(글자 조각) 수, change = 그 전 30일과 비교 (null = 새로 나온 모델)
 // 갱신: https://openrouter.ai/rankings 의 This Month 표를 보고 items 와 checked 를 고치면 돼요
+// 모델 사양 — OpenRouter 공개 모델 목록(API)의 값
+// ctx = 한 번에 읽을 수 있는 길이(토큰), out = 한 번에 써 줄 수 있는 최대 길이(토큰). 판매처 값이 ctx의 85% 이상이면 실제 제한으로 보기 어려워 빈 값(null)
+// in = 넣을 수 있는 것, hf = 모델 파일이 공개된 Hugging Face 주소 (있으면 공개 모델)
+// 용어 풀이 — 화면에 나오는 낯선 말 (처음 보는 사람 기준)
+const GLOSSARY = [
+  ["모델", "AI의 두뇌 하나하나예요. 같은 회사도 빠른 모델, 똑똑한 모델 등 여러 개를 내요 (예: Claude Sonnet, Claude Haiku)."],
+  ["서비스·앱", "사람이 직접 들어가 대화하는 곳이에요 (예: ChatGPT, Gemini 앱). 한 서비스 안에서 여러 모델을 골라 써요."],
+  ["토큰", "AI가 글을 읽고 쓰는 단위예요. 한글 1글자가 대략 1~2토큰, 1만 토큰이면 한글 5천~1만 자 정도예요."],
+  ["입력 / 출력", "입력 = AI에게 보내는 글, 출력 = AI가 써 주는 글. 요금은 보통 출력이 더 비싸요."],
+  ["평균 단가", "입력 요금 3번과 출력 요금 1번을 더해 4로 나눈 값이에요. 보통 보내는 글이 받는 글보다 3배쯤 많아서 이렇게 섞어 비교해요."],
+  ["API", "개발자가 자기 프로그램에서 AI를 불러 쓰는 통로예요. 쓴 만큼(토큰) 돈을 내요. 일반 사용자는 보통 구독 요금제를 써요."],
+  ["구독 요금제", "앱·웹에서 AI를 쓰려고 매달 내는 돈이에요. 무료 → 기본 유료 → 최상위 유료로 갈수록 쓸 수 있는 양과 기능이 늘어요."],
+  ["한 번에 읽는 길이 (컨텍스트)", "AI가 한 번에 기억하며 볼 수 있는 글의 양이에요. 길수록 긴 문서나 긴 대화를 한꺼번에 다룰 수 있어요."],
+  ["넣을 수 있는 것", "AI에게 보낼 수 있는 자료 종류예요. 글만 되는 모델도 있고, 이미지·파일·음성·영상까지 되는 모델도 있어요."],
+  ["모델 파일 공개 (오픈 웨이트)", "모델 파일을 누구나 내려받아 자기 컴퓨터나 서버에서 돌릴 수 있게 공개한 것이에요. 쓰는 조건(라이선스)은 모델마다 달라요."],
+  ["OpenRouter", "여러 회사 AI를 한곳에서 골라 쓰게 해 주는 개발자용 중개 서비스예요. 여기서 모델별 사용량과 사양을 공개해요."],
+  ["Similarweb", "웹사이트 방문 수를 재는 회사예요. AI 서비스 인기 순위는 이 회사가 잰 AI 웹사이트 방문 비율이에요 (휴대폰 앱은 빠져요)."],
+  ["개발자 사용량", "개발자 프로그램이 OpenRouter를 거쳐 AI에게 맡긴 글의 양(토큰)이에요. 사람 수가 아니라 처리량이라 싸고 빠른 모델이 위로 올라가요."],
+  ["벤치마크", "AI 실력을 재는 시험이에요. 시험마다 재는 능력(코딩, 수학, 대화 등)이 달라서 한 점수로 전부를 말할 수는 없어요."],
+];
+
+const SPECS_CHECKED = "2026-10-23";
+const SPECS_SOURCE = "https://openrouter.ai/api/v1/models";
+const SPECS = {
+  argon: { or: "google/gemini-4-argon", ctx: 1048576, out: null, in: ["text", "image", "file", "audio", "video"] },
+  wonder: { or: "meta/muse-wonder", ctx: 1048576, out: null, in: ["text", "image", "file", "audio", "video"] },
+  haiku55: { or: "anthropic/claude-haiku-5.5", ctx: 1000000, out: 128000, in: ["text", "image", "file"] },
+  large4: { or: "mistralai/mistral-large-4-0", ctx: 1048576, out: 262144, in: ["text", "image"] },
+  sol61: { or: "openai/gpt-6.1-sol", ctx: 1050000, out: 128000, in: ["text", "image", "file"] },
+  sonnet55: { or: "anthropic/claude-sonnet-5.5", ctx: 1000000, out: 128000, in: ["text", "image", "file"] },
+  opus55: { or: "anthropic/claude-opus-5.5", ctx: 1000000, out: 128000, in: ["text", "image", "file"] },
+  grok47: { or: "x-ai/grok-4.7", ctx: 500000, out: null, in: ["text", "image", "file"] },
+  astra: { or: "openai/gpt-6-astra", ctx: 1050000, out: 128000, in: ["text", "image", "file"] },
+  g38flash: { or: "google/gemini-3.8-flash", ctx: 1048576, out: 65536, in: ["text", "image", "file", "audio", "video"] },
+  muse13: { or: "meta/muse-spark-1.3", ctx: 1048576, out: null, in: ["text", "image", "file", "video"] },
+  fable: { or: "anthropic/claude-fable-5.1", ctx: 1000000, out: 128000, in: ["text", "image", "file"] },
+  dsflash: { or: "deepseek/deepseek-v4.1-flash", ctx: 1048576, out: null, in: ["text", "image"], hf: "deepseek-ai/DeepSeek-V4.1-Flash" },
+  dsv4pro: { or: "deepseek/deepseek-v4-pro", ctx: 1048576, out: 384000, in: ["text"], hf: "deepseek-ai/DeepSeek-V4-Pro" },
+  luna6: { or: "openai/gpt-6-luna", ctx: 1050000, out: 128000, in: ["text", "image", "file"] },
+  g35lite: { or: "google/gemini-3.5-flash-lite", ctx: 1048576, out: 65536, in: ["text", "image", "file", "audio", "video"] },
+  nb21: { or: "google/gemini-nano-banana-2.1", ctx: 65536, out: null, in: ["text", "image"] },
+  nbpro: { or: "google/gemini-3-pro-image", ctx: 131072, out: 32768, in: ["text", "image"] },
+  musopen: { or: "meta/muse-spark-open", ctx: 1048576, out: null, in: ["text", "image", "file", "audio", "video"], hf: "meta-models/Muse-Spark-Open-816B-A42B" },
+  grok43: { or: "x-ai/grok-4.3", ctx: 1000000, out: null, in: ["text", "image", "file"] },
+  grokbuild: { or: "x-ai/grok-build-0.1", ctx: 256000, out: null, in: ["text", "image", "file"] },
+  medium35: { or: "mistralai/mistral-medium-3-5", ctx: 262144, out: 209715, in: ["text", "image", "file"] },
+  small4: { or: "mistralai/mistral-small-2603", ctx: 262144, out: 209715, in: ["text", "image"], hf: "mistralai/Mistral-Small-4-119B-2603" },
+  qwen38max: { or: "qwen/qwen3.8-max-0902", ctx: 1000000, out: 131072, in: ["text", "image", "video"] },
+  qwen38flash: { or: "qwen/qwen3.8-flash", ctx: 1000000, out: 131072, in: ["text", "image", "video"], hf: "Qwen/Qwen3.8-Flash-Next" },
+  qwenomni: { or: "qwen/qwen3.8-omni-flash", ctx: 1000000, out: 131072, in: ["text", "image", "audio", "video"] },
+  kimik3: { or: "moonshotai/kimi-k3", ctx: 1048576, out: null, in: ["text", "image", "video"], hf: "moonshotai/Kimi-K3" },
+  glm53: { or: "z-ai/glm-5.3", ctx: 1048576, out: null, in: ["text"], hf: "zai-org/GLM-5.3" },
+  glm53prime: { or: "z-ai/glm-5.3-prime", ctx: 1000000, out: 131072, in: ["text"] },
+  glm53flash: { or: "z-ai/glm-5.3-flash", ctx: 1048576, out: null, in: ["text", "image", "video"], hf: "zai-org/GLM-5.3-Flash" },
+  minimaxm3: { or: "minimax/minimax-m3", ctx: 1048576, out: 512000, in: ["text", "image", "video"], hf: "MiniMaxAI/Minimax-M3" },
+  mimopro: { or: "xiaomi/mimo-v2.6-pro", ctx: 1050000, out: 131072, in: ["text", "image", "audio", "video"], hf: "XiaomiMiMo/MiMo-V2.6-Pro-RL" },
+  mimoflash: { or: "xiaomi/mimo-v2.6-flash", ctx: 1050000, out: 131072, in: ["text", "image", "audio", "video"], hf: "XiaomiMiMo/MiMo-V2.6-Flash-RL" },
+  nemo3ultra: { or: "nvidia/nemotron-3-ultra-550b-a55b", ctx: 262144, out: 182520, in: ["text"], hf: "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16" },
+  nemo35vl: { or: "nvidia/nemotron-3.5-super-vl", ctx: 1048576, out: 235929, in: ["text", "image", "video"], hf: "nvidia/NVIDIA-Nemotron-3.5-Super-VL" },
+  nova2lite: { or: "amazon/nova-2-lite-v1", ctx: 1000000, out: 65535, in: ["text", "image", "file", "video"] },
+  novapremier: { or: "amazon/nova-premier-v1", ctx: 1000000, out: 32000, in: ["text", "image"] },
+  commandaplus: { or: "cohere/command-a-plus", ctx: 192000, out: 64000, in: ["text", "image"] },
+  solarpro4: { or: "upstage/solar-pro4", ctx: 524288, out: 131072, in: ["text"] },
+  solarmini4: { or: "upstage/solar-mini4", ctx: 524288, out: 131072, in: ["text"] },
+};
+
 // AI 서비스 전체 인기 — Similarweb 생성형 AI 웹사이트 방문 비율 (전 세계, 2026년 9월, 2026-10-12 발표)
 // 앱·API 사용은 빠져요. prev = 1년 전(2025년 10월) 비율. 같은 수치를 OfficeChai·FourWeekMBA 두 곳에서 확인
 const TRAFFIC = { month: "2026년 9월", source: "https://x.com/Similarweb/status/2109561054883717264", items: [

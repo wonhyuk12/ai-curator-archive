@@ -35,7 +35,7 @@
 
   <!-- LLM 차트 -->
   <section class="a-chart card" aria-labelledby="chartTitle">
-    <div class="head"><h2 id="chartTitle">AI 모델 순위</h2><small id="chartTime"></small></div>
+    <div class="head"><h2 id="chartTitle">AI 모델 순위</h2><button type="button" class="gloss-btn" id="glossBtn">용어 풀이</button></div>
     <p class="sec-help">대화형 AI 모델(LLM)을 새로 나온 순서, 요금, 인기로 비교해요. 눌러서 자세히 보기</p>
     <div class="tabs" id="rankTabs" role="group" aria-label="정렬">
       <button type="button" data-k="new" aria-pressed="true">최신순</button>
@@ -57,6 +57,7 @@
       <button type="button" data-pp="all" aria-pressed="true">AI 서비스 전체</button>
       <button type="button" data-pp="dev" aria-pressed="false">개발자 사용량</button>
     </div>
+    <p class="crit" id="crit"></p>
     <div class="rows" id="rows"></div>
     <p class="legend"></p>
   </section>
