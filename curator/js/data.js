@@ -765,7 +765,7 @@ const SUBSCRIPTIONS = {
   perplexity: { service: "Perplexity", co: "perplexity", source: "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you",
     plans: [
       { name: "Free", usd: 0, tier: "free", models: ["자동 선택 (직접 못 골라요)"], limits: "Pro 검색 하루 3번, 깊은 조사 한 달 1번", f: ["search", "research", "file"] },
-      { name: "Pro", usd: null, tier: "pro", models: ["GPT-6.1 Sol", "Claude Sonnet 5.5", "Gemini 3.8 Flash", "Grok 4.7", "Kimi K3 등"], limits: "주간 한도", f: ["search", "research", "image", "video", "file"] },
+      { name: "Pro", usd: null, tier: "pro", models: ["GPT-6.1 Sol", "Claude Sonnet 5.5", "Gemini 3.8 Flash", "Grok 4.7", "Kimi K3 등"], limits: "주간 한도 · 월 결제 가격은 확인 못 했고, 연 결제 시 월 $17이에요", src: "https://www.perplexity.ai/hub/pricing", f: ["search", "research", "image", "video", "file"] },
       { name: "Max", usd: 200, tier: "max", src: "https://www.perplexity.ai/help-center/en/articles/11680686-perplexity-max", models: ["Pro 모델 + GPT-6 Astra", "Gemini 4 Argon", "Claude Opus 5.5", "Claude Fable 5.1"], limits: "높은 한도", f: ["search", "research", "image", "video", "file", "memory"] },
     ] },
   meta: { service: "Meta Muse", co: "meta", source: "https://www.meta.com/help/subscriptions/1021145227643680/", note: "아직 일부 지역에서만 시험 중이에요",
