@@ -71,7 +71,7 @@ export const fmtUsd = (v: number) => (Number.isInteger(v) ? `$${v}` : `$${v.toFi
 /** 비용 한 줄: "무료로 시작 · 유료 월 $20부터" */
 export function costText(m: ToolMetric): string {
   const free = m.freeStart === true ? "무료로 시작" : m.freeStart === false ? "무료 없음" : null;
-  const paid = m.paidFrom != null ? `유료 월 ${fmtUsd(m.paidFrom)}부터${m.annualOnly ? " (연 결제)" : ""}` : null;
+  const paid = m.paidFrom != null ? `유료 월 ${fmtUsd(m.paidFrom)}부터${m.annualOnly ? " (연 결제·연 약정)" : ""}` : null;
   return [free, paid].filter(Boolean).join(" · ") || "요금 확인 못 함";
 }
 
