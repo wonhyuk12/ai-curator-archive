@@ -48,7 +48,7 @@ export function KioskStart() {
   };
 
   return (
-    <main className="relative flex h-dvh w-full flex-col overflow-hidden px-[4vw] py-[3.2vh] text-white">
+    <main className="relative flex h-dvh w-full flex-col overflow-hidden break-keep px-[4vw] py-[3.2vh] text-white">
       <Backdrop intensity={1.3} />
       <Orb />
 
@@ -73,7 +73,7 @@ export function KioskStart() {
         >
           [ 원하는 버튼을 눌러 시작하세요 ]
         </motion.div>
-        <h1 className="mt-[1.4vh] text-[clamp(30px,8.4vh,84px)] font-extrabold leading-[1.02] tracking-[-0.045em]">
+        <h1 className="mt-[1.4vh] text-[clamp(30px,min(8.4vh,8.4vw),84px)] font-extrabold leading-[1.02] tracking-[-0.045em]">
           <ScrambleText text="지금 AI, 무엇이 새롭고" duration={900} className="block" />
           <span className="block bg-gradient-to-r from-[#00F0FF] via-white to-[#FF2E88] bg-clip-text text-transparent">
             나에겐 무엇이 맞을까?
