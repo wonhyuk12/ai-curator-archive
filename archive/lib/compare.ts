@@ -1,12 +1,14 @@
 import { TOOLS, type SubField, type ToolKey } from "@/data/archive";
-import { BOARDS, FIELD_BOARD, TAG_BOARD, TOOL_METRICS, TOOL_SKILL, type Board, type BoardInfo, type ToolMetric } from "@/data/tool-metrics";
+import { BOARDS, FIELD_BOARD, GENERAL_TOOLS, SCORE_TIE, TAG_BOARD, TOOL_METRICS, TOOL_SKILL, type Board, type BoardInfo, type ToolMetric } from "@/data/tool-metrics";
 
 export interface ToolRow {
   key: ToolKey;
   name: string;
-  /** 실력 점수 (분야 측정에 값이 있을 때만) */
+  /** 여러 일에 두루 쓰는 범용 AI (방문 수가 사이트 전체라 전문 툴과 따로 봐요) */
+  general: boolean;
+  /** 실력 점수 (분야 측정에 값이 있을 때만). place = 분야 안 순위, 같은 점수는 같은 순위 */
   skill: { score: number; rank: number; entry: string; place: number } | null;
-  /** 최근 3개월 방문 수와 분야 안 순위 */
+  /** 방문 수와 순위. place = 같은 무리(범용끼리 / 전문 툴끼리) 안의 순위 */
   users: { visits: number; place: number } | null;
   metric: ToolMetric;
 }
@@ -17,18 +19,22 @@ export interface FieldCompare {
   boardInfo: BoardInfo | null;
   rows: ToolRow[];
   skillCount: number;
-  userCount: number;
+  /** 방문 순위를 범용 AI와 전문 툴로 나눴는지 (분야에 둘이 섞여 있으면 true) */
+  split: boolean;
 }
 
-/** 분야를 잴 측정: 툴 태그가 가리키는 측정 중, 분야 안에서 점수가 있는 툴이 2개 이상인 것 */
+/** 분야를 잴 측정: 직접 정한 것이 있으면 그것, 아니면 툴 태그가 가리키는 측정 중 점수 있는 툴이 2개 이상인 것 */
 function pickBoard(field: SubField, key?: string): Board | null {
-  if (key && key in FIELD_BOARD) { const b = FIELD_BOARD[key]; return b && field.tools.filter((t) => TOOL_SKILL[t.tool]?.[b]).length >= 2 ? b : null; }
+  const scored = (b: Board) => field.tools.filter((t) => TOOL_SKILL[t.tool]?.[b]).length;
+  if (key && key in FIELD_BOARD) {
+    const b = FIELD_BOARD[key];
+    return b && scored(b) >= 2 ? b : null;
+  }
   const votes = new Map<Board, number>();
   for (const t of field.tools) {
     const b = TAG_BOARD[t.tag];
     if (b) votes.set(b, (votes.get(b) ?? 0) + 1);
   }
-  const scored = (b: Board) => field.tools.filter((t) => TOOL_SKILL[t.tool]?.[b]).length;
   const ordered = [...votes.entries()].sort((a, b) => b[1] - a[1]).map(([b]) => b);
   return ordered.find((b) => scored(b) >= 2 && BOARDS[b]) ?? null;
 }
@@ -42,21 +48,30 @@ export function compareField(field: SubField, key?: string): FieldCompare {
     return {
       key: t.tool,
       name: TOOLS[t.tool].name,
+      general: GENERAL_TOOLS.has(t.tool),
       skill: s ? { ...s, place: 0 } : null,
       users: m.visits ? { visits: m.visits, place: 0 } : null,
       metric: m,
     };
   });
-  [...rows].filter((r) => r.skill).sort((a, b) => b.skill!.score - a.skill!.score || a.skill!.rank - b.skill!.rank).forEach((r, i) => (r.skill!.place = i + 1));
-  [...rows].filter((r) => r.users).sort((a, b) => b.users!.visits - a.users!.visits).forEach((r, i) => (r.users!.place = i + 1));
-  return {
-    n: rows.length,
-    board,
-    boardInfo: board ? BOARDS[board] ?? null : null,
-    rows,
-    skillCount: rows.filter((r) => r.skill).length,
-    userCount: rows.filter((r) => r.users).length,
-  };
+  const withSkill = rows.filter((r) => r.skill);
+  const bySkill = [...withSkill].sort((a, b) => b.skill!.score - a.skill!.score);
+  bySkill.forEach((r, i) => (r.skill!.place = i > 0 && r.skill!.score === bySkill[i - 1].skill!.score ? bySkill[i - 1].skill!.place : i + 1));
+  // 범용 AI와 전문 툴이 섞인 분야는 방문 순위를 따로 매겨요 (사이트 전체 방문을 전문 툴과 겨루지 않게)
+  const split = rows.some((r) => r.general) && rows.some((r) => !r.general);
+  for (const group of split ? [rows.filter((r) => r.general), rows.filter((r) => !r.general)] : [rows]) {
+    const byUsers = group.filter((r) => r.users).sort((a, b) => b.users!.visits - a.users!.visits);
+    byUsers.forEach((r, i) => (r.users!.place = i + 1));
+  }
+  return { n: rows.length, board, boardInfo: board ? BOARDS[board] ?? null : null, rows, skillCount: withSkill.length, split };
+}
+
+/** 이 툴이 실력 1위로 확실히 앞서는지 (2위와 차이가 측정 오차보다 클 때만) */
+export function clearSkillLead(c: FieldCompare, key: ToolKey): boolean {
+  const me = c.rows.find((r) => r.key === key)?.skill;
+  if (!me || me.place !== 1) return false;
+  const next = c.rows.filter((r) => r.skill && r.key !== key).map((r) => r.skill!.score).sort((a, b) => b - a)[0];
+  return next === undefined || me.score - next >= SCORE_TIE;
 }
 
 /** 방문 수를 한국어로: 1.2억 / 3,400만 / 85만 / 9,000 */
@@ -75,32 +90,51 @@ export function costText(m: ToolMetric): string {
   return [free, paid].filter(Boolean).join(" · ") || "요금 확인 못 함";
 }
 
+/** 표 칸용 짧은 비용 */
+export function costShort(m: ToolMetric): string {
+  if (m.freeStart === true) return "무료 시작";
+  if (m.paidFrom != null) return `${fmtUsd(m.paidFrom)}~${m.annualOnly ? " (연)" : ""}`;
+  return m.freeStart === false ? "유료" : "–";
+}
+
+const n = (v: number) => v.toLocaleString("en-US");
+
 /** 이 툴을 같은 분야 다른 툴과 비교한 문장들 (숫자 포함) */
 export function compareSentences(c: FieldCompare, key: ToolKey): string[] {
   const me = c.rows.find((r) => r.key === key)!;
   const out: string[] = [];
   if (me.skill && c.skillCount >= 2 && c.boardInfo) {
-    const bySkill = c.rows.filter((r) => r.skill).sort((a, b) => a.skill!.place - b.skill!.place);
-    const top = bySkill[0];
+    const others = c.rows.filter((r) => r.skill && r.key !== key).sort((a, b) => b.skill!.score - a.skill!.score);
+    const mine = `${c.boardInfo.name} ${n(me.skill.score)}점(${me.skill.entry} 기준)`;
     if (me.skill.place === 1) {
-      const second = bySkill[1];
+      const second = others[0];
       const d = me.skill.score - second.skill!.score;
-      out.push(d > 0
-        ? `${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점(${me.skill.entry} 기준)으로 같은 분야 ${second.name}(${second.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 높아요.`
-        : `${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점으로 같은 분야 ${second.name}도 같은 점수예요.`);
+      out.push(d >= SCORE_TIE
+        ? `${mine}으로 같은 분야 ${second.name}(${n(second.skill!.score)}점)보다 ${n(d)}점 높아요.`
+        : `${mine}으로 같은 분야 ${second.name}(${n(second.skill!.score)}점)과 ${d}점 차이라, 측정 오차 안에서 비슷한 수준이에요.`);
     } else {
+      const top = others[0];
       const d = top.skill!.score - me.skill.score;
-      out.push(`${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점(${me.skill.entry} 기준)으로, 이 분야 1위 ${top.name}(${top.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 낮아요.`);
+      out.push(d >= SCORE_TIE
+        ? `${mine}으로, 이 분야 1위 ${top.name}(${n(top.skill!.score)}점)보다 ${n(d)}점 낮아요.`
+        : `${mine}으로, 이 분야 1위 ${top.name}(${n(top.skill!.score)}점)과 ${d}점 차이라 측정 오차 안에서 비슷한 수준이에요.`);
     }
   }
-  if (me.users && c.userCount >= 2) {
-    const byUsers = c.rows.filter((r) => r.users).sort((a, b) => a.users!.place - b.users!.place);
-    if (me.users.place === 1) {
-      const second = byUsers[1];
-      const x = me.users.visits / second.users!.visits;
-      out.push(`최근 3개월 방문 ${fmtVisits(me.users.visits)} 번으로 이 분야에서 가장 많이 쓰여요 (${second.name}의 ${x >= 10 ? Math.round(x) : x.toFixed(1)}배).`);
-    } else {
-      out.push(`최근 3개월 방문 ${fmtVisits(me.users.visits)} 번으로 이 분야 ${c.userCount}개 중 ${me.users.place}위예요 (1위 ${byUsers[0].name} ${fmtVisits(byUsers[0].users!.visits)} 번).`);
+  if (me.users) {
+    const peers = c.rows.filter((r) => r.users && (!c.split || r.general === me.general)).sort((a, b) => a.users!.place - b.users!.place);
+    const kind = c.split ? (me.general ? "이 분야의 범용 AI" : "이 분야의 전문 툴") : "이 분야";
+    const visits = `사이트 방문 ${fmtVisits(me.users.visits)} 번`;
+    if (me.general) {
+      out.push(peers.length >= 2
+        ? `${visits}으로 ${kind} ${peers.length}개 중 ${me.users.place}위예요. 여러 일에 두루 쓰는 AI라 이 작업만 센 숫자는 아니에요.`
+        : `${visits}이에요. 여러 일에 두루 쓰는 AI라 이 작업만 센 숫자는 아니에요.`);
+    } else if (peers.length >= 2) {
+      if (me.users.place === 1) {
+        const x = me.users.visits / peers[1].users!.visits;
+        out.push(`${visits}으로 ${kind} 중 가장 많아요 (${peers[1].name}의 ${x >= 10 ? Math.round(x) : x.toFixed(1)}배).`);
+      } else {
+        out.push(`${visits}으로 ${kind} ${peers.length}개 중 ${me.users.place}위예요 (1위 ${peers[0].name} ${fmtVisits(peers[0].users!.visits)} 번).`);
+      }
     }
   }
   return out;

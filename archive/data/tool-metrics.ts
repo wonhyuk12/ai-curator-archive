@@ -1,8 +1,8 @@
 /**
  * 툴 비교 자료 — 같은 분야 툴끼리 "몇 개 중 몇 위"로 비교할 때 쓰는 실제 측정값.
- *  - 실력: 그 작업을 직접 재는 공개 측정 (LMArena·Artificial Analysis). 툴 안에서 쓸 수 있는 모델 중 점수가 가장 높은 것 기준
- *    (entry = 측정표의 모델 이름, 유료 요금제에서만 쓸 수 있는 모델일 수 있어요). 측정이 없는 툴은 비워 둬요
- *  - 이용자: Similarweb 최근 3개월 웹사이트 방문 합계 (2026년 7~9월, 모든 툴 공통)
+ *  - 실력: 그 작업을 직접 재는 공개 측정 (LMArena·Artificial Analysis). 툴 회사가 직접 만든 모델 중 측정표에 정식으로 오른 최신 모델 기준
+ *    (entry = 측정표의 모델 이름, 유료 요금제에서만 쓸 수 있는 모델일 수 있어요). 미리보기·시험용 모델은 빼요. 측정이 없는 툴은 비워 둬요
+ *  - 이용자: Similarweb 웹사이트 방문 수 (2026년 9월 기준 페이지, 모든 툴 공통). 같은 기준이라 툴끼리 비교에 써요
  *  - 비용: 공식 요금 페이지의 무료 시작 여부와 가장 싼 개인 유료 요금 (미국 달러, 월 결제)
  * 값을 확인하지 못하면 null — 화면에는 "공개 측정 없음"으로 보여요.
  */
@@ -30,7 +30,7 @@ export interface SkillScore {
 
 export interface ToolMetric {
   domain?: string;
-  /** Similarweb 최근 3개월 방문 합계 */
+  /** Similarweb 방문 수 (2026년 9월 기준 페이지) */
   visits?: number | null;
   month?: string;
   /** 돈을 내지 않고 쓸 수 있는지 (무료 체험만 있으면 false) */
@@ -49,7 +49,7 @@ export const BOARDS: Partial<Record<Board, BoardInfo>> = {
   image: { name: "이미지 만들기 점수", by: "LMArena 이미지 만들기 투표", url: "https://arena.ai/leaderboard/text-to-image", updated: "2026-10-08" },
   imageEdit: { name: "이미지 편집 점수", by: "LMArena 이미지 편집 투표", url: "https://arena.ai/leaderboard/image-edit", updated: "2026-10-20" },
   video: { name: "영상 만들기 점수", by: "LMArena 영상 만들기 투표", url: "https://arena.ai/leaderboard/text-to-video", updated: "2026-09-22" },
-  music: { name: "음악 만들기 점수", by: "Artificial Analysis 음악 아레나(연주곡)", url: "https://artificialanalysis.ai/music/leaderboard/instrumental", updated: "2026-10-24" },
+  music: { name: "음악 만들기 점수(연주곡)", by: "Artificial Analysis 음악 아레나 연주곡 부문", url: "https://artificialanalysis.ai/music/leaderboard/instrumental", updated: "2026-10-24" },
   tts: { name: "음성 만들기 점수", by: "Artificial Analysis 음성 합성 아레나", url: "https://artificialanalysis.ai/text-to-speech/leaderboard/provider-voice", updated: "2026-10-24" },
   search: { name: "검색 답변 점수", by: "LMArena 검색 투표", url: "https://arena.ai/leaderboard/search", updated: "2026-10-13" },
 };
@@ -134,7 +134,6 @@ export const TOOL_METRICS: Partial<Record<ToolKey, ToolMetric>> = {
   miro: { domain: "miro.com", visits: 30200000, freeStart: true, freeWhat: "편집 가능 보드 3개", paidFrom: 8, paidName: "Starter", annualOnly: true, priceUrl: "https://miro.com/pricing/" },
   moises: { domain: "moises.ai", visits: 4200000, freeStart: true, freeWhat: "월 제한된 업로드", priceUrl: "https://moises.ai/pricing/" },
   mscopilot: { domain: "copilot.microsoft.com", visits: 64400000, freeStart: true, freeWhat: "제한된 무료 Copilot", paidFrom: 9.99, paidName: "Microsoft 365 Personal", priceUrl: "https://www.microsoft.com/en-us/copilot/pricing/individuals" },
-  msdesigner: { domain: "designer.microsoft.com", visits: 1500000, priceUrl: "https://designer.microsoft.com" },
   myrealtrip: { domain: "myrealtrip.com", visits: 5300000, priceUrl: "https://www.myrealtrip.com" },
   n8n: { domain: "n8n.io", visits: 4900000, freeStart: true, freeWhat: "셀프호스팅 Community 무료", paidFrom: 20, paidName: "Starter", annualOnly: true, priceUrl: "https://n8n.io/pricing/" },
   napkin: { domain: "napkin.ai", visits: 1200000, freeStart: true, freeWhat: "주 500 AI 크레딧", paidFrom: 12, paidName: "Plus", priceUrl: "https://www.napkin.ai/pricing" },
@@ -208,29 +207,27 @@ export const TOOL_METRICS: Partial<Record<ToolKey, ToolMetric>> = {
 };
 
 export const TOOL_SKILL: Partial<Record<ToolKey, Partial<Record<Board, SkillScore>>>> = {
-  chatgpt: { text: { entry: "GPT-6.1 Sol", score: 1480, rank: 27 }, webdev: { entry: "GPT-6 Astra", score: 1775, rank: 2 }, image: { entry: "GPT-Image-2.5 Sunburst", score: 1425, rank: 1 }, imageEdit: { entry: "GPT-Image-2.5 Sunburst", score: 1514, rank: 1 }, search: { entry: "GPT-5.6 Sol (Search)", score: 1261, rank: 1 } },
+  chatgpt: { text: { entry: "GPT-6.1 Sol", score: 1480, rank: 27 }, webdev: { entry: "GPT-6 Astra", score: 1775, rank: 2 }, image: { entry: "GPT-Image-2 (Medium)", score: 1383, rank: 3 }, search: { entry: "GPT-5.6 Sol (Search)", score: 1261, rank: 1 } },
   claude: { text: { entry: "Claude Opus 5.5", score: 1509, rank: 2 }, webdev: { entry: "Claude Opus 5.5", score: 1807, rank: 1 }, search: { entry: "Claude Opus 4.6 (Search)", score: 1251, rank: 3 } },
   claudecode: { webdev: { entry: "Claude Opus 5.5", score: 1807, rank: 1 } },
-  gemini: { text: { entry: "Gemini 4 Argon", score: 1517, rank: 1 }, webdev: { entry: "Gemini 4 Argon", score: 1673, rank: 11 }, image: { entry: "Nano Banana 2.1", score: 1328, rank: 6 }, imageEdit: { entry: "Nano Banana 2.1", score: 1426, rank: 5 }, search: { entry: "Gemini 3.1 Pro (Grounding)", score: 1209, rank: 15 } },
+  gemini: { text: { entry: "Gemini 4 Argon", score: 1517, rank: 1 }, webdev: { entry: "Gemini 4 Argon", score: 1673, rank: 11 }, image: { entry: "Nano Banana 2.1", score: 1328, rank: 6 }, search: { entry: "Gemini 3.1 Pro (Grounding)", score: 1209, rank: 15 } },
   aistudio: { text: { entry: "Gemini 4 Argon", score: 1517, rank: 1 }, webdev: { entry: "Gemini 4 Argon", score: 1673, rank: 11 } },
-  grok: { text: { entry: "Grok 4.7", score: 1441, rank: 96 }, webdev: { entry: "Grok 4.7", score: 1637, rank: 18 }, image: { entry: "Grok Imagine Image 2.0", score: 1334, rank: 4 }, imageEdit: { entry: "Grok Imagine Image 2.0", score: 1439, rank: 4 }, video: { entry: "Grok Imagine Video 1.5", score: 1492, rank: 4 }, search: { entry: "Grok 4.5 (Search)", score: 1216, rank: 13 } },
+  grok: { text: { entry: "Grok 4.7", score: 1441, rank: 96 }, webdev: { entry: "Grok 4.7", score: 1637, rank: 18 }, image: { entry: "Grok Imagine Image 2.0", score: 1334, rank: 4 }, video: { entry: "Grok Imagine Video 1.5", score: 1492, rank: 4 }, search: { entry: "Grok 4.5 (Search)", score: 1216, rank: 13 } },
   metaai: { text: { entry: "Muse Spark 1.3", score: 1496, rank: 10 } },
   lechat: { text: { entry: "Mistral Medium 3.5", score: 1426, rank: 119 } },
   perplexity: { search: { entry: "Sonar Reasoning Pro (High)", score: 1139, rank: 37 } },
-  ideogram: { image: { entry: "Ideogram 4.0 (Quality)", score: 1205, rank: 20 }, imageEdit: { entry: "Ideogram 4.5", score: 1347, rank: 21 } },
+  ideogram: { image: { entry: "Ideogram 4.0 (Quality)", score: 1205, rank: 20 } },
   recraft: { image: { entry: "Recraft V4.1 Utility Pro", score: 1169, rank: 26 } },
-  krea: { image: { entry: "Krea 2 Medium", score: 1124, rank: 45 }, imageEdit: { entry: "Krea 3 Ultra", score: 1411, rank: 8 } },
+  krea: { image: { entry: "Krea 2 Medium", score: 1124, rank: 45 } },
   leonardo: { image: { entry: "Lucid Origin", score: 1013, rank: 75 } },
-  msdesigner: { image: { entry: "DALL-E 3", score: 968, rank: 79 } },
   veo: { video: { entry: "Veo 3.1 (Audio)", score: 1364, rank: 12 } },
-  hailuo: { video: { entry: "Hailuo 2.3", score: 1206, rank: 32 } },
   runway: { video: { entry: "Runway Gen-4.5", score: 1225, rank: 27 } },
-  kling: { video: { entry: "Kling 2.5 Turbo (1080p)", score: 1220, rank: 28 } },
+  kling: { video: { entry: "Kling 2.6 Pro", score: 1216, rank: 29 } },
   luma: { video: { entry: "Luma Ray3", score: 1206, rank: 31 } },
   pika: { video: { entry: "Pika 2.2", score: 1009, rank: 47 } },
   suno: { music: { entry: "Suno v6", score: 1148, rank: 1 } },
   stableaudio: { music: { entry: "Stable Audio 3 Large", score: 1014, rank: 8 } },
-  elevenlabs: { tts: { entry: "Eleven v4 Turbo", score: 1335, rank: 1 } },
+  elevenlabs: { tts: { entry: "Eleven v4 Turbo", score: 1335, rank: 1 }, music: { entry: "Eleven Music v2.5", score: 1001, rank: 11 } },
 };
 
 /** 분야 태그 → 그 일을 재는 측정 (태그가 여러 개면 분야 안에서 가장 많은 것) */
@@ -260,12 +257,19 @@ export const TAG_BOARD: Record<string, Board> = {
 
 /** 분야별로 직접 정한 측정 (태그만으로 정해지지 않을 때). null = 이 분야 일을 재는 측정이 없음 */
 export const FIELD_BOARD: Record<string, Board | null> = {
-  "office/sheet": "text",
+  // 엑셀·파일 분석·말하기 연습은 대화 점수로 잴 수 없는 일이라 비교하지 않아요
+  "office/sheet": null,
+  "data/analyze": null,
+  "language/speaking": null,
   "presentation/rehearsal": "text",
-  "language/speaking": "text",
-  "data/analyze": "text",
   "support/reply": "text",
   "codingstart/ask": "text",
   // 발표자(아바타) 영상은 영상 생성 측정과 다른 일이라 비교하지 않아요
   "video/avatar": null,
 };
+
+/** 여러 일에 두루 쓰는 범용 AI — 사이트 전체 방문이라 전문 툴과 방문 수를 바로 비교하지 않아요 */
+export const GENERAL_TOOLS = new Set<ToolKey>(["chatgpt", "gemini", "claude", "grok", "mscopilot", "metaai", "lechat", "perplexity", "wrtn", "copilot365", "aistudio", "notebooklm", "genspark", "manus"]);
+
+/** 점수 차이가 이보다 작으면 측정 오차 안이라 "비슷해요"로 말해요 (LMArena 신뢰구간 약 ±7점) */
+export const SCORE_TIE = 15;

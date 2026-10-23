@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { TOOLS, type Category, type Pricing } from "@/data/archive";
 import { ENTRY_GUIDES } from "@/data/entry-guides";
 import { monogram, toolOccurrences, type GNode } from "@/lib/graph";
-import { compareField, compareSentences, costText, fmtVisits, type FieldCompare } from "@/lib/compare";
+import { clearSkillLead, compareField, compareSentences, costShort, costText, fmtVisits, type FieldCompare } from "@/lib/compare";
 import { METRICS_CHECKED } from "@/data/tool-metrics";
 import { Crosshairs } from "@/components/ui/Crosshairs";
 
@@ -103,6 +103,8 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
   const cmp = compareField(node.field!, node.id.split("/").slice(0, 2).join("/"));
   const metric = cmp.rows.find((r) => r.key === entry.tool)!.metric;
   const hasCost = metric.freeStart != null || metric.paidFrom != null;
+  // 실제 요금 자료가 있으면 그 기준으로 색을 정해요 (무료로 시작 = 연두, 무료 없음 = 주황)
+  const chipColor = !hasCost ? price.color : metric.freeStart === true ? "#C6FF00" : metric.freeStart === false ? "#FF6B00" : "#ffffff";
   const usedIn = toolOccurrences(entry.tool).filter((o) => o.nodeId !== node.id);
   // 여러 작업에 나오는 툴은 이 작업 맥락에 맞춘 설명을, 아니면 툴 공통 설명을 보여요
   const guide = ENTRY_GUIDES[node.id];
@@ -146,7 +148,7 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
         <span className="rounded-full border px-2.5 py-1" style={{ borderColor: `${accent}66`, color: accent, background: `${accent}12` }}>
           #{entry.tag}
         </span>
-        <span className="rounded-full border px-2.5 py-1" style={{ borderColor: `${price.color}55`, color: price.color }}>
+        <span className="rounded-full border px-2.5 py-1" style={{ borderColor: `${chipColor}55`, color: chipColor }}>
           {hasCost ? costText(metric) : price.label}
         </span>
         <span className="rounded-full border border-white/10 px-2.5 py-1 text-white/50">{node.field!.name}</span>
@@ -301,17 +303,21 @@ function CompareCard({ cmp, me, accent, fieldName }: { cmp: FieldCompare; me: st
   const row = cmp.rows.find((r) => r.key === me)!;
   if (cmp.n < 2) return null;
   const sentences = compareSentences(cmp, row.key);
+  const lead = clearSkillLead(cmp, row.key);
+  const skillLabel = !row.skill ? "측정 없음" : row.skill.place === 1 && !lead ? "1위권 (차이 작음)" : `${row.skill.place}위`;
+  const userLabel = !row.users ? "자료 없음" : `${cmp.split ? (row.general ? "범용 AI 중 " : "전문 툴 중 ") : ""}${row.users.place}위`;
   const stat = (label: string, value: string, on: boolean) => (
     <span className="rounded-full border px-2.5 py-1 text-[12px]" style={on ? { borderColor: `${accent}66`, color: accent, background: `${accent}12` } : { borderColor: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.55)" }}>
       {label} <b className="font-semibold">{value}</b>
     </span>
   );
+  const order = [...cmp.rows].sort((a, b) => (b.skill?.score ?? -1) - (a.skill?.score ?? -1) || (b.users?.visits ?? -1) - (a.users?.visits ?? -1));
   return (
     <section data-compare className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
       <h3 className="font-mono text-[10px] tracking-[0.2em] text-white/40">{"// "}{fieldName} 분야 {cmp.n}개 비교</h3>
       <div className="mt-3 flex flex-wrap gap-2">
-        {stat("실력", row.skill ? `${row.skill.place}위` : "측정 없음", !!row.skill && row.skill.place === 1)}
-        {stat("이용자", row.users ? `${row.users.place}위` : "자료 없음", !!row.users && row.users.place === 1)}
+        {stat("실력", skillLabel, lead)}
+        {stat("방문", userLabel, !!row.users && row.users.place === 1 && !row.general)}
         {stat("비용", costText(row.metric), row.metric.freeStart === true)}
       </div>
       {sentences.length > 0 && (
@@ -322,24 +328,36 @@ function CompareCard({ cmp, me, accent, fieldName }: { cmp: FieldCompare; me: st
       <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
         <table className="w-full text-left text-[12.5px]">
           <thead className="bg-white/[0.04] text-[11px] text-white/45">
-            <tr><th className="px-2.5 py-1.5 font-medium">툴</th><th className="px-2 py-1.5 font-medium">실력</th><th className="px-2 py-1.5 font-medium">3개월 방문</th><th className="px-2.5 py-1.5 font-medium">비용</th></tr>
+            <tr>
+              <th className="px-2.5 py-1.5 font-medium">툴</th>
+              <th className="px-2 py-1.5 font-medium">{cmp.boardInfo ? cmp.boardInfo.name : "실력"}</th>
+              <th className="px-2 py-1.5 font-medium">방문</th>
+              <th className="px-2.5 py-1.5 font-medium">비용</th>
+            </tr>
           </thead>
           <tbody>
-            {[...cmp.rows].sort((a, b) => (a.skill?.place ?? 99) - (b.skill?.place ?? 99) || (a.users?.place ?? 99) - (b.users?.place ?? 99)).map((r) => (
-              <tr key={r.key} className="border-t border-white/[0.06]" style={r.key === me ? { background: `${accent}14` } : undefined}>
-                <td className="px-2.5 py-1.5 font-semibold" style={r.key === me ? { color: accent } : { color: "rgba(255,255,255,0.85)" }}>{r.name}</td>
-                <td className="px-2 py-1.5 text-white/75">{r.skill ? `${r.skill.score.toLocaleString("en-US")}점` : "–"}</td>
+            {order.map((r) => (
+              <tr key={r.key} className="border-t border-white/[0.06] align-top" style={r.key === me ? { background: `${accent}14` } : undefined}>
+                <td className="px-2.5 py-1.5 font-semibold" style={r.key === me ? { color: accent } : { color: "rgba(255,255,255,0.85)" }}>
+                  {r.name}
+                  {r.general && cmp.split && <span className="ml-1 text-[10px] font-normal text-white/40">범용</span>}
+                </td>
+                <td className="px-2 py-1.5 text-white/75">
+                  {r.skill ? <>{r.skill.score.toLocaleString("en-US")}점<span className="block text-[10px] text-white/35">{r.skill.entry}</span></> : "–"}
+                </td>
                 <td className="px-2 py-1.5 text-white/75">{r.users ? fmtVisits(r.users.visits) : "–"}</td>
-                <td className="px-2.5 py-1.5 text-white/60">{r.metric.freeStart === true ? "무료 시작" : r.metric.paidFrom != null ? `$${r.metric.paidFrom}~` : r.metric.freeStart === false ? "유료" : "–"}</td>
+                <td className="px-2.5 py-1.5 text-white/60">{costShort(r.metric)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <p className="mt-2.5 text-[11px] leading-relaxed text-white/40">
-        표 순서 = 실력 순, 같으면 이용자 순 ·{" "}
-        {cmp.boardInfo ? <>실력 = {cmp.boardInfo.name} ({cmp.boardInfo.by}, {cmp.boardInfo.updated}, <a href={cmp.boardInfo.url} target="_blank" rel="noreferrer" className="underline">출처</a>), 툴에서 쓸 수 있는 모델 중 가장 높은 점수 (유료 요금제 모델일 수 있음) · </> : <>실력 = 이 분야를 재는 공개 측정 없음 · </>}
-        3개월 방문 = Similarweb 웹사이트 방문 합계 (2026년 7~9월, 이 작업만이 아니라 툴 전체 방문) · 비용 = 공식 요금 페이지, 미국 달러 · {METRICS_CHECKED} 확인 · &quot;–&quot; = 자료 없음
+        표 순서 = 점수 높은 순, 점수가 없으면 방문 많은 순 ·{" "}
+        {cmp.boardInfo
+          ? <>점수 = {cmp.boardInfo.by} ({cmp.boardInfo.updated}, <a href={cmp.boardInfo.url} target="_blank" rel="noreferrer" className="underline">출처</a>), 툴 회사 모델 중 측정표에 정식으로 오른 최신 모델 기준 · 15점보다 작은 차이는 측정 오차 안 · </>
+          : <>이 분야 일을 재는 공개 측정이 없어 점수는 비교하지 않아요 · </>}
+        방문 = Similarweb 웹사이트 방문 수 (2026년 9월 기준){cmp.split ? ", 범용 AI는 사이트 전체 방문이라 전문 툴과 순위를 따로 매겨요" : ""} · 비용 = 공식 요금 페이지, 미국 달러, (연) = 연 결제 기준 · {METRICS_CHECKED} 확인 · &quot;–&quot; = 자료 없음
       </p>
     </section>
   );

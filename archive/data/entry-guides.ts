@@ -62,7 +62,7 @@ export const ENTRY_GUIDES: Record<string, EntryGuide> = {
     steps: ["주제 → 스타일 → 조명 → 구도 순서로 영어 프롬프트를 써요", "--ar 4:5 처럼 비율을 지정해요", "마음에 드는 결과를 골라 변형(Vary)으로 다듬어요"],
   },
   "designer/image/ideogram": {
-    why: ["포스터·썸네일 안에 넣은 글자가 정확하게 나와요", "레트로·포스터처럼 미리 만들어진 스타일을 골라 쓸 수 있어요"],
+    why: ["포스터·썸네일 안에 글자를 넣어 만들 수 있어요", "레트로·포스터처럼 미리 만들어진 스타일을 골라 쓸 수 있어요"],
     steps: ["넣을 문구를 따옴표로 감싸 적어요", "스타일과 색을 지정해요", "여러 결과 중 하나를 골라 Remix로 변형해요"],
   },
   "designer/image/gemini": {
@@ -210,7 +210,7 @@ export const ENTRY_GUIDES: Record<string, EntryGuide> = {
     steps: ["카드뉴스 템플릿을 골라요", "글과 사진을 바꿔 넣어요", "채널 크기에 맞춰 내보내요"],
   },
   "marketing/visual/ideogram": {
-    why: ["이미지 안에 행사 이름·가격 같은 글자를 정확히 넣어요", "홍보 포스터 시안을 여러 개 만들어요"],
+    why: ["이미지 안에 행사 이름·가격 같은 글자를 넣어 만들어요", "홍보 포스터 시안을 여러 개 만들어요"],
     steps: ["넣을 글자를 따옴표로 감싸 적어요", "분위기와 색을 지정해요", "마음에 드는 시안을 골라 다듬어요"],
   },
   "marketing/social/capcut": {
@@ -501,7 +501,7 @@ export const ENTRY_GUIDES: Record<string, EntryGuide> = {
     steps: ["AI 초안이나 템플릿으로 시작해요", "팀원과 나눠 슬라이드를 맡아요", "링크로 공유하거나 발표해요"],
   },
   "language/translate/papago": {
-    why: ["한국어와 아시아 언어 번역에 강해요", "높임말·반말을 골라 번역해요"],
+    why: ["네이버가 만든 번역기라 한국어 번역에 많이 써요", "높임말·반말을 골라 번역해요"],
     steps: ["번역할 글을 붙여넣어요", "높임말 여부를 골라요", "어색하면 문장을 짧게 나눠 다시 번역해요"],
   },
   "research/map/liner": {
@@ -561,7 +561,7 @@ export const ENTRY_GUIDES: Record<string, EntryGuide> = {
     steps: ["홍보물 템플릿을 골라요", "가게 정보와 사진을 넣어요", "인쇄용·SNS용으로 저장해요"],
   },
   "creator/thumbnail/ideogram": {
-    why: ["썸네일 제목 글자가 정확히 들어가요", "눈에 띄는 색·구도로 여러 안을 만들어요"],
+    why: ["썸네일 제목 글자를 넣어 만들어요", "눈에 띄는 색·구도로 여러 안을 만들어요"],
     steps: ["넣을 제목을 따옴표로 감싸 적어요", "배경·분위기를 적어요", "가장 눈에 띄는 안을 골라요"],
   },
   "creator/sound/elevenlabs": {

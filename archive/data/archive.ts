@@ -154,7 +154,7 @@ const TOOL_TABLE = defineTools({
   },
   gemini: {
     name: "Gemini",
-    description: "Google의 AI. 글·이미지·영상을 함께 이해해요. 최신 모델은 Gemini 4 Argon · 3.8 Flash (2026.10 기준). 텍스트·이미지·코드를 한 번에 다루며 이미지 생성과 긴 문서 분석에 강해요.",
+    description: "Google의 AI. 글·이미지·영상을 함께 이해해요. 최신 모델은 Gemini 4 Argon · 3.8 Flash (2026.10 기준). 텍스트·이미지·코드를 한 번에 다루고, 이미지 생성과 긴 문서 분석도 해요.",
     pricing: "Freemium",
     url: "https://gemini.google.com",
     related: ["chatgpt", "claude", "notebooklm"],
@@ -172,7 +172,7 @@ const TOOL_TABLE = defineTools({
   },
   claude: {
     name: "Claude",
-    description: "Anthropic의 AI 어시스턴트. 최신 모델은 Claude Fable 5.1 · Opus 5.5 · Sonnet 5.5 · Haiku 5.5 (2026.10 기준). 긴 글을 한 번에 읽고, 코드 작성·문서 분석·글쓰기에 강해요.",
+    description: "Anthropic의 AI 어시스턴트. 최신 모델은 Claude Fable 5.1 · Opus 5.5 · Sonnet 5.5 · Haiku 5.5 (2026.10 기준). 긴 글을 한 번에 읽고, 코드 작성·문서 분석·글쓰기를 해요.",
     pricing: "Freemium",
     url: "https://claude.ai",
     related: ["claudecode", "chatgpt", "cursor"],
@@ -203,7 +203,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Paid",
     url: "https://claude.com/product/claude-code",
     related: ["claude", "cursor", "copilot"],
-    strengths: ["터미널에서 저장소를 직접 탐색·수정·테스트까지 수행", "여러 파일에 걸친 리팩터링·기능 추가에 강해요", "git·테스트·빌드 도구를 그대로 써서 평소 개발 방식과 맞아요"],
+    strengths: ["터미널에서 저장소를 직접 탐색·수정·테스트까지 수행", "여러 파일에 걸친 코드 정리·기능 추가를 한 번에 맡겨요", "git·테스트·빌드 도구를 그대로 써서 평소 개발 방식과 맞아요"],
     howTo: ["프로젝트 폴더에서 claude를 실행하고 작업 목표를 설명해요", "큰 작업은 '먼저 계획만 보여줘'로 방향을 확인해요", "CLAUDE.md에 팀 규칙·명령어를 적어 두면 매번 반영돼요"],
   },
   copilot: {
@@ -235,11 +235,11 @@ const TOOL_TABLE = defineTools({
   },
   perplexity: {
     name: "Perplexity",
-    description: "출처를 달아주는 AI 검색 엔진. 실시간 웹 검색 기반으로 빠르고 검증 가능한 답을 줘요.",
+    description: "출처를 달아주는 AI 검색 엔진. 실시간 웹 검색으로 찾은 내용을 출처와 함께 답해요.",
     pricing: "Freemium",
     url: "https://www.perplexity.ai",
     related: ["chatgpt", "elicit", "consensus"],
-    strengths: ["모든 답변에 출처 링크가 달려 검증이 쉬워요", "실시간 웹 검색으로 최신 정보에 강해요", "후속 질문으로 리서치를 깊게 이어갈 수 있어요"],
+    strengths: ["모든 답변에 출처 링크가 달려 검증이 쉬워요", "실시간 웹 검색으로 최신 정보를 찾아요", "후속 질문으로 리서치를 깊게 이어갈 수 있어요"],
     howTo: ["질문에 기간·범위(예: 최근 1년, 공식 문서)를 넣어요", "중요한 내용은 출처 링크를 직접 열어 확인해요", "Spaces로 주제별 리서치를 모아 관리해요"],
   },
   framer: {
@@ -280,11 +280,11 @@ const TOOL_TABLE = defineTools({
   },
   ideogram: {
     name: "Ideogram",
-    description: "이미지 속 타이포그래피 표현이 정확한 이미지 생성 AI. 포스터·로고 시안에 강해요.",
+    description: "글자가 들어간 이미지를 만드는 데 많이 쓰는 이미지 생성 AI. 포스터·로고 시안에 써요.",
     pricing: "Freemium",
     url: "https://ideogram.ai",
     related: ["midjourney", "recraft"],
-    strengths: ["이미지 안의 글자를 정확하게 렌더링", "포스터·로고·썸네일 같은 타이포 중심 디자인에 강해요", "Magic Prompt가 짧은 프롬프트를 자동으로 풍부하게 만들어요"],
+    strengths: ["이미지 안에 글자를 넣어 만들기", "포스터·로고·썸네일처럼 글자가 중요한 디자인에 써요", "Magic Prompt가 짧은 프롬프트를 자동으로 풍부하게 만들어요"],
     howTo: ["넣을 문구를 따옴표로 감싸 명시해요", "디자인 스타일(레트로, 스위스 등)과 색상을 지정해요", "여러 결과 중 고르고 Remix로 변형해요"],
   },
   looka: {
@@ -320,7 +320,7 @@ const TOOL_TABLE = defineTools({
     pricing: "Free",
     url: "https://stitch.withgoogle.com",
     related: ["figma", "v0", "uizard"],
-    strengths: ["프롬프트·스케치로 앱 화면을 여러 버전 생성", "Figma 내보내기와 프론트엔드 코드 제공", "빠른 아이디어 탐색에 최적"],
+    strengths: ["프롬프트·스케치로 앱 화면을 여러 버전 생성", "Figma 내보내기와 프론트엔드 코드 제공", "아이디어를 여러 화면으로 비교"],
     howTo: ["앱 목적과 필요한 화면을 설명해요", "여러 변형 중 방향을 골라 대화로 수정해요", "Figma로 보내 다듬거나 코드로 내보내요"],
   },
   relume: {
@@ -353,7 +353,7 @@ const TOOL_TABLE = defineTools({
   luma: {
     name: "Luma AI",
     description: "Luma의 영상 생성 AI. 글이나 이미지 한 장으로 짧은 영상을 만들고, 시작·끝 장면을 지정해 움직임을 연출해요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://lumalabs.ai",
     related: ["runway", "meshy", "kling"],
     strengths: ["사실적인 카메라 움직임의 영상 생성", "이미지 한 장을 움직이는 영상으로", "시작·끝 프레임 지정으로 연출 제어"],
@@ -389,7 +389,7 @@ const TOOL_TABLE = defineTools({
   notion: {
     name: "Notion AI",
     description: "노트·위키·DB가 결합된 워크스페이스의 AI. 요약, 정리, 워크스페이스 전체 검색을 지원해요.",
-    pricing: "Paid",
+    pricing: "Freemium",
     url: "https://www.notion.com/product/ai",
     related: ["notebooklm", "otter"],
     strengths: ["노트·할 일·DB가 있는 워크스페이스 안에서 바로 AI 사용", "페이지 요약, 표 정리, 번역을 한 번에", "워크스페이스 전체를 검색해 답변"],
@@ -623,7 +623,7 @@ const TOOL_TABLE = defineTools({
   copilot365: {
     name: "Microsoft 365 Copilot",
     description: "Word·Excel·PowerPoint·Outlook 안에 들어간 Microsoft의 AI. 문서 작성, 표 분석, 슬라이드 만들기, 메일 요약을 해당 앱에서 바로 해요.",
-    pricing: "Paid",
+    pricing: "Freemium",
     url: "https://www.microsoft.com/microsoft-365/copilot",
     related: ["gemini", "notion", "gamma"],
     strengths: ["평소 쓰는 오피스 앱 안에서 바로 사용", "Excel 표를 말로 분석하고 그래프로 만들기", "Word 문서를 바탕으로 PowerPoint 발표 자료 초안 생성"],
@@ -848,7 +848,7 @@ const TOOL_TABLE = defineTools({
   lightroom: {
     name: "Adobe Lightroom",
     description: "사진 보정 프로그램. AI로 피사체·하늘을 자동 선택해 밝기와 색을 고치고, 잡티를 지워요.",
-    pricing: "Paid",
+    pricing: "Freemium",
     url: "https://www.adobe.com/products/photoshop-lightroom.html",
     related: ["photoshop", "picsart"],
     strengths: ["사람·하늘을 자동으로 골라 따로 보정", "여러 장을 같은 느낌으로 한 번에 보정", "잡티·잡음 제거"],
@@ -1037,7 +1037,7 @@ const TOOL_TABLE = defineTools({
   predis: {
     name: "Predis.ai",
     description: "글을 입력하면 광고 이미지·영상과 SNS 게시물을 만들어 주는 AI예요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://predis.ai",
     related: ["adcreative", "canva", "buffer"],
     strengths: ["글 한 줄로 광고 영상·이미지", "SNS 게시물 문구까지 함께", "예약 게시 연동"],
@@ -1100,7 +1100,7 @@ const TOOL_TABLE = defineTools({
   powerautomate: {
     name: "Power Automate",
     description: "Microsoft의 업무 자동화 도구. 앱·시스템·웹사이트에 걸친 반복 작업을 AI와 함께 자동화해요. 내 PC 자동화는 윈도우에서 무료, 클라우드 자동화는 유료예요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://www.microsoft.com/power-platform/products/power-automate",
     related: ["zapier", "make"],
     strengths: ["Microsoft 365(Outlook·Teams·Excel)와 잘 연결", "말로 설명하면 자동화 흐름 초안", "PC 화면 작업 자동화"],
@@ -1118,7 +1118,7 @@ const TOOL_TABLE = defineTools({
   pika: {
     name: "Pika",
     description: "글이나 이미지로 짧은 영상을 만들고 효과를 넣는 AI 영상 도구예요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://pika.art",
     related: ["runway", "kling", "hailuo"],
     strengths: ["글·이미지로 짧은 영상", "재미있는 효과 넣기", "SNS용 짧은 영상에 적합"],
@@ -1172,7 +1172,7 @@ const TOOL_TABLE = defineTools({
   krisp: {
     name: "Krisp",
     description: "통화·회의의 배경 소음을 없애고 회의 메모를 AI로 남기는 프로그램이에요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://krisp.ai",
     related: ["otter", "fireflies"],
     strengths: ["통화 중 잡음 제거", "회의 자동 메모", "여러 화상회의 앱에서 동작"],
@@ -1217,7 +1217,7 @@ const TOOL_TABLE = defineTools({
   qodo: {
     name: "Qodo",
     description: "AI 코드 리뷰 도구. 저장소 전체 맥락을 보고 변경 사항을 검토해 줘요.",
-    pricing: "Freemium",
+    pricing: "Paid",
     url: "https://www.qodo.ai",
     related: ["copilot", "claudecode"],
     strengths: ["코드 변경 자동 검토", "테스트 코드 제안", "코드 편집기·GitHub에서 동작"],
@@ -1253,7 +1253,7 @@ const TOOL_TABLE = defineTools({
   tableau: {
     name: "Tableau",
     description: "데이터를 끌어 놓아 차트·대시보드로 만드는 시각화 도구예요.",
-    pricing: "Paid",
+    pricing: "Freemium",
     url: "https://www.tableau.com",
     related: ["powerbi"],
     strengths: ["다양한 차트", "대시보드 공유", "AI로 데이터 설명 도움"],
@@ -1469,7 +1469,7 @@ const TOOL_TABLE = defineTools({
   ollama: {
     name: "Ollama",
     description: "AI 모델을 내 컴퓨터에서 돌리는 무료 프로그램. 명령 한 줄로 모델을 받아 실행해요.",
-    pricing: "Free",
+    pricing: "Freemium",
     url: "https://ollama.com",
     related: ["lmstudio", "huggingface"],
     strengths: ["인터넷 없이도 내 컴퓨터에서 실행", "무료", "여러 공개 모델 지원"],
@@ -1478,7 +1478,7 @@ const TOOL_TABLE = defineTools({
   lmstudio: {
     name: "LM Studio",
     description: "AI 모델을 내 컴퓨터에서 쉽게 내려받아 쓰는 데스크톱 앱이에요.",
-    pricing: "Free",
+    pricing: "Freemium",
     url: "https://lmstudio.ai",
     related: ["ollama", "huggingface"],
     strengths: ["설치형 앱이라 쉬워요", "모델 검색·다운로드", "내 데이터가 밖으로 나가지 않아요"],
@@ -1617,7 +1617,7 @@ export const ARCHIVE: Category[] = [
         desc: "그림·대표 이미지 생성",
         icon: Sparkles,
         tools: [
-          { tool: "midjourney", useCase: "대표 이미지 · 컨셉 아트", tag: "이미지 생성", recommendation: "분위기와 색감이 중요한 대표 이미지·컨셉 아트는 Midjourney가 강해요.", prompt: "minimal skincare product key visual, frosted glass bottle on wet stone, soft morning light, water droplets, beige and sage palette, editorial photography, shallow depth of field --ar 4:5 --style raw" },
+          { tool: "midjourney", useCase: "대표 이미지 · 컨셉 아트", tag: "이미지 생성", recommendation: "대표 이미지·컨셉 아트를 만들 때 많이 쓰는 툴이에요. 공개 측정표에는 없어서 점수 비교는 할 수 없어요.", prompt: "minimal skincare product key visual, frosted glass bottle on wet stone, soft morning light, water droplets, beige and sage palette, editorial photography, shallow depth of field --ar 4:5 --style raw" },
           { tool: "firefly", useCase: "상업용 안전 이미지", tag: "이미지 생성", recommendation: "클라이언트 납품용이라 저작권이 걱정된다면 Firefly로 생성하세요.", prompt: "흰 배경 위 친환경 텀블러 제품 사진, 부드러운 스튜디오 조명, 옆에 유칼립투스 가지, 미니멀 구도, 오른쪽에 카피를 넣을 넓은 여백, 광고용 고해상도" },
           { tool: "ideogram", useCase: "타이포 포함 이미지", tag: "타이포그래피", recommendation: "글자가 정확히 들어가야 하는 포스터·썸네일은 Ideogram.", prompt: "Retro jazz festival poster, bold title text \"SEOUL JAZZ NIGHT\", subtitle \"Oct 24 · Olympic Park\", 1970s Swiss typography, orange and navy, halftone paper texture" },
           { tool: "gemini", useCase: "대화로 만드는 이미지", tag: "이미지 생성", recommendation: "따로 툴을 배우지 않고 대화하면서 이미지 시안을 만들고 고쳐 보고 싶다면 Gemini.", prompt: "카페 신메뉴 홍보용 이미지를 만들어줘.\n따뜻한 가을 분위기, 나무 테이블 위 라떼 한 잔, 위에서 내려다본 구도, 글자는 넣지 말아줘." },
