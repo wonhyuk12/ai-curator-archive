@@ -103,6 +103,43 @@ function trafficRows() {
     </button>`;
   }).join("");
 }
+// 개발자 작업별 1위 모델 (TASK_LEADERS)
+function taskRows() {
+  return TASK_LEADERS.items.map((x, i) => [x, i]).sort((a, b) => b[0][3] - a[0][3]).map(([[task, name, id, pctv], i], r) => {
+    const m = id && MODELS.find((x) => x.id === id);
+    return `
+    <button type="button" class="row row-price" data-task="${i}">
+      <span class="rk">${r + 1}</span>
+      ${m ? modelLogo(m) : `<span class="logo-c" style="--c:#2a2a2e">${esc(name[0])}</span>`}
+      <span class="nm"><b>${esc(task)}</b><small>1위 ${esc(name)}</small>${meter(pctv, 60)}</span>
+      <span class="pr num"><b>${pctv}%</b><small class="flat">이 작업 처리량 중</small></span>
+    </button>`;
+  }).join("");
+}
+// 서비스 상세: 인기 비율, 많이 쓰는 나라, 무엇에 쓰나
+const usageKey = (t) => t.co || t.usage;
+function usageHTML(key) {
+  const u = USAGE[key]; if (!u) return "";
+  const cmax = Math.max(...u.countries.map((c) => c[1]));
+  return `<div><h4>많이 쓰는 나라 <small style="font-weight:500;color:var(--sub)">· ${esc(u.web)} 방문 중 나라별 비율</small></h4><div class="peers">${u.countries.map(([c, v]) => `
+      <div class="peer${c === "한국" ? " cur" : ""}"><span class="pn">${esc(c)}</span>${meter(v, cmax)}<span class="pv num">${v.toFixed(1)}%</span></div>`).join("")}</div>
+    <p class="price-note">Similarweb · 2026년 9월 · PC 방문 기준일 수 있어요 · ${USAGE_CHECKED} 확인 · <a href="https://www.similarweb.com/website/${esc(u.web)}/" target="_blank" rel="noopener">출처 ›</a></p></div>
+    ${u.tasks ? `<div><h4>무엇에 많이 쓰나요 <small style="font-weight:500;color:var(--sub)">· ${esc(u.tasks.basis)}</small></h4><div class="peers">${u.tasks.items.map(([c, v]) => `
+      <div class="peer"><span class="pn">${esc(c)}</span>${meter(v, Math.max(...u.tasks.items.map((x) => x[1])))}<span class="pv num">${v}%</span></div>`).join("")}</div>
+    <p class="price-note">${esc(u.tasks.title)} · ${esc(u.tasks.date)} · 보고서마다 나누는 방법이 달라 서비스끼리 바로 비교하기는 어려워요 · <a href="${esc(u.tasks.url)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
+      : u.note ? `<div><h4>무엇에 많이 쓰나요</h4><p class="price-note">${esc(u.note.text)} · <a href="${esc(u.note.url)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
+      : `<div><h4>무엇에 많이 쓰나요</h4><p class="price-note">회사가 공개한 사용 보고서가 없어요.</p></div>`}`;
+}
+function openService(i) {
+  const t = TRAFFIC.items[i], key = usageKey(t);
+  openSheet(`
+    <div class="sh-top">${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
+      <div class="nm"><b>${esc(t.name)}</b><small>AI 웹사이트 방문 비율 ${i + 1}위 · ${t.share.toFixed(1)}% (1년 전 ${t.prev.toFixed(1)}%)</small></div>
+      <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button></div>
+    <div class="pane">${usageHTML(key)}
+    ${t.co && CO_FAMILY[t.co] ? `<button type="button" class="sh-link" data-fam="${CO_FAMILY[t.co]}">${esc(COMPANIES[t.co].name)} 모델 전체 보기 ›</button>` : ""}</div>`);
+  const b = $("#sheet [data-fam]"); if (b) b.onclick = () => openFamily(b.dataset.fam);
+}
 // 차트 아래 설명: 탭마다 무엇을 기준으로 줄 세웠는지, 왜 보는지
 const LEGENDS = {
   new: () => `최신순 = 공식 출시일 순서예요. 지금 어떤 AI가 새로 나왔는지 볼 수 있어요 · ${CHECKED} 확인`,
@@ -111,6 +148,7 @@ const LEGENDS = {
     : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 기준 USD) · ${CHECKED} 확인`,
   pop: () => popMode === "all"
     ? `AI 서비스 전체 인기 = 사람들이 AI 웹사이트에 들어간 횟수 중 각 서비스의 비율이에요 (Similarweb, 전 세계, ${TRAFFIC.month}). 휴대폰 앱 사용은 빠져요 · 오른쪽 작은 글씨 = 1년 전 비율`
+    : popMode === "task" ? `작업별 1위 = 개발자 프로그램이 OpenRouter에 맡긴 일을 종류별로 나눴을 때, 그 일에 가장 많이 쓰인 모델이에요. % = 그 일 전체 처리량 중 1위 모델의 몫 · ${TASK_LEADERS.until}까지 30일`
     : `개발자 사용량 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
 // 목록 위 "1위 기준" 한 줄: 무엇이 1위인지, 무엇으로 셌는지, 막대는 무엇인지
@@ -123,6 +161,7 @@ const CRIT = {
       : [`월 요금이 가장 싼 ${TIER_LABEL[priceMode]}`, "미국 기준 월 요금, 같은 값이면 많이 쓰는 순", ""],
   pop: () => popMode === "all"
     ? ["사람들이 가장 많이 들어가는 AI 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month})`, "막대 = 방문 비율"]
+    : popMode === "task" ? ["작업마다 가장 많이 쓰인 모델 (목록은 1위 모델의 몫이 큰 작업부터)", "OpenRouter 작업별 처리량(토큰), 30일", "막대·% = 그 작업에서 1위 모델이 차지한 비율"]
     : ["개발자 프로그램이 가장 많이 쓴 모델", "OpenRouter에서 30일 동안 처리한 글의 양(토큰)", "막대 = 1위 대비 처리량"],
 };
 function setLegend() {
@@ -155,7 +194,7 @@ function renderRows() {
   $("#pmode").hidden = rankKey !== "price";
   $("#popmode").hidden = rankKey !== "pop";
   $("#kmode").hidden = rankKey === "pop" || (rankKey === "price" && priceMode !== "api");
-  if (rankKey === "pop") { $("#rows").innerHTML = popMode === "all" ? trafficRows() : popRows(); return; }
+  if (rankKey === "pop") { $("#rows").innerHTML = popMode === "all" ? trafficRows() : popMode === "task" ? taskRows() : popRows(); return; }
   if (rankKey === "price" && priceMode !== "api") { $("#rows").innerHTML = subRows(priceMode); return; }
   let list = ofKind(byNewest(MODELS));
   // 요금: 입력 3 : 출력 1 비율로 섞은 평균 단가가 싼 순 (같은 종류끼리)
@@ -198,7 +237,8 @@ $("#popmode").addEventListener("click", (e) => {
 $("#rows").addEventListener("click", (e) => {
   const b = e.target.closest(".row"); if (!b) return;
   if (b.dataset.sub) return openFamily(CO_FAMILY[b.dataset.sub]);
-  if (b.dataset.traffic !== undefined) { const t = TRAFFIC.items[+b.dataset.traffic]; if (t.co && CO_FAMILY[t.co]) openFamily(CO_FAMILY[t.co]); return; }
+  if (b.dataset.traffic !== undefined) return openService(+b.dataset.traffic);
+  if (b.dataset.task !== undefined) { const id = TASK_LEADERS.items[+b.dataset.task][2]; if (id) openModel(id); return; }
   if (b.dataset.pop === undefined) return openModel(b.dataset.id);
   const t = POPULAR.items[+b.dataset.pop];
   if (t.model) openModel(t.model);                            // 목록에 있는 모델
@@ -293,6 +333,7 @@ function pane(m, tab) {
     <div><h4>어디서 쓸 수 있나요</h4><div class="chips">${m.use.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
     <div><h4>주요 기능</h4><div class="chips">${m.features.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>
     ${specHTML(m)}
+    ${modelUsageHTML(m)}
     ${m.price ? `<div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
@@ -300,6 +341,15 @@ function pane(m, tab) {
       : `<div><h4>API 요금</h4><p class="price-note">공개된 API 요금이 없어요. ${m.use.some((u) => u.includes("모델 파일")) ? "모델 파일을 무료로 내려받아 직접 실행할 수 있어요. " : ""}<a href="${esc(m.src)}" target="_blank" rel="noopener">공식 발표 ›</a></p></div>`}
     ${peerPriceHTML(m)}
     ${subHTML(m.co)}`;
+}
+// 모델 상세의 "많이 쓰이는 곳": 개발자 작업별 1위 + 이 회사 서비스의 나라·용도
+function modelUsageHTML(m) {
+  const wins = TASK_LEADERS.items.filter((x) => x[2] === m.id);
+  const u = USAGE[m.co];
+  if (!wins.length && !u) return "";
+  return `${wins.length ? `<div><h4>개발자들이 이 일에 가장 많이 써요</h4><div class="chips">${wins.map(([t, , , v]) => `<span>${esc(t)} 1위 · ${v}%</span>`).join("")}</div>
+    <p class="price-note">OpenRouter 작업별 처리량 · ${TASK_LEADERS.until}까지 30일 · <a href="${TASK_LEADERS.source}" target="_blank" rel="noopener">출처 ›</a></p></div>` : ""}
+    ${u ? `<div><h4>${esc(u.service)} 서비스는 어디서 많이 쓰나요</h4></div>${usageHTML(m.co)}` : ""}`;
 }
 // 사양: 한 번에 읽는 길이, 최대 출력, 넣을 수 있는 것, 공개 여부 (SPECS)
 const IN_NAMES = { text: "글", image: "이미지", file: "파일(PDF 등)", audio: "음성", video: "영상" };

@@ -517,8 +517,49 @@ const TRAFFIC = { month: "2026년 9월", source: "https://x.com/Similarweb/statu
     { name: "Claude", co: "anthropic", share: 9.6, prev: 2.3 },
     { name: "DeepSeek", co: "deepseek", share: 3.4, prev: 4.1 },
     { name: "Grok", co: "xai", share: 2.3, prev: 2.8 },
-    { name: "Copilot", author: "Microsoft", share: 1.5, prev: 2.0 },
-    { name: "Perplexity", author: "Perplexity", share: 0.9, prev: 2.5 },
+    { name: "Copilot", author: "Microsoft", usage: "copilot", share: 1.5, prev: 2.0 },
+    { name: "Perplexity", author: "Perplexity", usage: "perplexity", share: 0.9, prev: 2.5 },
+] };
+
+// 많이 쓰이는 곳 — 서비스별 (2026-10-23 확인)
+// countries: Similarweb 웹사이트 방문 나라별 비율 상위 5곳 (2026년 9월, 페이지 표기상 PC 방문 기준일 수 있음)
+// tasks: 회사·연구진이 공개한 사용 보고서의 분류 비율 (보고서마다 분류 방법이 달라요)
+const USAGE_CHECKED = "2026-10-23";
+const USAGE = {
+  openai: { service: "ChatGPT", web: "chatgpt.com", countries: [["미국", 21.07], ["인도", 9.69], ["브라질", 5.19], ["일본", 4.92], ["한국", 3.25]],
+    tasks: { title: "How People Use ChatGPT (OpenAI·하버드 등 공동 연구, NBER)", date: "2025-09", url: "https://www.nber.org/papers/w34255", basis: "2025년 7월 전체 대화 기준",
+      items: [["실생활 조언·방법 안내", 29], ["글쓰기·다듬기", 24], ["정보 찾기", 24], ["이미지 등 멀티미디어", 7], ["코딩 등 기술 도움", 5]] } },
+  google: { service: "Gemini", web: "gemini.google.com", countries: [["미국", 13.29], ["일본", 6.94], ["인도", 6.3], ["브라질", 5.52], ["베트남", 4.48]],
+    note: { text: "공식 발표: 매달 10억 명 넘게 사용, 사용자의 63%가 음성으로 대화 (2026-08-11)", url: "https://blog.google/innovation-and-ai/products/gemini-app/one-billion-monthly-users/" } },
+  anthropic: { service: "Claude", web: "claude.ai", countries: [["미국", 25.09], ["인도", 10.23], ["영국", 4.11], ["프랑스", 3.62], ["일본", 3.38]],
+    tasks: { title: "Anthropic Economic Index: Cadences", date: "2026-06-26", url: "https://www.anthropic.com/research/economic-index-june-2026-report", basis: "업무용 대화에서 만든 결과물 기준",
+      items: [["문서·보고서", 20], ["설명", 9], ["이메일 초안", 7], ["분석·요약", 6]] } },
+  deepseek: { service: "DeepSeek", web: "chat.deepseek.com", countries: [["중국", 49.26], ["러시아", 9.86], ["미국", 5.69], ["홍콩", 3.27], ["브라질", 2.8]] },
+  xai: { service: "Grok", web: "grok.com", countries: [["미국", 27.98], ["인도", 6.32], ["브라질", 4.38], ["한국", 3.15], ["독일", 3.06]] },
+  copilot: { service: "Copilot", web: "copilot.microsoft.com", countries: [["미국", 24.38], ["일본", 6.91], ["영국", 5.6], ["호주", 5.16], ["브라질", 3.86]],
+    note: { text: "공식 보고서: 가장 많이 묻는 주제는 건강(특히 휴대폰), 가장 많이 쓰는 기능은 정보 검색 (비율은 공개 안 함)", url: "https://microsoft.ai/news/its-about-time-the-copilot-usage-report-2025/" } },
+  perplexity: { service: "Perplexity", web: "perplexity.ai", countries: [["미국", 25.13], ["인도", 8.2], ["독일", 5.51], ["러시아", 4.79], ["프랑스", 4.27]],
+    tasks: { title: "Perplexity Comet 에이전트 사용 연구 (arXiv)", date: "2025-12", url: "https://arxiv.org/abs/2512.07828", basis: "Comet 브라우저 에이전트 작업 기준",
+      items: [["생산성·업무 처리", 36], ["공부·조사", 21], ["미디어", 16], ["쇼핑", 10]] } },
+  meta: { service: "Meta AI", web: "meta.ai", countries: [["미국", 22.4], ["인도", 7.73], ["브라질", 5.41], ["필리핀", 3.55], ["멕시코", 3.52]] },
+  mistral: { service: "Mistral Le Chat", web: "chat.mistral.ai", countries: [["프랑스", 43.32], ["독일", 15.03], ["미국", 5.15], ["네덜란드", 4.77], ["오스트리아", 3.16]] },
+  alibaba: { service: "Qwen Chat", web: "chat.qwen.ai", countries: [["러시아", 35.38], ["중국", 9.16], ["미국", 6.26], ["인도", 5.03], ["브라질", 3.63]] },
+  moonshot: { service: "Kimi", web: "kimi.com", countries: [["중국", 68.1], ["미국", 6.59], ["홍콩", 3.41], ["인도", 2.48], ["러시아", 1.61]] },
+};
+// 개발자 작업별 1위 모델 — OpenRouter "Top models by task" (토큰 처리량 기준, 2026-10-22까지 30일)
+const TASK_LEADERS = { source: "https://openrouter.ai/rankings", until: "2026-10-22", items: [
+    ["코드 작성", "DeepSeek V4.1 Flash", "dsflash", 22.1],
+    ["코드 오류 고치기", "DeepSeek V4.1 Flash", "dsflash", 19.2],
+    ["수학", "DeepSeek V4.1 Flash", "dsflash", 16.3],
+    ["에이전트 작업 실행", "DeepSeek V4.1 Flash", "dsflash", 17.0],
+    ["글쓰기", "GLM 5.3 Flash", "glm53flash", 18.8],
+    ["요약", "Step 5 Preview", null, 51.0],
+    ["질문·지식 답변", "Step 5 Preview", null, 21.4],
+    ["번역", "Space Bunny Alpha (이름 비공개 테스트 모델)", null, 15.9],
+    ["화면(UI) 코드", "Space Bunny Alpha (이름 비공개 테스트 모델)", null, 17.6],
+    ["대화 기억 정리", "MiMo-V2.6-Flash", "mimoflash", 19.0],
+    ["고객 상담", "GPT-6 Luna", "luna6", 10.6],
+    ["역할극·소설", "DeepSeek V4 Flash", null, 12.0],
 ] };
 
 const POPULAR = { checked: "2026-10-20", source: "https://openrouter.ai/rankings", items: [
