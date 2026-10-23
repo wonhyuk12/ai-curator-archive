@@ -1,5 +1,5 @@
 import { TOOLS, type SubField, type ToolKey } from "@/data/archive";
-import { BOARDS, TAG_BOARD, TOOL_METRICS, TOOL_SKILL, type Board, type BoardInfo, type ToolMetric } from "@/data/tool-metrics";
+import { BOARDS, FIELD_BOARD, TAG_BOARD, TOOL_METRICS, TOOL_SKILL, type Board, type BoardInfo, type ToolMetric } from "@/data/tool-metrics";
 
 export interface ToolRow {
   key: ToolKey;
@@ -21,7 +21,8 @@ export interface FieldCompare {
 }
 
 /** 분야를 잴 측정: 툴 태그가 가리키는 측정 중, 분야 안에서 점수가 있는 툴이 2개 이상인 것 */
-function pickBoard(field: SubField): Board | null {
+function pickBoard(field: SubField, key?: string): Board | null {
+  if (key && key in FIELD_BOARD) { const b = FIELD_BOARD[key]; return b && field.tools.filter((t) => TOOL_SKILL[t.tool]?.[b]).length >= 2 ? b : null; }
   const votes = new Map<Board, number>();
   for (const t of field.tools) {
     const b = TAG_BOARD[t.tag];
@@ -32,8 +33,9 @@ function pickBoard(field: SubField): Board | null {
   return ordered.find((b) => scored(b) >= 2 && BOARDS[b]) ?? null;
 }
 
-export function compareField(field: SubField): FieldCompare {
-  const board = pickBoard(field);
+/** key = "작업/분야" (예: "office/sheet") — 분야별로 직접 정한 측정이 있으면 그걸 써요 */
+export function compareField(field: SubField, key?: string): FieldCompare {
+  const board = pickBoard(field, key);
   const rows: ToolRow[] = field.tools.map((t) => {
     const s = board ? TOOL_SKILL[t.tool]?.[board] : undefined;
     const m = TOOL_METRICS[t.tool] ?? {};
@@ -84,11 +86,11 @@ export function compareSentences(c: FieldCompare, key: ToolKey): string[] {
       const second = bySkill[1];
       const d = me.skill.score - second.skill!.score;
       out.push(d > 0
-        ? `${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점으로 같은 분야 ${second.name}(${second.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 높아요.`
+        ? `${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점(${me.skill.entry} 기준)으로 같은 분야 ${second.name}(${second.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 높아요.`
         : `${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점으로 같은 분야 ${second.name}도 같은 점수예요.`);
     } else {
       const d = top.skill!.score - me.skill.score;
-      out.push(`${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점으로, 이 분야 1위 ${top.name}(${top.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 낮아요.`);
+      out.push(`${c.boardInfo.name} ${me.skill.score.toLocaleString("en-US")}점(${me.skill.entry} 기준)으로, 이 분야 1위 ${top.name}(${top.skill!.score.toLocaleString("en-US")}점)보다 ${d.toLocaleString("en-US")}점 낮아요.`);
     }
   }
   if (me.users && c.userCount >= 2) {

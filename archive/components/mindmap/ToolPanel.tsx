@@ -100,7 +100,7 @@ function PanelBody({ node, category, onClose, onJump }: { node: GNode; category:
   const tool = node.tool!;
   const entry = node.entry!;
   const price = PRICING_STYLE[tool.pricing];
-  const cmp = compareField(node.field!);
+  const cmp = compareField(node.field!, node.id.split("/").slice(0, 2).join("/"));
   const metric = cmp.rows.find((r) => r.key === entry.tool)!.metric;
   const hasCost = metric.freeStart != null || metric.paidFrom != null;
   const usedIn = toolOccurrences(entry.tool).filter((o) => o.nodeId !== node.id);
@@ -338,7 +338,7 @@ function CompareCard({ cmp, me, accent, fieldName }: { cmp: FieldCompare; me: st
       </div>
       <p className="mt-2.5 text-[11px] leading-relaxed text-white/40">
         표 순서 = 실력 순, 같으면 이용자 순 ·{" "}
-        {cmp.boardInfo ? <>실력 = {cmp.boardInfo.name} ({cmp.boardInfo.by}, <a href={cmp.boardInfo.url} target="_blank" rel="noreferrer" className="underline">출처</a>) · </> : <>실력 = 이 분야를 재는 공개 측정 없음 · </>}
+        {cmp.boardInfo ? <>실력 = {cmp.boardInfo.name} ({cmp.boardInfo.by}, {cmp.boardInfo.updated}, <a href={cmp.boardInfo.url} target="_blank" rel="noreferrer" className="underline">출처</a>), 툴에서 쓸 수 있는 모델 중 가장 높은 점수 (유료 요금제 모델일 수 있음) · </> : <>실력 = 이 분야를 재는 공개 측정 없음 · </>}
         3개월 방문 = Similarweb 웹사이트 방문 합계 (2026년 7~9월, 이 작업만이 아니라 툴 전체 방문) · 비용 = 공식 요금 페이지, 미국 달러 · {METRICS_CHECKED} 확인 · &quot;–&quot; = 자료 없음
       </p>
     </section>

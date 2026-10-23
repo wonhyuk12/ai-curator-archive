@@ -1,6 +1,7 @@
 /**
  * 툴 비교 자료 — 같은 분야 툴끼리 "몇 개 중 몇 위"로 비교할 때 쓰는 실제 측정값.
- *  - 실력: 그 작업을 직접 재는 공개 측정 (LMArena·Artificial Analysis). 측정이 없는 툴은 비워 둬요
+ *  - 실력: 그 작업을 직접 재는 공개 측정 (LMArena·Artificial Analysis). 툴 안에서 쓸 수 있는 모델 중 점수가 가장 높은 것 기준
+ *    (entry = 측정표의 모델 이름, 유료 요금제에서만 쓸 수 있는 모델일 수 있어요). 측정이 없는 툴은 비워 둬요
  *  - 이용자: Similarweb 최근 3개월 웹사이트 방문 합계 (2026년 7~9월, 모든 툴 공통)
  *  - 비용: 공식 요금 페이지의 무료 시작 여부와 가장 싼 개인 유료 요금 (미국 달러, 월 결제)
  * 값을 확인하지 못하면 null — 화면에는 "공개 측정 없음"으로 보여요.
@@ -42,7 +43,16 @@ export interface ToolMetric {
   priceUrl?: string;
 }
 
-export const BOARDS: Partial<Record<Board, BoardInfo>> = {};
+export const BOARDS: Partial<Record<Board, BoardInfo>> = {
+  text: { name: "대화 실력 점수", by: "LMArena 텍스트 대화 투표", url: "https://arena.ai/leaderboard/text", updated: "2026-10-23" },
+  webdev: { name: "웹 화면 만들기 점수", by: "LMArena WebDev 투표", url: "https://arena.ai/leaderboard/webdev", updated: "2026-10-22" },
+  image: { name: "이미지 만들기 점수", by: "LMArena 이미지 만들기 투표", url: "https://arena.ai/leaderboard/text-to-image", updated: "2026-10-08" },
+  imageEdit: { name: "이미지 편집 점수", by: "LMArena 이미지 편집 투표", url: "https://arena.ai/leaderboard/image-edit", updated: "2026-10-20" },
+  video: { name: "영상 만들기 점수", by: "LMArena 영상 만들기 투표", url: "https://arena.ai/leaderboard/text-to-video", updated: "2026-09-22" },
+  music: { name: "음악 만들기 점수", by: "Artificial Analysis 음악 아레나(연주곡)", url: "https://artificialanalysis.ai/music/leaderboard/instrumental", updated: "2026-10-24" },
+  tts: { name: "음성 만들기 점수", by: "Artificial Analysis 음성 합성 아레나", url: "https://artificialanalysis.ai/text-to-speech/leaderboard/provider-voice", updated: "2026-10-24" },
+  search: { name: "검색 답변 점수", by: "LMArena 검색 투표", url: "https://arena.ai/leaderboard/search", updated: "2026-10-13" },
+};
 
 export const TOOL_METRICS: Partial<Record<ToolKey, ToolMetric>> = {
   adcreative: { domain: "adcreative.ai", visits: 389300, freeStart: false, paidFrom: 39, paidName: "Starter", priceUrl: "https://www.adcreative.ai/#new-pricing-section" },
@@ -88,7 +98,7 @@ export const TOOL_METRICS: Partial<Record<ToolKey, ToolMetric>> = {
   genspark: { domain: "genspark.ai", visits: 11100000, priceUrl: "https://www.genspark.ai/pricing" },
   gizmo: { domain: "gizmo.ai", visits: 7800000, priceUrl: "https://gizmo.ai/pricing" },
   grammarly: { domain: "grammarly.com", visits: 59800000, freeStart: true, freeWhat: "맞춤법·문법, 월 AI 100회", priceUrl: "https://www.grammarly.com/plans" },
-  grok: { domain: "grok.com", visits: 205500000, paidFrom: 8, paidName: "Plus", priceUrl: "https://grok.com/plans" },
+  grok: { domain: "grok.com", visits: 205500000, freeStart: true, paidFrom: 8, paidName: "Plus", priceUrl: "https://grok.com/plans" },
   hailuo: { domain: "hailuoai.video", visits: 2300000, priceUrl: "https://hailuoai.video/subscribe" },
   heygen: { domain: "heygen.com", visits: 8700000, freeStart: true, freeWhat: "월 3개 영상(워터마크)", paidFrom: 29, paidName: "Creator", priceUrl: "https://www.heygen.com/pricing" },
   huggingface: { domain: "huggingface.co", visits: 31200000, freeStart: true, paidFrom: 9, paidName: "PRO", priceUrl: "https://huggingface.co/pricing" },
@@ -197,7 +207,31 @@ export const TOOL_METRICS: Partial<Record<ToolKey, ToolMetric>> = {
   zendesk: { domain: "zendesk.com", visits: 62100000, freeStart: false, paidFrom: 19, paidName: "Support Team", annualOnly: true, priceUrl: "https://www.zendesk.com/pricing/" },
 };
 
-export const TOOL_SKILL: Partial<Record<ToolKey, Partial<Record<Board, SkillScore>>>> = {};
+export const TOOL_SKILL: Partial<Record<ToolKey, Partial<Record<Board, SkillScore>>>> = {
+  chatgpt: { text: { entry: "GPT-6.1 Sol", score: 1480, rank: 27 }, webdev: { entry: "GPT-6 Astra", score: 1775, rank: 2 }, image: { entry: "GPT-Image-2.5 Sunburst", score: 1425, rank: 1 }, imageEdit: { entry: "GPT-Image-2.5 Sunburst", score: 1514, rank: 1 }, search: { entry: "GPT-5.6 Sol (Search)", score: 1261, rank: 1 } },
+  claude: { text: { entry: "Claude Opus 5.5", score: 1509, rank: 2 }, webdev: { entry: "Claude Opus 5.5", score: 1807, rank: 1 }, search: { entry: "Claude Opus 4.6 (Search)", score: 1251, rank: 3 } },
+  claudecode: { webdev: { entry: "Claude Opus 5.5", score: 1807, rank: 1 } },
+  gemini: { text: { entry: "Gemini 4 Argon", score: 1517, rank: 1 }, webdev: { entry: "Gemini 4 Argon", score: 1673, rank: 11 }, image: { entry: "Nano Banana 2.1", score: 1328, rank: 6 }, imageEdit: { entry: "Nano Banana 2.1", score: 1426, rank: 5 }, search: { entry: "Gemini 3.1 Pro (Grounding)", score: 1209, rank: 15 } },
+  aistudio: { text: { entry: "Gemini 4 Argon", score: 1517, rank: 1 }, webdev: { entry: "Gemini 4 Argon", score: 1673, rank: 11 } },
+  grok: { text: { entry: "Grok 4.7", score: 1441, rank: 96 }, webdev: { entry: "Grok 4.7", score: 1637, rank: 18 }, image: { entry: "Grok Imagine Image 2.0", score: 1334, rank: 4 }, imageEdit: { entry: "Grok Imagine Image 2.0", score: 1439, rank: 4 }, video: { entry: "Grok Imagine Video 1.5", score: 1492, rank: 4 }, search: { entry: "Grok 4.5 (Search)", score: 1216, rank: 13 } },
+  metaai: { text: { entry: "Muse Spark 1.3", score: 1496, rank: 10 } },
+  lechat: { text: { entry: "Mistral Medium 3.5", score: 1426, rank: 119 } },
+  perplexity: { search: { entry: "Sonar Reasoning Pro (High)", score: 1139, rank: 37 } },
+  ideogram: { image: { entry: "Ideogram 4.0 (Quality)", score: 1205, rank: 20 }, imageEdit: { entry: "Ideogram 4.5", score: 1347, rank: 21 } },
+  recraft: { image: { entry: "Recraft V4.1 Utility Pro", score: 1169, rank: 26 } },
+  krea: { image: { entry: "Krea 2 Medium", score: 1124, rank: 45 }, imageEdit: { entry: "Krea 3 Ultra", score: 1411, rank: 8 } },
+  leonardo: { image: { entry: "Lucid Origin", score: 1013, rank: 75 } },
+  msdesigner: { image: { entry: "DALL-E 3", score: 968, rank: 79 } },
+  veo: { video: { entry: "Veo 3.1 (Audio)", score: 1364, rank: 12 } },
+  hailuo: { video: { entry: "Hailuo 2.3", score: 1206, rank: 32 } },
+  runway: { video: { entry: "Runway Gen-4.5", score: 1225, rank: 27 } },
+  kling: { video: { entry: "Kling 2.5 Turbo (1080p)", score: 1220, rank: 28 } },
+  luma: { video: { entry: "Luma Ray3", score: 1206, rank: 31 } },
+  pika: { video: { entry: "Pika 2.2", score: 1009, rank: 47 } },
+  suno: { music: { entry: "Suno v6", score: 1148, rank: 1 } },
+  stableaudio: { music: { entry: "Stable Audio 3 Large", score: 1014, rank: 8 } },
+  elevenlabs: { tts: { entry: "Eleven v4 Turbo", score: 1335, rank: 1 } },
+};
 
 /** 분야 태그 → 그 일을 재는 측정 (태그가 여러 개면 분야 안에서 가장 많은 것) */
 export const TAG_BOARD: Record<string, Board> = {
@@ -217,10 +251,21 @@ export const TAG_BOARD: Record<string, Board> = {
   "이미지 생성": "image",
   그래픽: "image",
   "디자인 시안": "image",
-  편집: "imageEdit",
   "영상 생성": "video",
   음악: "music",
   음성: "tts",
   검색: "search",
   조사: "search",
+};
+
+/** 분야별로 직접 정한 측정 (태그만으로 정해지지 않을 때). null = 이 분야 일을 재는 측정이 없음 */
+export const FIELD_BOARD: Record<string, Board | null> = {
+  "office/sheet": "text",
+  "presentation/rehearsal": "text",
+  "language/speaking": "text",
+  "data/analyze": "text",
+  "support/reply": "text",
+  "codingstart/ask": "text",
+  // 발표자(아바타) 영상은 영상 생성 측정과 다른 일이라 비교하지 않아요
+  "video/avatar": null,
 };
