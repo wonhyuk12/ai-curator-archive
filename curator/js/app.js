@@ -99,7 +99,7 @@ function trafficRows() {
       <span class="rk">${i + 1}</span>
       ${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
       <span class="nm"><b>${esc(t.name)}</b><small>${esc(t.co ? COMPANIES[t.co].name : t.author)}</small>${meter(t.share, max)}</span>
-      <span class="pr num"><b>${t.share.toFixed(1)}%</b><small class="${d > 0 ? "up" : d < 0 ? "down" : "flat"}">1년 전 ${t.prev.toFixed(1)}%</small></span>
+      <span class="pr num"><b>${t.share.toFixed(1)}%</b><small class="${d > 0 ? "up" : d < 0 ? "down" : "flat"}">25년 10월 ${t.prev.toFixed(1)}%</small></span>
     </button>`;
   }).join("");
 }
@@ -111,7 +111,7 @@ function taskRows() {
     <button type="button" class="row row-price" data-task="${i}">
       <span class="rk">${r + 1}</span>
       ${m ? modelLogo(m) : `<span class="logo-c" style="--c:#2a2a2e">${esc(name[0])}</span>`}
-      <span class="nm"><b>${esc(task)}</b><small>1위 ${esc(name)}</small>${meter(pctv, 60)}</span>
+      <span class="nm"><b>${esc(task)}</b><small>1위 ${esc(name)}</small>${meter(pctv, 100)}</span>
       <span class="pr num"><b>${pctv}%</b><small class="flat">이 작업 처리량 중</small></span>
     </button>`;
   }).join("");
@@ -121,12 +121,12 @@ const usageKey = (t) => t.co || t.usage;
 function usageHTML(key) {
   const u = USAGE[key]; if (!u) return "";
   const cmax = Math.max(...u.countries.map((c) => c[1]));
-  return `<div><h4>${esc(u.service)}를 많이 쓰는 나라 <small style="font-weight:500;color:var(--sub)">· ${esc(u.web)} 방문 중 나라별 비율</small></h4><div class="peers">${u.countries.map(([c, v]) => `
+  return `<div><h4>${esc(u.service)} 이용자가 많은 나라 <small style="font-weight:500;color:var(--sub)">· ${esc(u.web)} 방문 중 나라별 비율</small></h4><div class="peers">${u.countries.map(([c, v]) => `
       <div class="peer${c === "한국" ? " cur" : ""}"><span class="pn">${esc(c)}</span>${meter(v, cmax)}<span class="pv num">${v.toFixed(1)}%</span></div>`).join("")}</div>
-    <p class="price-note">Similarweb · 2026년 9월 · PC 방문 기준일 수 있어요 · ${USAGE_CHECKED} 확인 · <a href="https://www.similarweb.com/website/${esc(u.web)}/" target="_blank" rel="noopener">출처 ›</a></p></div>
+    <p class="price-note">상위 5곳만 · 막대 = 1위 나라 대비 · Similarweb · 2026년 9월 · PC 방문 기준일 수 있어요 · ${USAGE_CHECKED} 확인 · <a href="https://www.similarweb.com/website/${esc(u.web)}/" target="_blank" rel="noopener">출처 ›</a></p></div>
     ${u.tasks ? `<div><h4>무엇에 많이 쓰나요 <small style="font-weight:500;color:var(--sub)">· ${esc(u.tasks.basis)}</small></h4><div class="peers">${u.tasks.items.map(([c, v]) => `
       <div class="peer"><span class="pn">${esc(c)}</span>${meter(v, Math.max(...u.tasks.items.map((x) => x[1])))}<span class="pv num">${v}%</span></div>`).join("")}</div>
-    <p class="price-note">${esc(u.tasks.title)} · ${esc(u.tasks.date)} · 보고서마다 나누는 방법이 달라 서비스끼리 바로 비교하기는 어려워요 · <a href="${esc(u.tasks.url)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
+    <p class="price-note">주요 항목만이라 합이 100%가 아니에요 · 막대 = 가장 큰 항목 대비 · ${esc(u.tasks.title)} · ${esc(u.tasks.date)} · 보고서마다 나누는 방법이 달라 서비스끼리 바로 비교하기는 어려워요 · <a href="${esc(u.tasks.url)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
       : u.note ? `<div><h4>무엇에 많이 쓰나요</h4><p class="price-note">${esc(u.note.text)} · <a href="${esc(u.note.url)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
       : `<div><h4>무엇에 많이 쓰나요</h4><p class="price-note">회사가 공개한 사용 보고서가 없어요.</p></div>`}`;
 }
@@ -134,7 +134,7 @@ function openService(i) {
   const t = TRAFFIC.items[i], key = usageKey(t);
   openSheet(`
     <div class="sh-top">${t.co ? logo(t.co) : `<span class="logo-c" style="--c:#2a2a2e">${esc(t.name[0])}</span>`}
-      <div class="nm"><b>${esc(t.name)}</b><small>AI 웹사이트 방문 비율 ${i + 1}위 · ${t.share.toFixed(1)}% (1년 전 ${t.prev.toFixed(1)}%)</small></div>
+      <div class="nm"><b>${esc(t.name)}</b><small>AI 웹사이트 방문 비율 ${i + 1}위 · ${t.share.toFixed(1)}% (2025년 10월 ${t.prev.toFixed(1)}%)</small></div>
       <button type="button" class="iconbtn" data-close aria-label="닫기">✕</button></div>
     <div class="pane">${usageHTML(key)}
     ${t.co && CO_FAMILY[t.co] ? `<button type="button" class="sh-link" data-fam="${CO_FAMILY[t.co]}">${esc(COMPANIES[t.co].name)} 모델 전체 보기 ›</button>` : ""}</div>`);
@@ -143,13 +143,13 @@ function openService(i) {
 // 성능: 제3자 측정 (PERF) — 이 사이트에 있는 모델만, 높은 순
 let perfMode = "text";
 const PERF_VIEW = {
-  text: { list: () => Object.entries(PERF.arenaText.data).map(([id, [r, v]]) => ({ id, v, sub: `전체 ${r}위` })), fmt: (v) => `${v}점` },
-  web: { list: () => Object.entries(PERF.arenaWeb.data).map(([id, [r, v]]) => ({ id, v, sub: `전체 ${r}위` })), fmt: (v) => `${v}점` },
+  text: { list: () => Object.entries(PERF.arenaText.data).map(([id, [r, v]]) => ({ id, v, r, sub: `전체 ${r}위` })), fmt: (v) => `${v}점` },
+  web: { list: () => Object.entries(PERF.arenaWeb.data).map(([id, [r, v]]) => ({ id, v, r, sub: `전체 ${r}위` })), fmt: (v) => `${v}점` },
   aa: { list: () => Object.entries(PERF.aa.data).map(([id, [v]]) => ({ id, v, sub: "지능 지수" })), fmt: (v) => `${v}` },
   speed: { list: () => Object.entries(PERF.aa.data).filter(([, [, sp]]) => sp).map(([id, [, v]]) => ({ id, v, sub: "토큰/초" })), fmt: (v) => `${v}` },
 };
 function perfRows() {
-  const list = PERF_VIEW[perfMode].list().map((x) => ({ ...x, m: MODELS.find((m) => m.id === x.id) })).filter((x) => x.m).sort((a, b) => b.v - a.v);
+  const list = PERF_VIEW[perfMode].list().map((x) => ({ ...x, m: MODELS.find((m) => m.id === x.id) })).filter((x) => x.m).sort((a, b) => b.v - a.v || (a.r ?? 0) - (b.r ?? 0));
   const max = Math.max(...list.map((x) => x.v)), min = perfMode === "text" || perfMode === "web" ? Math.min(...list.map((x) => x.v)) - 40 : 0;
   return list.map(({ m, v, sub }, i) => `
     <button type="button" class="row row-price" data-id="${m.id}">
@@ -166,9 +166,9 @@ const LEGENDS = {
     : `${TIER_LABEL[priceMode]} = 앱·웹에서 AI를 쓰는 개인 구독 월 요금이에요 (미국 달러, 한국 원화는 공식 한국 가격이 있을 때만) · 눌러서 요금제마다 모델·한도·기능 보기 · ${SUB_CHECKED} 확인`,
   perf: () => perfMode === "aa" ? `종합 점수 = Artificial Analysis가 여러 시험(추론, 지식, 코딩, 수학 등)을 직접 돌려 합친 지능 지수예요. 생각을 가장 많이 하는 설정 기준 · ${PERF_CHECKED} 확인`
     : perfMode === "speed" ? `속도 = 답을 쓰기 시작한 뒤 1초에 내놓는 글의 양(토큰)이에요. 생각을 오래 하는 모델은 첫 글자가 나오기까지 더 걸릴 수 있어요 · Artificial Analysis · ${PERF_CHECKED} 확인`
-    : `${perfMode === "web" ? "웹 화면 만들기" : "대화 실력"} = LMArena에서 사람들이 이름을 모르는 두 AI의 답을 비교해 더 나은 쪽에 투표한 결과로 매긴 점수예요. "전체 n위"는 이 사이트에 없는 옛 모델까지 포함한 순위 · ${PERF_CHECKED} 확인`,
+    : `${perfMode === "web" ? "웹 화면 만들기" : "대화 실력"} = LMArena에서 사람들이 이름을 모르는 두 AI의 답을 비교해 더 나은 쪽에 투표한 결과로 매긴 점수예요. "전체 n위"는 이 사이트에 없는 다른 모델까지 포함한 순위 · ${PERF_CHECKED} 확인`,
   pop: () => popMode === "all"
-    ? `AI 서비스 전체 인기 = 사람들이 AI 웹사이트에 들어간 횟수 중 각 서비스의 비율이에요 (Similarweb, 전 세계, ${TRAFFIC.month}). 휴대폰 앱 사용은 빠져요 · 오른쪽 작은 글씨 = 1년 전 비율`
+    ? `AI 서비스 전체 인기 = 사람들이 AI 웹사이트에 들어간 횟수 중 각 서비스의 비율이에요 (Similarweb, 전 세계, ${TRAFFIC.month}). 휴대폰 앱 사용은 빠져요 · 오른쪽 작은 글씨 = 2025년 10월 비율 (빨강 = 그때보다 늘어남, 파랑 = 줄어듦)`
     : popMode === "task" ? `작업별 1위 = 개발자 프로그램이 OpenRouter에 맡긴 일을 종류별로 나눴을 때, 그 일에 가장 많이 쓰인 모델이에요. % = 그 일 전체 처리량 중 1위 모델의 몫 · ${TASK_LEADERS.until}까지 30일`
     : `개발자 사용량 = OpenRouter(여러 회사 AI를 한곳에서 골라 쓰는 개발자 서비스)에서 지난 30일 동안 가장 많이 쓰인 모델이에요. 토큰 = AI가 읽고 쓴 글자 조각 수, 막대 = 1위 대비 사용량 · ${POPULAR.checked}까지 자료`,
 };
@@ -178,15 +178,15 @@ const CRIT = {
   price: () => priceMode === "api"
     ? ["평균 단가가 가장 싼 모델", "100만 토큰당 요금 (입력 3 : 출력 1로 섞은 평균)", "막대 = 평균 단가, 길수록 비쌈"]
     : priceMode === "free"
-      ? ["사람들이 가장 많이 쓰는 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month})`, ""]
-      : priceMode === "pro" ? ["유료로 시작하는 값이 가장 싼 서비스", "각 서비스의 가장 싼 유료 요금제 월 요금 (미국 달러), 같은 값이면 많이 쓰는 순", ""]
-      : ["가장 비싼 요금제도 가장 싼 서비스", "각 서비스의 가장 비싼 개인 요금제 월 요금 (미국 달러)", ""],
-  perf: () => perfMode === "aa" ? ["종합 지능 지수가 가장 높은 모델", "Artificial Analysis 지능 지수 (제3자 측정)", "막대 = 점수"]
-    : perfMode === "speed" ? ["1초에 가장 많은 글을 써 주는 모델", "Artificial Analysis 출력 속도 (토큰/초)", "막대 = 속도, 길수록 빠름"]
-    : [`${perfMode === "web" ? "웹 화면 만들기" : "대화"} 투표 점수가 가장 높은 모델`, `LMArena ${perfMode === "web" ? "WebDev" : "텍스트"} 투표 점수 (제3자 측정)`, "막대 = 점수 차이를 보기 쉽게 늘린 것"],
+      ? ["사람들이 가장 많이 쓰는 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month}) · 방문 비율 자료가 없는 서비스는 순위 없이 뒤에`, ""]
+      : priceMode === "pro" ? ["유료로 시작하는 값이 가장 싼 서비스", "각 서비스의 가장 싼 유료 요금제 월 요금 (미국 달러), 같은 값이면 많이 쓰는 순 · 가격을 확인 못 한 곳은 뒤에", ""]
+      : ["최상위 요금제가 가장 싼 서비스", "각 서비스의 가장 비싼 개인 요금제 월 요금 (미국 달러), 싼 순 · 가격을 확인 못 한 곳은 뒤에", ""],
+  perf: () => perfMode === "aa" ? ["종합 지능 지수가 가장 높은 모델", "Artificial Analysis 지능 지수 (제3자 측정) · 측정된 모델만", "막대 = 점수"]
+    : perfMode === "speed" ? ["1초에 가장 많은 글을 써 주는 모델", "Artificial Analysis 출력 속도 (토큰/초) · 측정된 모델만", "막대 = 속도, 길수록 빠름"]
+    : [`${perfMode === "web" ? "웹 화면 만들기" : "대화"} 투표 점수가 가장 높은 모델`, `LMArena ${perfMode === "web" ? "WebDev" : "텍스트"} 투표 점수 (제3자 측정) · 측정된 모델만`, "막대 = 점수 차이를 보기 쉽게 늘린 것"],
   pop: () => popMode === "all"
     ? ["사람들이 가장 많이 들어가는 AI 서비스", `AI 웹사이트 방문 비율 (Similarweb, ${TRAFFIC.month})`, "막대 = 방문 비율"]
-    : popMode === "task" ? ["작업마다 가장 많이 쓰인 모델 (목록은 1위 모델의 몫이 큰 작업부터)", "OpenRouter 작업별 처리량(토큰), 30일", "막대·% = 그 작업에서 1위 모델이 차지한 비율"]
+    : popMode === "task" ? ["작업마다 가장 많이 쓰인 모델 · 목록 순서 = 1위 모델이 그 작업을 많이 차지한 순", "OpenRouter 작업별 처리량(토큰), 30일", "막대·% = 그 작업 전체(100%) 중 1위 모델의 몫"]
     : ["개발자 프로그램이 가장 많이 쓴 모델", "OpenRouter에서 30일 동안 처리한 글의 양(토큰)", "막대 = 1위 대비 처리량"],
 };
 function setLegend() {
@@ -209,9 +209,11 @@ function subRows(tier) {
       || (tier === "free" ? 0 : (x.plan?.usd ?? 1e9) - (y.plan?.usd ?? 1e9))
       || shareOf(y.key) - shareOf(x.key));
   let rank = 0;
+  // 순위는 기준 값이 있는 것만 (무료: 방문 비율 자료, 유료: 확인된 가격)
+  const ranked = (plan, key) => plan && (tier === "free" ? shareOf(key) > 0 : plan.usd != null);
   return rows.map(({ key, sub, plan }) => `
     <button type="button" class="row row-price${plan ? "" : " row-none"}" data-sub="${key}">
-      <span class="rk">${plan ? ++rank : "–"}</span>${logo(sub.co)}
+      <span class="rk">${ranked(plan, key) ? ++rank : "–"}</span>${logo(sub.co)}
       <span class="nm"><b>${esc(sub.service)}</b><small>${plan ? esc(`${plan.name} · ${plan.models.slice(0, 2).join(", ")}`) : esc(sub.note || "해당 요금제 없음")}</small></span>
       <span class="pr num"><b>${plan ? planPrice(plan) : "없음"}</b><small class="flat">${plan ? (plan.usd ? `월${plan.krw ? ` · 한국 ${won(plan.krw)}` : " · 미국 기준"}` : plan.usd === 0 ? "무료 요금제" : "공식 가격 미확인") : TIER_LABEL[tier]}</small></span>
     </button>`).join("");
@@ -388,7 +390,7 @@ function pane(m, tab) {
     ${m.price ? `<div><h4>API 요금 <small style="font-weight:500;color:var(--sub)">· 개발자가 프로그램에서 쓸 때</small></h4><div class="kv">
       <div><span>입력 (100만 토큰)</span><span class="num">${usd(m.price.in)}</span></div>
       <div><span>출력 (100만 토큰)</span><span class="num">${usd(m.price.out)}</span></div></div>
-      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1~2자 정도) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
+      <p class="price-note">${m.price.note ? `${esc(m.price.note)} · ` : ""}토큰 = AI가 글을 읽고 쓰는 단위 (한글 1글자 ≈ 1~2토큰) · ${CHECKED} 확인 · <a href="${esc(m.price.source)}" target="_blank" rel="noopener">출처 ›</a></p></div>`
       : m.priceText ? `<div><h4>API 요금</h4><p class="price-note">${esc(m.priceText)} <a href="${esc(m.src)}" target="_blank" rel="noopener">공식 발표 ›</a></p></div>`
       : `<div><h4>API 요금</h4><p class="price-note">공개된 API 요금이 없어요. ${m.use.some((u) => u.includes("모델 파일")) ? "모델 파일을 무료로 내려받아 직접 실행할 수 있어요. " : ""}<a href="${esc(m.src)}" target="_blank" rel="noopener">공식 발표 ›</a></p></div>`}
     ${peerPriceHTML(m)}
@@ -403,9 +405,9 @@ function perfHTML(m) {
     ${t ? row("대화 실력 (LMArena)", `${t[1]}점 · 전체 ${t[0]}위`) : ""}
     ${w ? row("웹 화면 만들기 (LMArena)", `${w[1]}점 · 전체 ${w[0]}위`) : ""}
     ${im ? row("이미지 만들기 (LMArena)", `${im[1]}점 · 전체 ${im[0]}위`) : ""}
-    ${a ? row("종합 지능 지수 (Artificial Analysis)", a[0]) : ""}
+    ${a ? row("종합 지능 지수 (Artificial Analysis)", `${a[0]} <small>· 높을수록 좋음, 지금 최고 58</small>`) : ""}
     ${a?.[1] ? row("속도", `초당 ${a[1]}토큰`) : ""}</div>
-    <p class="price-note">LMArena = 사람들의 비교 투표 점수, Artificial Analysis = 시험을 직접 돌린 점수 · ${PERF_CHECKED} 확인 · <a href="${PERF.arenaText.src}" target="_blank" rel="noopener">LMArena ›</a> · <a href="${PERF.aa.src}" target="_blank" rel="noopener">Artificial Analysis ›</a></p></div>`;
+    <p class="price-note">LMArena = 사람들의 비교 투표 점수, Artificial Analysis = 시험을 직접 돌린 점수 · ${PERF_CHECKED} 확인 · <a href="${(w && !t ? PERF.arenaWeb : im ? PERF.arenaImg : PERF.arenaText).src}" target="_blank" rel="noopener">LMArena ›</a> · <a href="${PERF.aa.src}" target="_blank" rel="noopener">Artificial Analysis ›</a></p></div>`;
 }
 // 모델 상세의 "많이 쓰이는 곳": 개발자 작업별 1위 + 이 회사 서비스의 나라·용도
 function modelUsageHTML(m) {

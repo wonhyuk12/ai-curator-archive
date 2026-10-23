@@ -658,7 +658,7 @@ const PERF = {
   arenaText: { title: "대화 실력", src: "https://arena.ai/leaderboard/text", by: "LMArena 텍스트 대화 투표 점수", data: { argon: [1, 1517], wonder: [3, 1509], haiku55: [126, 1425], large4: [111, 1434], sol61: [27, 1480], sonnet55: [29, 1478], opus55: [2, 1509], grok47: [96, 1441], astra: [32, 1476], g38flash: [9, 1496], muse13: [10, 1496], fable: [5, 1503], dsflash: [34, 1476], dsv4pro: [57, 1465], luna6: [91, 1442], g35lite: [71, 1455], grok43: [93, 1442], medium35: [119, 1426], qwen38max: [23, 1483], kimik3: [18, 1487], glm53: [26, 1481], glm53flash: [35, 1476], minimaxm3: [97, 1440], mimopro: [28, 1480], mimoflash: [81, 1448], nemo3ultra: [122, 1426], nova2lite: [245, 1335], solarpro4: [183, 1387] } },
   arenaWeb: { title: "웹 화면 만들기", src: "https://arena.ai/leaderboard/webdev", by: "LMArena 웹 개발(WebDev) 투표 점수", data: { opus55: [1, 1807], astra: [2, 1775], sonnet55: [3, 1767], sol61: [4, 1749], fable: [5, 1743], qwen38max: [10, 1673], argon: [11, 1673], dsflash: [13, 1664], muse13: [15, 1657], kimik3: [16, 1655], wonder: [17, 1651], grok47: [18, 1637], mimoflash: [19, 1634], mimopro: [22, 1625], glm53: [24, 1623], glm53flash: [29, 1608], g38flash: [34, 1585], haiku55: [35, 1585], dsv4pro: [36, 1582], luna6: [38, 1578], large4: [45, 1543], musopen: [52, 1527], minimaxm3: [67, 1482], g35lite: [88, 1434], solarpro4: [111, 1370], grok43: [117, 1357], medium35: [134, 1264] } },
   arenaImg: { title: "이미지 만들기", src: "https://arena.ai/leaderboard/text-to-image", by: "LMArena 글로 이미지 만들기 투표 점수", data: { nb21: [6, 1328], nbpro: [16, 1248] } },
-  aa: { src: "https://artificialanalysis.ai/leaderboards/models", data: { argon: [53, 82], wonder: [52, 149], haiku55: [43, 236], large4: [38, 87], sol61: [52, 55], sonnet55: [56, 134], opus55: [58, 96], grok47: [46, 97], astra: [53, 57], g38flash: [41, 142], fable: [53, 68], dsflash: [45, 204], dsv4pro: [36, 92], luna6: [38, 135], g35lite: [22, 430], musopen: [39, 162], medium35: [14, 161], small4: [11, 185], qwen38max: [45, 42], kimik3: [44, 37], glm53: [45, 78], glm53flash: [42, 69], minimaxm3: [29, 87], mimopro: [46, 53], mimoflash: [38, 58], nemo3ultra: [23, 154], nova2lite: [13, 182], commandaplus: [13, 149], solarpro4: [27, 120], step5: [44, null] } },
+  aa: { src: "https://artificialanalysis.ai/leaderboards/models", data: { argon: [53, 82], wonder: [52, 149], haiku55: [43, 236], large4: [38, 87], sol61: [52, 55], sonnet55: [56, 134], opus55: [58, 96], grok47: [46, 97], astra: [53, 57], g38flash: [41, 142], fable: [53, 68], dsflash: [45, 204], dsv4pro: [36, 92], luna6: [38, 135], g35lite: [22, 430], musopen: [39, 162], medium35: [14, 161], small4: [11, 185], qwen38max: [45, 42], kimik3: [44, 37], glm53: [45, 78], glm53flash: [42, 69], minimaxm3: [29, 87], mimopro: [46, 53], mimoflash: [38, 58], nemo3ultra: [23, 154], nova2lite: [13, 182], commandaplus: [13, 149], solarpro4: [27, 120], step5: [44, 217], nemo35vl: [26, 433], beam1: [30, 327], inklingsmall: [26, 222], inkling: [25, 171], solarmini4: [24, 104], longcat2: [19, 76], granite42: [11, 92] } },
 };
 
 // 많이 쓰이는 곳 — 서비스별 (2026-10-23 확인)
@@ -693,8 +693,8 @@ const TASK_LEADERS = { source: "https://openrouter.ai/rankings", until: "2026-10
     ["수학", "DeepSeek V4.1 Flash", "dsflash", 16.3],
     ["에이전트 작업 실행", "DeepSeek V4.1 Flash", "dsflash", 17.0],
     ["글쓰기", "GLM 5.3 Flash", "glm53flash", 18.8],
-    ["요약", "Step 5 Preview", null, 51.0],
-    ["질문·지식 답변", "Step 5 Preview", null, 21.4],
+    ["요약", "Step 5 Preview", "step5", 51.0],
+    ["질문·지식 답변", "Step 5 Preview", "step5", 21.4],
     ["번역", "Space Bunny Alpha (이름 비공개 테스트 모델)", null, 15.9],
     ["화면(UI) 코드", "Space Bunny Alpha (이름 비공개 테스트 모델)", null, 17.6],
     ["대화 기억 정리", "MiMo-V2.6-Flash", "mimoflash", 19.0],
@@ -707,11 +707,11 @@ const POPULAR = { checked: "2026-10-20", source: "https://openrouter.ai/rankings
     { name: "Space Bunny Alpha", author: "이름 비공개 테스트 모델", tokens: 56.7e12, change: null },
     { name: "GLM 5.3 Flash", author: "Z.ai", co: "zai", model: "glm53flash", tokens: 53.8e12, change: 0.21 },
     { name: "MiMo-V2.6-Flash", author: "Xiaomi", co: "xiaomi", model: "mimoflash", tokens: 38.9e12, change: null },
-    { name: "Hy4 preview", author: "Tencent", tokens: 34.7e12, change: -0.26 },
+    { name: "Hy4 preview", author: "Tencent", co: "tencent", model: "hy4", tokens: 34.7e12, change: -0.26 },
     { name: "Nemotron 3 Ultra (무료)", author: "NVIDIA", co: "nvidia", model: "nemo3ultra", tokens: 24.9e12, change: 0.34 },
     { name: "DeepSeek V4 Flash 0731", author: "DeepSeek", co: "deepseek", tokens: 24.6e12, change: -0.49 },
     { name: "GPT-6 Luna", author: "OpenAI", co: "openai", model: "luna6", tokens: 24.2e12, change: null },
-    { name: "Step 5 Preview", author: "StepFun", tokens: 20.9e12, change: null },
+    { name: "Step 5 Preview", author: "StepFun", co: "stepfun", model: "step5", tokens: 20.9e12, change: null },
     { name: "Claude Opus 5.5", author: "Anthropic", co: "anthropic", model: "opus55", tokens: 17.1e12, change: null },
 ] };
 
@@ -742,7 +742,8 @@ const SUBSCRIPTIONS = {
     plans: [
       { name: "Free", usd: 0, tier: "free", models: ["Sonnet", "Haiku"], limits: "5시간마다 한도가 다시 채워져요", f: ["search", "voice", "file", "memory", "apps"] },
       { name: "Pro", usd: 20, tier: "pro", models: ["Opus", "Sonnet", "Haiku", "Fable (사용 크레딧)"], limits: "5시간마다 무료의 5배 이상, 주간 한도 있음", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
-      { name: "Max 5x · 20x", usd: 100, from: true, tier: "max", models: ["Opus", "Sonnet", "Haiku", "Fable (주간 한도의 50%까지)"], limits: "5시간마다 Pro의 5배 또는 20배", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
+      { name: "Max 5x", usd: 100, models: ["Opus", "Sonnet", "Haiku", "Fable (주간 한도의 50%까지)"], limits: "5시간마다 Pro의 5배, API 크레딧 월 $100", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
+      { name: "Max 20x", usd: null, tier: "max", models: ["Opus", "Sonnet", "Haiku", "Fable (주간 한도의 50%까지)"], limits: "5시간마다 Pro의 20배, API 크레딧 월 $200 · 월 요금은 공식 페이지에 따로 안 나와요", f: ["search", "research", "voice", "file", "code", "memory", "apps"] },
     ] },
   deepseek: { service: "DeepSeek", co: "deepseek", source: "https://www.deepseek.com/en", note: "유료 구독이 없어요",
     plans: [{ name: "무료 웹·앱", usd: 0, tier: "free", models: ["DeepSeek V4.1 Flash"], limits: "공개된 한도 없음", f: ["search", "file"] }] },
