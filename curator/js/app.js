@@ -223,7 +223,7 @@ function plansHTML(sub) {
   return `<div class="plans">${sub.plans.map((p) => `
     <div class="plan"><div class="plan-h"><b>${esc(p.name)}</b><span class="num">${planPrice(p)}${p.usd ? " / 월" : ""}${p.krw ? ` <small>(한국 ${won(p.krw)})</small>` : ""}</span></div>
       <p><span>모델</span>${esc(p.models.join(", "))}</p>
-      <p><span>쓸 수 있는 양</span>${esc(p.limits)}</p>
+      <p><span>쓸 수 있는 양</span>${esc(p.limits)}${p.src ? ` · <a href="${esc(p.src)}" target="_blank" rel="noopener">가격 출처 ›</a>` : ""}</p>
       ${p.f.length ? `<div class="chips">${p.f.map((k) => `<span>${FEATURE_NAMES[k]}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>
     <p class="price-note">${sub.note ? `${esc(sub.note)} · ` : ""}${sub.korea === true ? "한국에서 쓸 수 있어요 · " : sub.korea === false ? "아직 한국에서는 못 써요 · " : ""}미국 달러 월 요금(월 결제) · 기능 칩은 공식 페이지에 적힌 것만 · ${SUB_CHECKED} 확인 · <a href="${esc(sub.source)}" target="_blank" rel="noopener">출처 ›</a></p>`;
 }
