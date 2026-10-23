@@ -65,7 +65,7 @@ export function KioskStart() {
       </header>
 
       {/* 타이틀 */}
-      <section className="relative z-10 mt-[3vh] text-center">
+      <section className="relative z-10 mt-auto pt-[3vh] text-center">
         <motion.div
           className="font-mono text-[clamp(10px,1.7vh,13px)] tracking-[0.4em] text-[#00F0FF]"
           animate={{ opacity: [1, 0.25, 1] }}
@@ -82,7 +82,7 @@ export function KioskStart() {
       </section>
 
       {/* 큰 버튼 2개 */}
-      <section className="relative z-10 mt-[3.6vh] grid flex-1 grid-cols-2 gap-[2.4vw]">
+      <section className="relative z-10 mx-auto mt-[3.6vh] grid h-[min(36vh,48vw)] w-full max-w-[1000px] grid-cols-2 gap-[2.4vw]">
         {DESTS.map((d, i) => (
           <motion.button
             key={d.key}
@@ -116,7 +116,7 @@ export function KioskStart() {
               </motion.span>
             </div>
             <div className="relative">
-              <div className="whitespace-pre-line text-[clamp(26px,7vh,64px)] font-extrabold leading-[1.02] tracking-[-0.045em]">{d.label}</div>
+              <div className="whitespace-pre-line text-[clamp(22px,min(5.6vh,5vw),52px)] font-extrabold leading-[1.02] tracking-[-0.045em]">{d.label}</div>
               <div className="mt-[1vh] text-[clamp(12px,2.2vh,18px)] text-white/65">{d.desc}</div>
             </div>
             <Crosshairs color={`${d.accent}aa`} inset={10} />
@@ -134,7 +134,7 @@ export function KioskStart() {
           scale: [1, 1.035, 1],
         }}
         transition={{ delay: 0.7, boxShadow: { duration: 1.8, repeat: Infinity }, scale: { duration: 1.8, repeat: Infinity } }}
-        className="relative z-10 mx-auto mt-[2.4vh] flex items-center gap-3 overflow-hidden rounded-full border-2 border-[#FF6B00]/70 bg-[#FF6B00]/15 px-6 py-[1.3vh] text-[clamp(15px,3vh,22px)] font-bold"
+        className="relative z-10 mx-auto mb-auto mt-[2.4vh] flex items-center gap-3 overflow-hidden rounded-full border-2 border-[#FF6B00]/70 bg-[#FF6B00]/15 px-6 py-[1.3vh] text-[clamp(15px,3vh,22px)] font-bold"
       >
         <svg aria-hidden viewBox="0 0 24 24" className="h-[1.4em] w-[1.4em] shrink-0 text-[#ffb37a]">
           <path d="M4 8h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z" fill="none" stroke="currentColor" strokeWidth="2" />
