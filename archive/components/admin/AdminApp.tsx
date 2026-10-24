@@ -10,9 +10,9 @@ import {
 const EVENT_NAMES: Record<string, string> = {
   session_start: "방문 시작", session_end: "방문 끝", page_view: "페이지 열기", page_leave: "페이지 떠남", click: "누름",
   survey_open: "설문 열기", survey_start: "설문 시작", survey_answer: "설문 답", survey_complete: "설문 완료", survey_close: "설문 닫기",
-  raffle_enter: "추첨 응모", raffle_skip: "추첨 건너뜀",
+  raffle_enter: "추첨 응모", raffle_skip: "추첨 건너뜀", home_pick: "첫 화면에서 다시 고름", go_home: "첫 화면으로 감",
 };
-const END_NAMES: Record<string, string> = { idle: "아무것도 안 눌러 처음으로", home: "처음으로 버튼", exit: "나가기 버튼", restart: "새 손님 시작", return: "첫 화면으로 돌아옴" };
+const END_NAMES: Record<string, string> = { idle: "아무것도 안 누름", home: "처음으로 버튼", exit: "나가기 버튼", restart: "새 손님 시작", return: "첫 화면으로 돌아옴" };
 
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -447,7 +447,7 @@ function SessionTable({ rows }: { rows: SessionRow[] }) {
               <td className="text-right tabular-nums">{(r.durationMs / 60000).toFixed(1)}분</td>
               <td className="text-right tabular-nums">{r.clicks}</td>
               <td>{r.survey ? (r.survey.completed ? "완료" : `중단 (${r.survey.last_question ?? "-"})`) : "-"}</td>
-              <td className="text-white/60">{({ idle: "2분 무반응", home: "처음으로", restart: "새 사람", return: "첫 화면 복귀" } as Record<string, string>)[r.endReason] ?? r.endReason}</td>
+              <td className="text-white/60">{({ idle: "무반응", home: "처음으로", restart: "새 사람", return: "첫 화면 복귀" } as Record<string, string>)[r.endReason] ?? r.endReason}</td>
               <td className="text-white/50">{r.kiosk}</td>
             </tr>
           ))}

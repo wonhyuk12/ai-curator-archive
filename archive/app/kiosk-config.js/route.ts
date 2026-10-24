@@ -5,7 +5,7 @@ export function GET() {
   const config = {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
-    idleSeconds: Number(process.env.NEXT_PUBLIC_KIOSK_IDLE_SECONDS ?? 120),
+    idleSeconds: Number(process.env.NEXT_PUBLIC_KIOSK_IDLE_SECONDS ?? 60),
     prize: process.env.NEXT_PUBLIC_KIOSK_PRIZE ?? "스타벅스 아메리카노",
   };
   return new Response(`window.KIOSK_CONFIG = ${JSON.stringify(config)};\n`, {

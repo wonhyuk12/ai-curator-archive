@@ -32,7 +32,7 @@ export function KioskStart() {
   const [going, setGoing] = useState<{ dest: Dest; rect: DOMRect } | null>(null);
 
   useEffect(() => {
-    // 이 기기를 키오스크로 표시 → 이후 모든 페이지에서 설문 버튼·이용 기록·2분 복귀가 켜져요
+    // 이 기기를 키오스크로 표시 → 이후 모든 페이지에서 설문 버튼·이용 기록·1분 무반응 복귀가 켜져요
     try {
       localStorage.setItem("kiosk.on", "true");
     } catch {

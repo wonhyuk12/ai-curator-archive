@@ -340,18 +340,19 @@ export function demoData(qs: Question[]): Dataset {
       const answers: Record<string, string | string[]> = {};
       const done = rnd() < 0.82;
       const heavy = rnd() < 0.55;
+      let nonUser = false; // q3 "거의 안 씀" → q13 → q14
       for (const q of qs) {
-        if (q.id === "q13") continue;
+        if (q.id === "q13" || (nonUser && q.id !== "q14")) continue;
         if (!done && rnd() < 0.25) break;
         const opts = q.extra ? [...q.options, q.extra] : q.options;
-        if (q.id === "q3") { answers.q3 = heavy ? "거의 매일" : pick(opts, [0, 4, 3, 2, 1]); if (answers.q3 === "거의 안 씀") { answers.q13 = [pick(qs.find((x) => x.id === "q13")!.options)]; break; } continue; }
+        if (q.id === "q3") { answers.q3 = heavy ? "거의 매일" : pick(opts, [0, 4, 3, 2, 1]); if (answers.q3 === "거의 안 씀") { answers.q13 = [pick(qs.find((x) => x.id === "q13")!.options)]; nonUser = true; } continue; }
         if (q.id === "q7" && answers.q6 === "없다") continue;
         if (rnd() < 0.08) continue;
         answers[q.id] = q.type === "multi" ? [...new Set([pick(opts), pick(opts), ...(rnd() < 0.4 ? [pick(opts)] : [])])].slice(0, q.max ?? 3) : pick(opts);
       }
       surveys.push({
         session_id: id, opened_on: opened, started_at: new Date(t).toISOString(), finished_at: new Date(t + 70e3).toISOString(),
-        completed: done, last_question: done ? "q12" : "q6", answers,
+        completed: done, last_question: done ? "q14" : "q6", answers,
         details: rnd() < 0.25 ? { q8: pick(["비교표가 있었으면", "한국어 자료가 부족해요", "가격이 헷갈려요"]) } : {}, kiosk_id: null,
       });
       t += 70e3;

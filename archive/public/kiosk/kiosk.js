@@ -2,9 +2,9 @@
  * AI 키오스크 위젯 — 키오스크 모드일 때만 동작해요 (/kiosk 첫 화면에서 켜짐, ?kiosk=0 으로 끔).
  *  - 사용 기록: 세션(한 사람) 단위로 페이지·머문 시간·클릭·설문을 기록 → Supabase (끊기면 임시 저장 후 재전송)
  *  - 키오스크 밖(휴대폰·PC) 방문도 기록만 해요 (kiosk_id "web", 화면 위젯 없음, 30분 쉬면 새 방문)
- *  - 2분 무반응이면 첫 화면(/kiosk)으로 복귀 (10초 전 안내)
+ *  - 1분(설정값) 무반응이면 세션을 끝내고 첫 화면(/kiosk)으로 복귀 (10초 전 안내). 처음으로·나가기로 첫 화면에 와도 세션은 이어져요
  *  - 첫 화면을 뺀 모든 페이지에 [처음으로] [설문 참여] 버튼
- *  - 설문 13문항 (한 화면 한 문항, 버튼 선택 + 선택 입력란, 화면 한글 키보드), 완료 후 추첨 응모(선택)
+ *  - 설문 14문항 (한 화면 한 문항, 버튼 선택 + 선택 입력란, 화면 한글 키보드), 완료 후 추첨 응모(선택)
  * AI 큐레이터(정적)와 AI ARCHIVE(Next.js) 양쪽에서 같은 파일을 불러 써요.
  */
 (() => {
@@ -35,7 +35,7 @@
     s.onerror = () => resolve((CFG = {}));
     document.head.appendChild(s);
   });
-  const idleMs = () => (CFG?.idleSeconds || 120) * 1000;
+  const idleMs = () => (CFG?.idleSeconds || 60) * 1000;
   const prize = () => CFG?.prize || "스타벅스 아메리카노";
 
   /* ───────── 전송 대기열 (인터넷이 끊겨도 보관) ───────── */
@@ -122,6 +122,8 @@
     enqueue("events", { session_id: s.id, ts: now(), type, page: data.page ?? path(), target: data.target ?? null, duration_ms: data.duration_ms ?? null, meta: data.meta ?? null });
   }
   function startSession(entry) {
+    const cur = session();
+    if (cur && entry !== "web" && cur.entry !== "web") { track("home_pick", { page: "/kiosk", target: entry }); flush(); return cur; } // 같은 손님이 첫 화면에서 다시 고름
     endSession("restart");
     const uuid = crypto.randomUUID ? crypto.randomUUID() : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => { const r = (Math.random() * 16) | 0; return (c === "x" ? r : (r & 3) | 8).toString(16); });
     const s = { id: uuid, startedAt: Date.now(), entry };
@@ -254,8 +256,26 @@
   addEventListener("click", (e) => { if (eatClick) { eatClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
   addEventListener("dragstart", (e) => e.preventDefault(), true); // 링크·이미지가 끌려가지 않게
 
-  if (isStart()) { if (session()) endSession("return"); return; } // 첫 화면은 React 페이지가 직접 그려요
+  /* ───────── 무반응 시간 (세션은 아무것도 안 누를 때만 끝나요) ───────── */
+  let last = Date.now();
+  // 터치가 있으면 시간만 초기화. 페이지를 옮겨도 이어지게 세션에도 마지막 터치 시각을 남겨요
+  const poke = () => {
+    last = Date.now();
+    const s = session();
+    if (s && last - (s.lastAt || 0) > 5000) LS.set("kiosk.session", { ...s, lastAt: last });
+  };
+  for (const ev of ["pointerdown", "touchstart", "keydown", "wheel"]) addEventListener(ev, poke, { capture: true, passive: true });
+  addEventListener("scroll", poke, { capture: true, passive: true });
+  const stale = () => { const s = session(); return !!s && Date.now() - (s.lastAt || s.startedAt) >= idleMs(); };
 
+  // 첫 화면은 React 페이지가 직접 그려요. 돌아와도 세션은 이어지고, 무반응이면 그때 끝나요
+  if (isStart()) {
+    cfgReady.then(() => { if (stale()) endSession("idle"); });
+    setInterval(() => { if (session() && Date.now() - last >= idleMs()) endSession("idle"); }, 1000);
+    return;
+  }
+
+  if (stale()) endSession("idle"); // 오래 꺼져 있다가 켜진 경우
   if (!session()) startSession("direct"); // 첫 화면을 거치지 않고 들어온 경우
   enterPage();
 
@@ -310,19 +330,17 @@
   setInterval(() => { if (busy()) call.classList.remove("show"); }, 300); // 떠 있는 중에 창이 열리면 바로 숨김
 
   function goHome(reason) {
-    endSession(reason);
+    if (reason === "idle") endSession("idle");
+    else { track("go_home", { target: reason }); flush(); } // 처음으로·나가기: 같은 손님이니 세션은 이어가요
     location.href = "/kiosk";
   }
   window.KIOSK.goHome = goHome; // 페이지 안 "나가기" 버튼에서도 써요
   addEventListener("click", (e) => { if (e.target.closest?.("[data-kiosk-exit]")) goHome("exit"); }); // AI 소식 화면 나가기
 
-  /* ───────── 2분 무반응 → 첫 화면 ───────── */
-  let last = Date.now(), warnEl = null;
-  // 터치가 있으면 시간만 초기화. 안내창은 직접 눌러서 닫아요 (누른 터치가 아래 버튼으로 새지 않게)
-  const poke = () => { last = Date.now(); };
+  /* ───────── 무반응(기본 1분) → 세션 끝, 첫 화면 ───────── */
+  let warnEl = null;
+  // 안내창은 직접 눌러서 닫아요 (누른 터치가 아래 버튼으로 새지 않게)
   const closeWarn = (e) => { e.preventDefault(); e.stopPropagation(); poke(); if (warnEl) { warnEl.remove(); warnEl = null; } };
-  for (const ev of ["pointerdown", "touchstart", "keydown", "wheel"]) addEventListener(ev, poke, { capture: true, passive: true });
-  addEventListener("scroll", poke, { capture: true, passive: true });
   setInterval(() => {
     const idle = Date.now() - last, left = Math.ceil((idleMs() - idle) / 1000);
     if (idle >= idleMs()) return goHome("idle");
@@ -336,13 +354,13 @@
     }
   }, 500);
 
-  /* ───────── 설문 문항 (면담지 13문항) ───────── */
+  /* ───────── 설문 문항 (면담지 13문항 + 마무리 1문항) ───────── */
   // 설문 문항은 questions.json 한 곳에서 관리해요 (관리자 분석 페이지와 공유)
   let QUESTIONS = [], byId = {};
   const questionsReady = fetch("/kiosk/questions.json").then((r) => r.json()).then((d) => {
     QUESTIONS = d.questions; byId = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
   }).catch(() => {});
-  const nextOf = (q, v) => (v != null && q.branch?.[v]) || (q.end ? "end" : QUESTIONS[QUESTIONS.indexOf(q) + 1]?.id || "end");
+  const nextOf = (q, v) => (v != null && q.branch?.[v]) || q.next || (q.end ? "end" : QUESTIONS[QUESTIONS.indexOf(q) + 1]?.id || "end");
 
   // 진행 상태는 세션 안에서 유지 (닫았다 다시 열면 이어서)
   const S = () => LS.get("kiosk.survey") || { step: "intro", path: [], answers: {}, details: {}, completed: false, saved: false, openedOn: null, startedAt: null };
@@ -399,7 +417,7 @@
       <button type="button" class="kq-x" aria-label="닫기">✕</button>
       <div class="kq-intro">
         <div class="kq-badge">AI 이용 설문</div>
-        <h2>총 <em>13문항</em>, <em>1분</em>이면 끝나요</h2>
+        <h2>총 <em>${QUESTIONS.length}문항</em>, <em>1분</em>이면 끝나요</h2>
         <p class="kq-prize">${ICON.cup} 완료하면 추첨을 통해 <b>${esc(prize())}</b>를 드려요</p>
         <ul class="kq-points"><li>버튼만 누르면 돼요 · 모르면 건너뛰어도 OK</li><li>응답은 이름·연락처 없이 익명으로 저장돼요</li></ul>
         <button type="button" class="kq-primary kq-start">동의하고 시작하기 →</button>
@@ -422,8 +440,8 @@
     const scale = q.type === "scale";
     c.innerHTML = `
       <div class="kq-top">
-        <div class="kq-prog"><i style="width:${(q.no / 13) * 100}%"></i></div>
-        <span class="kq-count"><b>${q.no}</b> / 13</span>
+        <div class="kq-prog"><i style="width:${(q.no / QUESTIONS.length) * 100}%"></i></div>
+        <span class="kq-count"><b>${q.no}</b> / ${QUESTIONS.length}</span>
         <button type="button" class="kq-x" aria-label="닫기">✕</button>
       </div>
       <div class="kq-body">
