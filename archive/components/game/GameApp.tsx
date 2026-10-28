@@ -172,7 +172,7 @@ export function GameApp() {
                       <ul className="mt-3 space-y-1 text-[12.5px] text-white/70">
                         {p.tool.freeStart && p.tool.freeWhat && <li>무료로 되는 것: {p.tool.freeWhat}</li>}
                         {p.paidKrw != null && <li>유료로 올리면: 월 약 {fmtKrw(p.paidKrw)}{p.tool.annualOnly ? " (연 결제 기준)" : ""}</li>}
-                        {p.tool.commercialFree === false && <li className="text-[#FFB020]">무료로 만든 결과물은 판매용 게임에 못 써요</li>}
+                        {p.tool.commercialFree === false && <li className="text-[#FFB020]">무료로 만든 결과물은 판매용 게임에 못 써서 유료 요금으로 계산했어요</li>}
                         {p.tool.commercialFree === true && <li>무료로 만든 결과물도 판매용 게임에 쓸 수 있어요</li>}
                         {p.alternatives.length > 0 && <li className="text-white/45">비슷한 후보: {p.alternatives.map((a) => a.name).join(", ")}</li>}
                       </ul>
@@ -192,7 +192,7 @@ export function GameApp() {
                 {result.budget != null && <span className="text-white/55"> · 예산 {budgetLabel(result.budget)} 안이에요</span>}
               </div>
               <p className="mt-2 text-[11px] leading-relaxed text-white/35">
-                고르는 기준: 예산 안 → (코딩을 모르면) 초보자용 → 사용자 수(Similarweb 방문) 순 · 가격은 공식 요금 페이지의 미국 달러를 1달러 = {USD_KRW.rate.toLocaleString("ko-KR")}원({USD_KRW.date})으로 바꾼 값 · {GAME_CHECKED} 확인
+                고르는 기준: 만든 결과물을 게임에 넣어 팔 수 있는 조건으로 예산 안 → 그 일이 주력인 툴 → (코딩을 모르면) 초보자용 → 사용자 수(Similarweb 방문) 순 · 무료 결과물을 판매용으로 못 쓰는 툴은 유료 요금으로 계산 · 가격은 공식 요금 페이지의 미국 달러를 1달러 = {USD_KRW.rate.toLocaleString("ko-KR")}원({USD_KRW.date})으로 바꾼 값 · {GAME_CHECKED} 확인
                 {result.source === "keyword" && " · 이번에는 키워드로 알아들었어요"}
               </p>
             </motion.section>

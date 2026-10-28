@@ -88,16 +88,20 @@ export interface Plan {
   missing: Role[];
 }
 
-/** 추천 순서 점수: 초보자용(코딩을 모르면) → 이용자 수 → 무료 결과물 판매 가능 */
+/** 추천 순서 점수: 그 일이 주력인 툴 → 초보자용(코딩을 모르면) → 이용자 수 (아주 큰 범용 서비스는 3,000만에서 끊어요) */
 function score(t: GameTool, intent: GameIntent, role: Role): number {
-  let s = Math.log10(Math.max(t.visits ?? 1e4, 1e4));
+  let s = Math.log10(Math.min(Math.max(t.visits ?? 1e4, 1e4), 3e7));
   if (role === "code" && (intent.codingLevel === "none" || intent.codingLevel === "unknown") && t.beginner) s += 2;
   if (role === "code" && intent.codingLevel === "good" && !t.beginner) s += 1;
-  if (t.commercialFree) s += 0.5;
+  if (minCost(t) === 0) s += 0.3; // 비슷하면 무료로 쓸 수 있는 쪽
+  if (t.roles[0] === role) s += 1.5; // 그 일이 주력인 툴 (예: 배경음악은 음악 전문 툴)
   return s;
 }
 
-const minCost = (t: GameTool) => (t.freeStart ? 0 : t.paidFrom != null ? krw(t.paidFrom) : Infinity);
+/** 게임에 실제로 쓰려면 드는 최소 월 비용 (원).
+ *  무료 요금제 결과물을 판매용 게임에 못 쓰는 툴은(공식 안내 기준) 유료 요금으로 셈해요 */
+export const minCost = (t: GameTool) =>
+  t.freeStart && t.commercialFree !== false ? 0 : t.paidFrom != null ? krw(t.paidFrom) : Infinity;
 
 export function makePlan(intent: GameIntent, budget: Budget): Plan {
   const used = new Set<string>();
