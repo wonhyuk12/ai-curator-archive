@@ -14,7 +14,7 @@ const TOOL_COUNT = Object.keys(TOOLS).length;
 const PRIZE = process.env.NEXT_PUBLIC_KIOSK_PRIZE ?? "스타벅스 아메리카노";
 
 type Dest = {
-  key: "news" | "archive";
+  key: "game" | "archive";
   href: string;
   accent: string;
   label: string;
@@ -23,7 +23,7 @@ type Dest = {
 };
 
 const DESTS: Dest[] = [
-  { key: "news", href: "/news/index.html", accent: "#00F0FF", label: "AI 소식", en: "최신 모델 · 요금 · 소식", desc: "최신 모델 · 요금 비교 · 진화 타임라인" },
+  { key: "game", href: "/game", accent: "#C6FF00", label: "게임 만들기\nAI 추천", en: "만들고 싶은 게임 · 한 달 예산", desc: "게임을 적으면 예산 안에서 AI 툴 4개를 골라 드려요" },
   { key: "archive", href: "/", accent: "#FF2E88", label: "작업별 AI\n기능 추천", en: `작업 ${TASKS}가지 · AI 툴 ${TOOL_COUNT}개`, desc: "개발 · 디자인 · 공부 · 글쓰기 · 발표 · 취업 …" },
 ];
 
@@ -190,9 +190,9 @@ function Sweep({ color, delay }: { color: string; delay: number }) {
   );
 }
 
-/* 카드별 장식: 소식 = 레이더 파동, 추천 = 연결된 노드 */
+/* 카드별 장식: 게임 = 레이더 파동, 추천 = 연결된 노드 */
 function CardVisual({ kind, accent }: { kind: Dest["key"]; accent: string }) {
-  if (kind === "news") {
+  if (kind === "game") {
     return (
       <div aria-hidden className="pointer-events-none absolute -right-[8%] top-1/2 h-[90%] -translate-y-1/2 opacity-70" style={{ aspectRatio: "1" }}>
         {[0, 1, 2].map((i) => (

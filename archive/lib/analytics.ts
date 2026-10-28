@@ -31,11 +31,12 @@ export type Dataset = { sessions: Session[]; events: Event[]; surveys: Survey[];
 const PAGE_NAMES: Record<string, string> = {
   "/kiosk": "키오스크 첫 화면",
   "/news": "AI 소식",
+  "/game": "게임 만들기 AI 추천",
   "/": "작업별 AI 추천 첫 화면",
   ...Object.fromEntries(ARCHIVE.map((c) => [`/${c.slug}`, `마인드맵 · ${c.name}`])),
 };
 export const pageName = (p: string | null) => (p ? PAGE_NAMES[p] ?? p : "(알 수 없음)");
-export const ENTRY_NAMES: Record<string, string> = { news: "AI 소식", archive: "작업별 AI 추천", direct: "첫 화면 거치지 않음", web: "키오스크 밖 방문" };
+export const ENTRY_NAMES: Record<string, string> = { game: "게임 만들기 AI 추천", news: "AI 소식", archive: "작업별 AI 추천", direct: "첫 화면 거치지 않음", web: "키오스크 밖 방문" };
 
 /* 받아온 기록 정리: 중복 제거(예전 전송 버그로 두 번 들어간 기록) · 시험 기기 빼기 */
 export const isTestKiosk = (id: string | null | undefined) => !!id && id.startsWith("test-");

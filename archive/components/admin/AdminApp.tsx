@@ -10,7 +10,7 @@ import {
 const EVENT_NAMES: Record<string, string> = {
   session_start: "방문 시작", session_end: "방문 끝", page_view: "페이지 열기", page_leave: "페이지 떠남", click: "누름",
   survey_open: "설문 열기", survey_start: "설문 시작", survey_answer: "설문 답", survey_complete: "설문 완료", survey_close: "설문 닫기",
-  raffle_enter: "추첨 응모", raffle_skip: "추첨 건너뜀", home_pick: "첫 화면에서 다시 고름", go_home: "첫 화면으로 감",
+  game_plan: "게임 추천 받음", raffle_enter: "추첨 응모", raffle_skip: "추첨 건너뜀", home_pick: "첫 화면에서 다시 고름", go_home: "첫 화면으로 감",
 };
 const END_NAMES: Record<string, string> = { idle: "아무것도 안 누름", home: "처음으로 버튼", exit: "나가기 버튼", restart: "새 손님 시작", return: "첫 화면으로 돌아옴" };
 
@@ -189,6 +189,9 @@ function Dashboard({ data, qs, demo, updatedAt, loading, includeTest, onIncludeT
   const flow = funnel(rows, data);
   const surveySec = surveySeconds(rows);
   const recent = recentEvents(data, rows);
+  // 게임 만들기 AI 추천: 손님이 적은 게임과 고른 예산 (최신이 위)
+  const keep = new Set(rows.map((r) => r.id));
+  const games = data.events.filter((e) => e.type === "game_plan" && keep.has(e.session_id)).sort((a, b) => b.ts.localeCompare(a.ts));
 
   return (
     <Shell>
@@ -292,6 +295,27 @@ function Dashboard({ data, qs, demo, updatedAt, loading, includeTest, onIncludeT
       </Card>
 
       <Raffle data={data} demo={demo} onDelete={onDeleteRaffles} />
+
+      <Card title={`게임 만들기 AI 추천 · ${games.length}번`} sub="손님이 적은 게임과 고른 예산 · 최신이 위 · 최근 30개" className="mt-4">
+        {games.length ? (
+          <ul className="divide-y divide-white/5 text-sm">
+            {games.slice(0, 30).map((e, i) => {
+              const m = (e.meta ?? {}) as { text?: string; picks?: string[]; total?: number; source?: string };
+              return (
+                <li key={i} className="py-2">
+                  <div className="flex flex-wrap gap-x-3">
+                    <span className="text-white/40">{kst(e.ts)}</span>
+                    <span className="text-[#C6FF00]">{e.target}</span>
+                    <span className="text-white/40">{m.source === "gemini" ? "Gemini 해석" : "키워드 해석"}</span>
+                  </div>
+                  <p className="mt-0.5 text-white/85">{m.text}</p>
+                  {m.picks && <p className="text-xs text-white/45">추천: {m.picks.join(", ")} · 시작 비용 월 {(m.total ?? 0).toLocaleString("ko-KR")}원</p>}
+                </li>
+              );
+            })}
+          </ul>
+        ) : <p className="text-sm text-white/40">아직 없어요</p>}
+      </Card>
 
       <Card title="최근 기록 20개" sub="기록이 실제로 들어오는지 바로 확인해요 · 한국 시간" className="mt-4">
         {recent.length ? (

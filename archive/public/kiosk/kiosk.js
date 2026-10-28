@@ -667,4 +667,5 @@
     k.classList.remove("in");
     setTimeout(() => k.remove(), 220);
   }
+  window.KIOSK.openKeyboard = openKeyboard; // 다른 화면(게임 추천)의 입력칸에서도 써요
 })();

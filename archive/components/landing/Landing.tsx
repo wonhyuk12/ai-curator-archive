@@ -16,13 +16,13 @@ import { CategoryCard } from "./CategoryCard";
 const CURATOR_URL = process.env.NEXT_PUBLIC_CURATOR_URL ?? "https://ai-curator-ten.vercel.app/";
 function useCuratorUrl() {
   const [url, setUrl] = useState(CURATOR_URL);
-  const kiosk = useKiosk(); // 키오스크: 같은 주소(/news)의 큐레이터로
+  const kiosk = useKiosk(); // 키오스크: AI 소식 대신 게임 만들기 AI 추천으로
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_CURATOR_URL && ["localhost", "127.0.0.1"].includes(window.location.hostname)) {
       setUrl("http://localhost:3001/"); // eslint-disable-line react-hooks/set-state-in-effect -- 브라우저에서만 알 수 있는 값
     }
   }, []);
-  return kiosk ? "/news/index.html" : url;
+  return kiosk ? "/game" : url;
 }
 
 // Boot plays once per full page load; client-side navigation back to "/" skips it.
@@ -90,7 +90,7 @@ export function Landing() {
           <div className="hidden md:block">{"// "}하고 싶은 작업에 맞는 AI 찾기</div>
           <div className="flex items-center gap-4">
             <a href={curatorUrl} className="flex items-center gap-2 text-white/70 transition-colors hover:text-[#00F0FF]">
-              ← AI 큐레이터
+              {kiosk ? "← 게임 만들기 AI 추천" : "← AI 큐레이터"}
             </a>
             {kiosk && <KioskExit />}
           </div>

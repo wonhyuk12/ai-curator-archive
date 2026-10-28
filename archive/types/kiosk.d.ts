@@ -6,6 +6,8 @@ interface KioskApi {
   flush(): Promise<void>;
   enabled(): boolean;
   goHome?(reason: string): void;
+  /** 키오스크 화면 한글 키보드 (키오스크 모드에서만) */
+  openKeyboard?(initial: string, onDone: (text: string) => void, label: string): Promise<void>;
 }
 interface Window {
   KIOSK?: KioskApi;
