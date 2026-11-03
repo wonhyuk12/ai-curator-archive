@@ -59,6 +59,24 @@ body.tkb-open .tg-zoom{display:none}
   }, { passive: false });
   document.addEventListener("touchend", (e) => { if (e.touches.length < 2) pinch = null; }, { passive: true });
 
+  /* ───────── 탭 보정 ───────── */
+  // 일부 파이 화면(Wayland)에서는 탭이 click 으로 이어지지 않아요 → 짧은 탭 뒤 click 이 안 오면 직접 눌러 줘요
+  let tap = null, clicked = 0;
+  addEventListener("click", () => { clicked = Date.now(); }, true);
+  addEventListener("pointerdown", (e) => {
+    tap = e.pointerType === "mouse" ? null : { x: e.clientX, y: e.clientY, t: Date.now(), el: e.target };
+  }, { capture: true, passive: true });
+  addEventListener("pointerup", (e) => {
+    const t = tap; tap = null;
+    if (!t || Date.now() - t.t > 600 || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 12) return;
+    const since = Date.now();
+    setTimeout(() => {
+      if (clicked >= since - 50) return; // 정상적으로 click 이 왔어요
+      const el = t.el?.closest?.("button, a[href], [role=button], [data-a], input, textarea, label, summary");
+      if (el && el.isConnected) el.click();
+    }, 350);
+  }, { capture: true, passive: true });
+
   /* ───────── 끌어서 스크롤 (터치가 마우스로 들어오는 화면) ───────── */
   const canScroll = (el, dx, dy) => {
     const cs = getComputedStyle(el);
@@ -77,7 +95,7 @@ body.tkb-open .tg-zoom{display:none}
     if (!drag || !(e.buttons & 1)) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
     if (!drag.moved) {
-      if (Math.hypot(dx, dy) < 8) return;
+      if (Math.hypot(dx, dy) < 12) return; // 손가락 떨림은 탭으로 봐요
       drag.moved = true;
       let el = drag.el;
       while (el && el !== document.body && !(el instanceof Element && canScroll(el, dx, dy))) el = el.parentElement;
