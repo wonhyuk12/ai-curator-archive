@@ -66,11 +66,12 @@ body.tkb-open .tg-zoom{display:none}
     const x = /(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1;
     return Math.abs(dy) >= Math.abs(dx) ? y : x;
   };
-  let drag = null, eatClick = false;
+  let drag = null, eatUntil = 0, fling = 0;
   addEventListener("pointerdown", (e) => {
     drag = null;
+    cancelAnimationFrame(fling); fling = 0; // 미끄러지는 중에 다시 짚으면 멈춰요
     if (e.pointerType !== "mouse" || e.button !== 0 || e.target.closest?.(".tkb, .tg-zoom, input, textarea")) return;
-    drag = { x: e.clientX, y: e.clientY, el: e.target, sc: null, moved: false };
+    drag = { x: e.clientX, y: e.clientY, el: e.target, sc: null, moved: false, pts: [] };
   }, true);
   addEventListener("pointermove", (e) => {
     if (!drag || !(e.buttons & 1)) return;
@@ -85,11 +86,32 @@ body.tkb-open .tg-zoom{display:none}
     }
     drag.sc.scrollBy(-dx, -dy);
     drag.x = e.clientX; drag.y = e.clientY;
+    drag.pts.push({ x: e.clientX, y: e.clientY, t: e.timeStamp });
+    if (drag.pts.length > 8) drag.pts.shift();
     e.preventDefault();
   }, true);
-  // 끌고 난 뒤 손을 뗄 때 버튼이 눌리지 않게
-  addEventListener("pointerup", () => { if (drag?.moved) { eatClick = true; setTimeout(() => { eatClick = false; }, 0); } drag = null; }, true);
-  addEventListener("click", (e) => { if (eatClick) { eatClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
+  // 손을 떼면 마지막 0.1초 동안 끈 속도로 계속 미끄러지다가 천천히 멈춰요 (휴대폰처럼)
+  const startFling = (sc, pts, now) => {
+    const recent = pts.filter((p) => now - p.t < 100);
+    if (recent.length < 2) return;
+    const a = recent[0], b = recent[recent.length - 1], dt = Math.max(b.t - a.t, 8);
+    let vx = (b.x - a.x) / dt, vy = (b.y - a.y) / dt; // px/ms
+    let last = performance.now();
+    const step = (t) => {
+      const ms = Math.min(t - last, 40); last = t;
+      sc.scrollBy(-vx * ms, -vy * ms);
+      const k = Math.pow(0.95, ms / 16);
+      vx *= k; vy *= k;
+      fling = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
+    };
+    fling = requestAnimationFrame(step);
+  };
+  // 끌고 난 뒤 손을 뗄 때 그 자리 버튼이 눌리지 않게 (클릭이 늦게 와도 0.4초 동안 막아요)
+  addEventListener("pointerup", (e) => {
+    if (drag?.moved) { eatUntil = e.timeStamp + 400; startFling(drag.sc, drag.pts, e.timeStamp); }
+    drag = null;
+  }, true);
+  addEventListener("click", (e) => { if (e.timeStamp < eatUntil) { eatUntil = 0; e.preventDefault(); e.stopPropagation(); } }, true);
   addEventListener("dragstart", (e) => e.preventDefault(), true); // 링크·이미지가 끌려가지 않게
   addEventListener("selectstart", (e) => { if (drag?.moved) e.preventDefault(); }, true);
 
