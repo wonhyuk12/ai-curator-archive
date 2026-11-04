@@ -16,26 +16,47 @@
     zoom = Math.min(MAX, Math.max(MIN, Math.round(z * 100) / 100));
     const el = app(); if (el) el.style.zoom = zoom === 1 ? "" : String(zoom);
     document.body.classList.toggle("tg-z", zoom > 1);
+    fitMedia(innerWidth / zoom);
     if (out) { out.disabled = zoom <= MIN; inn.disabled = zoom >= MAX; }
   };
 
+  // 확대하면 실제로 쓸 수 있는 폭이 좁아져요. 그런데 화면 크기 기준(@media)은 진짜 화면 폭을 봐요.
+  // 그래서 페이지에 있는 "(max-width: Npx)" 규칙 가운데 확대한 폭에 맞는 것을 켜고, "(min-width: Npx)" 는 꺼요.
+  // 규칙 순서는 그대로라서 좁은 화면에서 보는 것과 같은 배치가 돼요. 원래 크기로 돌아오면 원래대로 되돌려요.
+  const orig = new Map();
+  const mediaRules = () => {
+    const out = [];
+    for (const sh of document.styleSheets) {
+      let rules; try { rules = sh.cssRules; } catch { continue; } // 다른 사이트 글꼴 CSS 는 못 읽어요
+      for (const r of rules) if (r instanceof CSSMediaRule) out.push(r);
+    }
+    return out;
+  };
+  const fitMedia = (w) => {
+    for (const r of mediaRules()) {
+      if (!orig.has(r)) orig.set(r, r.media.mediaText);
+      const text = orig.get(r);
+      const m = /^\(\s*(max|min)-width\s*:\s*(\d+(?:\.\d+)?)px\s*\)$/.exec(text.trim());
+      if (!m) continue; // 폭 하나만 보는 규칙만 다뤄요
+      const n = +m[2], real = innerWidth;
+      let next = text;
+      if (w < real) {
+        if (m[1] === "max" && n < real && w <= n) next = "all";      // 확대한 폭이면 켜져야 하는 좁은 화면 규칙
+        if (m[1] === "min" && n <= real && w < n) next = "not all";  // 확대한 폭이면 꺼져야 하는 넓은 화면 규칙
+      }
+      if (r.media.mediaText !== next) r.media.mediaText = next;
+    }
+  };
+  addEventListener("resize", () => fitMedia(innerWidth / zoom));
+
   const style = document.createElement("style");
   style.textContent = `
-.tg-zoom{position:fixed;right:8px;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:6px}
-.tg-zoom button{width:44px;height:44px;border-radius:12px;border:1px solid #545a63;background:rgba(27,30,35,.88);color:#d9dde3;font:700 22px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+.tg-zoom{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:6px;opacity:.6}
+.tg-zoom:active{opacity:1}
+.tg-zoom button{width:34px;height:44px;border-right:0!important;border-radius:12px 0 0 12px!important;border-radius:12px;border:1px solid #545a63;background:rgba(27,30,35,.9);color:#d9dde3;font:700 22px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
 .tg-zoom button:disabled{opacity:.35}
 .tg-zoom button:active{background:#2f514c}
-body.tkb-open .tg-zoom{display:none}
-/* 확대하면 실제로 쓸 수 있는 폭이 좁아져요. 화면 크기 기준(@media)은 그대로라서, 이 페이지의 좁은 화면용 배치를 직접 켜요 */
-.tg-z .presets,.tg-z .grid2,.tg-z .examples,.tg-z .guide ol{grid-template-columns:1fr}
-.tg-z .two{grid-template-columns:minmax(0,1fr)!important}
-.tg-z .home h1{font-size:28px}
-.tg-z .qgrid{grid-template-columns:110px repeat(3,minmax(200px,1fr));overflow-x:auto}
-.tg-z .srow{grid-template-columns:1fr auto}
-.tg-z .gsteps li{grid-template-columns:28px minmax(0,1fr)}
-.tg-z .confirm-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"sidebar" "content";gap:18px}
-.tg-z .confirm-sidebar{position:relative;top:auto;max-height:none}
-.tg-z .confirm-sidebar .envchips{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}`;
+body.tkb-open .tg-zoom{display:none}`;
   document.head.appendChild(style);
   const box = document.createElement("div");
   box.className = "tg-zoom";
@@ -72,7 +93,7 @@ body.tkb-open .tg-zoom{display:none}
     const since = Date.now();
     setTimeout(() => {
       if (clicked >= since - 50) return; // 정상적으로 click 이 왔어요
-      const el = t.el?.closest?.("button, a[href], [role=button], [data-a], input, textarea, label, summary");
+      const el = t.el?.closest?.("button, a[href], [role=button], [data-a], [data-act], [data-go], input, textarea, label, summary");
       if (el && el.isConnected) el.click();
     }, 350);
   }, { capture: true, passive: true });

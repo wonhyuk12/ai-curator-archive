@@ -74,8 +74,10 @@ body.tkb-open{padding-bottom:var(--tkb-h,0px)}`;
     close();
     const id = el.id;
     const max = el.maxLength > 0 ? el.maxLength : 600;
-    let jamo = window.Hangul ? window.Hangul.disassemble(el.value || "") : (el.value || "").split("");
-    let mode = numericOnly(el) ? "num" : "ko", shift = false;
+    // 숫자 칸은 새 숫자를 넣는 칸이라 비운 채로 열어요 (취소하면 원래 값 그대로). 글자 칸은 이어서 써요
+    const num = numericOnly(el);
+    let jamo = num ? [] : window.Hangul ? window.Hangul.disassemble(el.value || "") : (el.value || "").split("");
+    let mode = num ? "num" : "ko", shift = false;
     const text = () => (window.Hangul ? window.Hangul.assemble(jamo) : jamo.join(""));
 
     kb = document.createElement("div");

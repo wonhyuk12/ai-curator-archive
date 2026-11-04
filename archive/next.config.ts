@@ -8,9 +8,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: "/news", destination: "/news/index.html", permanent: false }];
   },
-  // 키오스크: 파이가 여는 /kiosk 에 AI 도구 견적 화면(public/kiosk/quote.html)을 보여 줘요 (예전 시작 화면 대신)
+  // 키오스크: 파이가 여는 /kiosk 에 MAP 화면(public/kiosk/map.html)을 보여 줘요. 이전 견적 화면은 /kiosk/quote.html 에 남아 있어요
   async rewrites() {
-    return { beforeFiles: [{ source: "/kiosk", destination: "/kiosk/quote.html" }], afterFiles: [], fallback: [] };
+    return { beforeFiles: [{ source: "/kiosk", destination: "/kiosk/map.html" }], afterFiles: [], fallback: [] };
   },
 };
 
