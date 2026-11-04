@@ -51,6 +51,7 @@
 
   const style = document.createElement("style");
   style.textContent = `
+html,html *{cursor:none!important} /* 터치 전용: 마우스 화살표 숨김 (예전 키오스크와 같게) */
 .tg-zoom{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:6px;opacity:.6}
 .tg-zoom:active{opacity:1}
 .tg-zoom button{width:34px;height:44px;border-right:0!important;border-radius:12px 0 0 12px!important;border-radius:12px;border:1px solid #545a63;background:rgba(27,30,35,.9);color:#d9dde3;font:700 22px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
